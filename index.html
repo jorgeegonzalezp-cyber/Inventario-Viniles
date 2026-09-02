@@ -276,16 +276,16 @@
 
         <!-- 2. Gemini API Key -->
         <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 space-y-1 text-xs">
-          <label class="block text-slate-200 font-semibold">2. Tu Clave API de Gemini (IA):</label>
-          <input type="password" id="fieldApiKey" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
-          <p class="text-[10px] text-slate-400">Gratuita en <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-emerald-400 underline">Google AI Studio</a>. Sirve para reconocer portadas.</p>
+          <label class="block text-slate-200 font-semibold">2. Tu Clave API de Gemini (Opcional en Canvas):</label>
+          <input type="password" id="fieldApiKey" placeholder="Dejar en blanco para usar la integrada..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-slate-400">Si la dejas vacía, la aplicación usará el modelo predeterminado de la plataforma.</p>
         </div>
 
         <!-- 3. Clave Secreta Token -->
         <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 space-y-1 text-xs">
-          <label class="block text-slate-200 font-semibold">3. Tu Clave/PIN de Seguridad Secreta:</label>
-          <input type="password" id="fieldSecretToken" placeholder="Escribe un PIN o contraseña..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
-          <p class="text-[10px] text-slate-400">Debe coincidir con la clave definida dentro del código de tu Apps Script.</p>
+          <label class="block text-slate-200 font-semibold">3. Tu Clave/PIN de Seguridad Secreta (Opcional):</label>
+          <input type="password" id="fieldSecretToken" placeholder="Escribe un PIN o contraseña si tu script lo exige..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-slate-400">Solo necesario si configuraste un token de validación en tu Apps Script.</p>
         </div>
 
         <button onclick="saveAllSettings()" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow">
@@ -294,27 +294,65 @@
         </button>
       </div>
 
-      <!-- Guía de Configuración Rápida para Compradores / Amigos -->
+      <!-- Guía de Configuración Rápida y Código de Google Apps Script -->
       <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
         <button onclick="toggleInstructions()" class="w-full flex items-center justify-between text-xs font-bold text-slate-200">
-          <span class="flex items-center gap-1.5"><i class="fa-solid fa-book-open text-emerald-400"></i> ¿Cómo configurar tu propio Google Sheets?</span>
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-code text-emerald-400"></i> Ver Código Recomendado para Google Apps Script</span>
           <i id="instructionsChevron" class="fa-solid fa-chevron-down text-slate-400"></i>
         </button>
         
         <div id="instructionsContent" class="hidden text-xs text-slate-300 space-y-3 pt-2 border-t border-slate-800">
-          <ol class="list-decimal list-inside space-y-2 text-[11px] leading-relaxed text-slate-300">
-            <li>Crea una nueva <strong>Hoja de Cálculo en Google Sheets</strong>.</li>
-            <li>En la primera fila agrega las columnas: <code class="bg-slate-950 px-1 py-0.5 rounded text-emerald-300">Artista, Título, Edición, Formato, Año, Género, Sello, Condición, Ubicación, Precio, FotoURL, Fecha</code>.</li>
-            <li>Ve al menú <strong>Extensiones &gt; Apps Script</strong> y pega el código backend del script.</li>
-            <li>Haz clic en <strong>Implementar &gt; Nueva implementación</strong>:
-              <ul class="list-disc list-inside pl-3 mt-1 text-slate-400">
-                <li>Selecciona tipo: <strong>Aplicación Web</strong></li>
-                <li>Ejecutar como: <strong>Yo (tu cuenta)</strong></li>
-                <li>Quién tiene acceso: <strong>Cualquier persona</strong></li>
-              </ul>
-            </li>
-            <li>Copia la <strong>URL de la Aplicación Web</strong> generada y pégala en el campo 1 de arriba.</li>
-          </ol>
+          <p class="text-[11px] text-slate-400">Pega este código en el editor de Google Apps Script de tu Hoja de Cálculo para asegurar lectura y escritura fluidas:</p>
+          <div class="relative">
+            <pre class="bg-slate-950 text-emerald-300 text-[10px] p-3 rounded-lg overflow-x-auto max-h-48 border border-slate-800 font-mono"><code>function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length < 2) return responseJSON([]);
+  
+  var headers = rows[0].map(function(h) { return String(h).toLowerCase().trim(); });
+  var result = [];
+  
+  for (var i = 1; i < rows.length; i++) {
+    var row = rows[i];
+    if (!row[0] && !row[1]) continue;
+    var item = {};
+    for (var j = 0; j < headers.length; j++) {
+      item[headers[j]] = row[j];
+    }
+    result.push(item);
+  }
+  return responseJSON(result);
+}
+
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  
+  sheet.appendRow([
+    data.artist || "",
+    data.title || "",
+    data.edition || "",
+    data.format || "",
+    data.year || "",
+    data.genre || "",
+    data.label || "",
+    data.condition || "",
+    data.location || "",
+    data.price || 0,
+    data.photoUrl || "",
+    new Date().toLocaleDateString()
+  ]);
+  return responseJSON({ status: "success" });
+}
+
+function responseJSON(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}</code></pre>
+            <button onclick="copyScriptCode()" class="mt-2 text-[11px] bg-slate-800 hover:bg-slate-700 text-slate-200 px-3 py-1.5 rounded border border-slate-700 flex items-center gap-1.5">
+              <i class="fa-solid fa-copy text-emerald-400"></i> Copiar Código Backend
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -405,6 +443,61 @@
       }
     }
 
+    function copyScriptCode() {
+      const codeText = `function doGet(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var rows = sheet.getDataRange().getValues();
+  if (rows.length < 2) return responseJSON([]);
+  
+  var headers = rows[0].map(function(h) { return String(h).toLowerCase().trim(); });
+  var result = [];
+  
+  for (var i = 1; i < rows.length; i++) {
+    var row = rows[i];
+    if (!row[0] && !row[1]) continue;
+    var item = {};
+    for (var j = 0; j < headers.length; j++) {
+      item[headers[j]] = row[j];
+    }
+    result.push(item);
+  }
+  return responseJSON(result);
+}
+
+function doPost(e) {
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  var data = JSON.parse(e.postData.contents);
+  
+  sheet.appendRow([
+    data.artist || "",
+    data.title || "",
+    data.edition || "",
+    data.format || "",
+    data.year || "",
+    data.genre || "",
+    data.label || "",
+    data.condition || "",
+    data.location || "",
+    data.price || 0,
+    data.photoUrl || "",
+    new Date().toLocaleDateString()
+  ]);
+  return responseJSON({ status: "success" });
+}
+
+function responseJSON(data) {
+  return ContentService.createTextOutput(JSON.stringify(data))
+    .setMimeType(ContentService.MimeType.JSON);
+}`;
+      const textarea = document.createElement('textarea');
+      textarea.value = codeText;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      showToast("Código copiado al portapapeles", "success");
+    }
+
     function switchTab(tabName) {
       document.getElementById('secScan').classList.add('hidden');
       document.getElementById('secCollection').classList.add('hidden');
@@ -427,7 +520,6 @@
       }
     }
 
-    // --- CARGAR COLECCIÓN DESDE GOOGLE SHEETS ---
     async function fetchFromGoogleSheets() {
       const scriptUrl = getScriptUrl();
       if (!scriptUrl) {
@@ -445,29 +537,93 @@
         const urlWithToken = token ? `${scriptUrl}?token=${encodeURIComponent(token)}` : scriptUrl;
         
         const response = await fetch(urlWithToken);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.error) {
-            showToast(data.error, "warning");
-            document.getElementById('syncStatus').innerText = "Acceso Denegado (Clave incorrecta)";
-            return;
-          }
-          if (Array.isArray(data)) {
-            collectionData = data;
-            document.getElementById('syncStatus').innerText = `Conectado (${collectionData.length} discos)`;
-            showToast(`Cargados ${collectionData.length} discos desde Google Sheets`, "success");
-            renderCollection();
-          }
+        if (!response.ok) {
+          throw new Error(`HTTP Error ${response.status}`);
         }
+
+        const rawData = await response.json();
+        if (rawData && rawData.error) {
+          showToast(rawData.error, "warning");
+          document.getElementById('syncStatus').innerText = "Acceso Denegado";
+          return;
+        }
+
+        // Extraer arreglo de cualquier estructura recibida
+        let itemsArray = [];
+        if (Array.isArray(rawData)) {
+          itemsArray = rawData;
+        } else if (Array.isArray(rawData.data)) {
+          itemsArray = rawData.data;
+        } else if (Array.isArray(rawData.items)) {
+          itemsArray = rawData.items;
+        } else if (Array.isArray(rawData.rows)) {
+          itemsArray = rawData.rows;
+        } else if (Array.isArray(rawData.result)) {
+          itemsArray = rawData.result;
+        }
+
+        collectionData = normalizeSheetItems(itemsArray);
+        document.getElementById('syncStatus').innerText = `Conectado (${collectionData.length} discos)`;
+        showToast(`Cargados ${collectionData.length} discos desde Google Sheets`, "success");
+        renderCollection();
+
       } catch (err) {
         console.error("Error al leer Google Sheets:", err);
         document.getElementById('syncStatus').innerText = "Error al conectar con Sheets";
+        showToast("Error al leer Google Sheets. Revisa el código del Apps Script.", "warning");
       } finally {
         if (refreshIcon) refreshIcon.classList.remove('fa-spin');
       }
     }
 
-    // --- ENVIAR NUEVO DISCO A GOOGLE SHEETS ---
+    // Normaliza automáticamente las variaciones de encabezados de la Hoja de Cálculo
+    function normalizeSheetItems(items) {
+      if (!Array.isArray(items)) return [];
+      return items.map((item, index) => {
+        const getVal = (...keys) => {
+          for (const k of keys) {
+            for (const objKey in item) {
+              const cleanObjKey = objKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+              const cleanK = k.toLowerCase().replace(/[^a-z0-9]/g, '');
+              if (cleanObjKey === cleanK) {
+                if (item[objKey] !== undefined && item[objKey] !== null) return String(item[objKey]).trim();
+              }
+            }
+          }
+          return '';
+        };
+
+        const artist = getVal('artist', 'artista', 'band', 'banda', 'autor');
+        const title = getVal('title', 'titulo', 'título', 'album', 'disco', 'nombre');
+        const edition = getVal('edition', 'edicion', 'edición', 'variant', 'variante', 'version', 'versión') || 'Estándar';
+        const format = getVal('format', 'formato', 'tipo', 'media') || 'Vinilo 12"';
+        const year = getVal('year', 'ano', 'año', 'fecha_lanzamiento');
+        const genre = getVal('genre', 'genero', 'género', 'style', 'estilo');
+        const label = getVal('label', 'sello', 'disquera', 'discografica');
+        const condition = getVal('condition', 'condicion', 'condición', 'estado');
+        const location = getVal('location', 'ubicacion', 'ubicación', 'estante');
+        const priceStr = getVal('price', 'precio', 'valor', 'costo');
+        const price = parseFloat(priceStr.replace(/[^0-9.]/g, '')) || 0;
+        const photoUrl = getVal('photourl', 'foto', 'fotourl', 'photo', 'imagen', 'imageurl', 'driveurl');
+
+        return {
+          id: item.id || `sheet_row_${index}`,
+          artist: artist || "Artista",
+          title: title || "Disco",
+          edition: edition,
+          format: format,
+          year: year,
+          genre: genre,
+          label: label,
+          condition: condition,
+          location: location,
+          price: price,
+          photoUrl: photoUrl,
+          dateAdded: getVal('fecha', 'date', 'dateadded') || ''
+        };
+      });
+    }
+
     async function saveAlbumToSheets(event) {
       event.preventDefault();
 
@@ -513,7 +669,7 @@
           body: JSON.stringify(albumData)
         });
 
-        showToast("¡Disco guardado en tu Google Sheet y foto subida a Drive!", "success");
+        showToast("¡Disco enviado a tu Google Sheet!", "success");
         
         collectionData.unshift({
           id: "temp_" + Date.now(),
@@ -538,19 +694,15 @@
       }
     }
 
-    // --- PROCESAR FOTO CON IA GEMINI ---
     async function processPhotoWithAI(event) {
       const file = event.target.files[0];
       if (!file) return;
 
-      const apiKey = getApiKey();
-      if (!apiKey) {
-        showToast("Ingresa tu clave de Gemini en Ajustes para activar el reconocimiento", "warning");
-      }
+      const userApiKey = getApiKey(); // Puede ser vacía si utiliza el entorno
 
       const aiAnalyzing = document.getElementById('aiAnalyzing');
       aiAnalyzing.classList.remove('hidden');
-      showToast("Optimizando y analizando foto...", "info");
+      showToast("Optimizando y analizando portada con IA...", "info");
 
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -558,7 +710,7 @@
         img.onload = async function() {
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
-          const MAX_SIZE = 600;
+          const MAX_SIZE = 800;
           let width = img.width;
           let height = img.height;
 
@@ -572,24 +724,20 @@
           canvas.height = height;
           ctx.drawImage(img, 0, 0, width, height);
 
-          currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.8);
 
           document.getElementById('photoPreview').src = currentPhotoBase64;
           document.getElementById('photoPreview').classList.remove('hidden');
           document.getElementById('photoPlaceholder').classList.add('hidden');
           document.getElementById('btnClearPhoto').classList.remove('hidden');
-          document.getElementById('photoStatusText').innerText = "Foto optimizada para Drive";
+          document.getElementById('photoStatusText').innerText = "Foto capturada";
 
-          if (apiKey) {
-            try {
-              await analyzeImageWithGemini(currentPhotoBase64.split(',')[1], apiKey);
-            } catch (err) {
-              console.error("Error al analizar con IA:", err);
-              showToast("Completa los datos manualmente si es necesario", "warning");
-            } finally {
-              aiAnalyzing.classList.add('hidden');
-            }
-          } else {
+          try {
+            await analyzeImageWithGemini(currentPhotoBase64.split(',')[1], userApiKey);
+          } catch (err) {
+            console.error("Error al analizar con IA:", err);
+            showToast("No se autocompletaron datos. Escríbelos manualmente.", "warning");
+          } finally {
             aiAnalyzing.classList.add('hidden');
           }
         };
@@ -598,21 +746,24 @@
       reader.readAsDataURL(file);
     }
 
-    async function analyzeImageWithGemini(base64Data, apiKey) {
-      const promptText = `Analiza esta portada o disco. Identifica el artista, título del álbum y edición especial (Target Exclusive, Urban Outfitters, Colored Vinyl, Deluxe, Gatefold, 180g, etc.).
-Devuelve ÚNICAMENTE un JSON válido con este formato exacto:
+    async function analyzeImageWithGemini(base64Data, apiKey = "") {
+      const promptText = `Analiza detenidamente esta imagen de portada de disco o vinilo.
+Identifica el nombre exacto del artista/banda, el título del álbum, la edición especial/variante si aplica (ej. Target Exclusive, Red Vinyl, Remastered, Deluxe, Gatefold, etc.), formato probable, año de lanzamiento, género musical, sello discográfico y valor estimado en USD.
+
+Devuelve ÚNICAMENTE un JSON válido sin Markdown con este formato exacto:
 {
   "artist": "Nombre del artista",
   "title": "Título del álbum",
   "edition": "Detalle de edición o 'Estándar'",
   "format": "Vinilo 12\"",
-  "year": 2011,
+  "year": 2020,
   "genre": "Género musical",
   "label": "Sello discográfico",
-  "estimatedPrice": 35.0
+  "estimatedPrice": 25.0
 }`;
 
-      const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
+      // gemini-3-flash-preview es el modelo primario
+      const models = ["gemini-3-flash-preview", "gemini-2.5-flash"];
       let success = false;
 
       for (const model of models) {
@@ -636,7 +787,7 @@ Devuelve ÚNICAMENTE un JSON válido con este formato exacto:
           });
 
           if (!response.ok) {
-            console.warn(`Modelo ${model} no respondió correctamente (HTTP ${response.status})`);
+            console.warn(`Modelo ${model} devolvió respuesta HTTP ${response.status}`);
             continue;
           }
 
@@ -644,7 +795,6 @@ Devuelve ÚNICAMENTE un JSON válido con este formato exacto:
           const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
           if (textResponse) {
-            // Extraer JSON robustamente eliminando etiquetas markdown o texto extra
             const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
             if (jsonMatch) {
               const parsed = JSON.parse(jsonMatch[0]);
@@ -667,7 +817,7 @@ Devuelve ÚNICAMENTE un JSON válido con este formato exacto:
               }
 
               document.getElementById('aiBadge').classList.remove('hidden');
-              showToast(`IA: Detectado ${parsed.artist || 'Disco'} - ${parsed.title || ''}`, "success");
+              showToast(`IA detectó: ${parsed.artist || 'Disco'} - ${parsed.title || ''}`, "success");
               success = true;
               break;
             }
@@ -678,7 +828,7 @@ Devuelve ÚNICAMENTE un JSON válido con este formato exacto:
       }
 
       if (!success) {
-        showToast("No se reconocieron los datos de la portada. Ingrésalos manualmente.", "warning");
+        showToast("No se reconocieron los datos de la portada. Puedes ingresarlos manualmente.", "warning");
       }
     }
 
