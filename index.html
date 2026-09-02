@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="es" class="bg-slate-950 text-slate-100">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Vinyl & CD Vault</title>
+  
+  <!-- Configuración de Pantalla Completa PWA para iPhone -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Vinyl Vault">
+  <meta name="theme-color" content="#020617">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    html, body {
+      background-color: #020617;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    body {
+      padding-top: env(safe-area-inset-top);
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    input, select, textarea {
+      font-size: 16px !important;
+    }
+    .pulse-glow {
+      animation: pulse-animation 2s infinite;
+    }
+    @keyframes pulse-animation {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.6); }
+      70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen pb-20 font-sans antialiased">
+
+  <!-- Header Principal -->
+  <header class="bg-slate-900/95 backdrop-blur border-b border-slate-800 p-4 sticky top-0 z-30 shadow-lg pt-6">
+    <div class="max-w-md mx-auto flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-500 flex items-center justify-center text-xl shadow-md">
+          <i class="fa-solid fa-compact-disc fa-spin" style="animation-duration: 12s;"></i>
+        </div>
+        <div>
+          <h1 class="font-bold text-lg tracking-tight leading-tight flex items-center gap-1.5">
+            Vinyl & CD Vault
+            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold px-1.5 py-0.2 rounded-full">Drive Connected</span>
+          </h1>
+          <p class="text-xs text-slate-400" id="syncStatus">Conectando a Google Sheets...</p>
+        </div>
+      </div>
+      <button onclick="fetchFromGoogleSheets()" class="bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg font-medium flex items-center gap-1.5 border border-slate-700 shadow transition-all">
+        <i class="fa-solid fa-rotate text-emerald-400" id="refreshIcon"></i> Actualizar
+      </button>
+    </div>
+  </header>
+
+  <!-- Navegación por pestañas -->
+  <nav class="bg-slate-900/90 backdrop-blur border-b border-slate-800 sticky top-[73px] z-20">
+    <div class="max-w-md mx-auto flex">
+      <button id="tabNavScan" onclick="switchTab('scan')" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 transition-colors">
+        <i class="fa-solid fa-camera mr-1"></i> Escanear
+      </button>
+      <button id="tabNavCollection" onclick="switchTab('collection')" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors">
+        <i class="fa-solid fa-list-ul mr-1"></i> Mi Colección (<span id="collectionCount">0</span>)
+      </button>
+      <button id="tabNavConfig" onclick="switchTab('config')" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors">
+        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Estado Sheets
+      </button>
+    </div>
+  </nav>
+
+  <main class="max-w-md mx-auto p-4">
+
+    <!-- SECCIÓN 1: ESCANEAR -->
+    <section id="secScan" class="space-y-5">
+      
+      <!-- Escáner Banner -->
+      <div class="bg-gradient-to-b from-emerald-950/40 to-slate-900 border border-emerald-800/40 p-5 rounded-2xl text-center shadow-xl space-y-4">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-emerald-600/20 text-emerald-400 border border-emerald-500/30 text-2xl pulse-glow">
+          <i class="fa-solid fa-camera-retro"></i>
+        </div>
+        <div>
+          <h2 class="text-base font-bold text-slate-100">Escáner de Vinilos y CDs</h2>
+          <p class="text-xs text-slate-300 mt-1">
+            Toma una foto de la portada, vinilo o edición especial. La IA detectará los datos y se guardarán en tu Google Sheet y Drive.
+          </p>
+        </div>
+
+        <div>
+          <label for="cameraInput" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 cursor-pointer shadow-lg text-sm transition-all">
+            <i class="fa-solid fa-camera text-base"></i>
+            <span>Tomar Foto con iPhone</span>
+          </label>
+          <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="processPhotoWithAI(event)">
+        </div>
+      </div>
+
+      <!-- Estado IA -->
+      <div id="aiAnalyzing" class="hidden bg-slate-900 border border-emerald-500/40 p-4 rounded-xl text-center space-y-3">
+        <div class="flex justify-center">
+          <i class="fa-solid fa-brain text-2xl text-emerald-400 fa-pulse"></i>
+        </div>
+        <div class="text-xs font-semibold text-emerald-300">Analizando portada con IA...</div>
+        <p class="text-[11px] text-slate-400">Identificando artista, título y variantes exclusivas.</p>
+      </div>
+
+      <!-- Formulario -->
+      <form id="albumForm" onsubmit="saveAlbumToSheets(event)" class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-4 shadow">
+        <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+          <h2 class="text-xs font-semibold text-slate-300 flex items-center gap-1.5">
+            <i class="fa-solid fa-pen-to-square text-emerald-400"></i>
+            <span>Detalles del Disco</span>
+          </h2>
+          <span id="aiBadge" class="hidden text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-medium">
+            <i class="fa-solid fa-sparkles mr-1"></i> Detectado por IA
+          </span>
+        </div>
+
+        <!-- Vista previa Foto -->
+        <div>
+          <div class="flex items-center gap-3">
+            <div id="photoPreviewContainer" class="w-20 h-20 bg-slate-950 rounded-lg border border-slate-800 flex items-center justify-center overflow-hidden shrink-0 relative">
+              <i id="photoPlaceholder" class="fa-solid fa-image text-2xl text-slate-700"></i>
+              <img id="photoPreview" class="w-full h-full object-cover hidden" alt="Vista previa">
+            </div>
+            <div class="flex-1 space-y-1">
+              <div class="text-xs font-semibold text-slate-200" id="photoStatusText">Sin foto capturada</div>
+              <p class="text-[11px] text-slate-400">La foto se enviará automáticamente a tu Google Drive.</p>
+              <button type="button" onclick="clearPhoto()" id="btnClearPhoto" class="text-xs text-red-400 hover:text-red-300 hidden">
+                <i class="fa-solid fa-trash mr-1"></i> Quitar foto
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Campos de Texto -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-slate-400 mb-1">Artista *</label>
+            <input type="text" id="fieldArtist" required placeholder="Ej: Kasabian" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-slate-400 mb-1">Título del Álbum *</label>
+            <input type="text" id="fieldTitle" required placeholder="Ej: Velociraptor!" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-slate-400 mb-1">Edición Especial / Variante</label>
+            <input type="text" id="fieldEdition" placeholder="Ej: Target Exclusive Red Translucent, Gatefold" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Formato</label>
+            <select id="fieldFormat" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+              <option value="Vinilo 12&quot;">Vinilo 12"</option>
+              <option value="Vinilo 2LP">Vinilo 2LP Double</option>
+              <option value="CD">CD Compact Disc</option>
+              <option value="Boxset">Box Set Especial</option>
+              <option value="Cassette">Cassette</option>
+              <option value="Vinilo 7&quot;">Vinilo 7" Single</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Año</label>
+            <input type="number" id="fieldYear" placeholder="2011" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Género</label>
+            <input type="text" id="fieldGenre" placeholder="Indie Rock" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Sello / Disquera</label>
+            <input type="text" id="fieldLabel" placeholder="Columbia / Sony" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Estado / Condición</label>
+            <select id="fieldCondition" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+              <option value="Mint (M)">Mint (Nuevo / Sellado)</option>
+              <option value="Near Mint (NM)" selected>Near Mint (Casi Nuevo)</option>
+              <option value="Very Good+ (VG+)">Very Good+ (Excelente)</option>
+              <option value="Very Good (VG)">Very Good (Bueno)</option>
+              <option value="Good (G)">Good (Aceptable)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-400 mb-1">Ubicación Estante</label>
+            <input type="text" id="fieldLocation" placeholder="Ej: Estante B2" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div class="col-span-2">
+            <label class="block text-xs font-medium text-slate-400 mb-1">Valor Estimado ($ USD)</label>
+            <input type="number" step="0.01" id="fieldPrice" placeholder="35.00" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <button type="submit" id="btnSave" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 text-sm">
+          <i class="fa-solid fa-cloud-arrow-up"></i>
+          <span>Guardar en Google Sheets & Drive</span>
+        </button>
+      </form>
+    </section>
+
+    <!-- SECCIÓN 2: MI COLECCIÓN -->
+    <section id="secCollection" class="space-y-4 hidden">
+      <!-- Estadísticas -->
+      <div class="grid grid-cols-3 gap-2">
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center shadow">
+          <div class="text-[11px] text-slate-400">Vinilos</div>
+          <div id="statVinyls" class="text-xl font-bold text-amber-400">0</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center shadow">
+          <div class="text-[11px] text-slate-400">CDs</div>
+          <div id="statCDs" class="text-xl font-bold text-sky-400">0</div>
+        </div>
+        <div class="bg-slate-900 border border-slate-800 p-3 rounded-xl text-center shadow">
+          <div class="text-[11px] text-slate-400">Valor Total</div>
+          <div id="statValue" class="text-xl font-bold text-emerald-400">$0</div>
+        </div>
+      </div>
+
+      <!-- Buscador -->
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500"></i>
+        <input type="text" id="inputFilter" placeholder="Buscar en tu colección..." oninput="renderCollection()" class="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 pl-10 pr-4 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-emerald-500">
+      </div>
+
+      <!-- Lista de Discos -->
+      <div id="collectionList" class="space-y-3">
+        <!-- Tarjetas dinámicas -->
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: ESTADO GOOGLE SHEETS -->
+    <section id="secConfig" class="space-y-4 hidden">
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-4">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <i class="fa-solid fa-circle-check text-lg"></i>
+          </div>
+          <div>
+            <h2 class="text-sm font-bold text-slate-100">Google Sheets Vinculado</h2>
+            <p class="text-[11px] text-emerald-400 font-medium">Conexión activa integrada en el código</p>
+          </div>
+        </div>
+
+        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 space-y-1 text-xs">
+          <div class="text-slate-300 font-semibold">URL de tu Apps Script:</div>
+          <div class="text-[10px] text-slate-400 font-mono break-all bg-slate-900 p-2 rounded border border-slate-800">
+            https://script.google.com/macros/s/AKfycbwMv33uJV8YjYHtE1Y1V4QG7DI-vDLZ2A76voD9EJJs0tZrmhHnFrQ_GQ8sXhvF5Gp5hA/exec
+          </div>
+        </div>
+
+        <button onclick="fetchFromGoogleSheets()" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow">
+          <i class="fa-solid fa-rotate"></i>
+          <span>Recargar Colección desde Google Sheets</span>
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Notificaciones -->
+  <div id="toast" class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-slate-800 text-slate-100 border border-slate-700 text-xs px-4 py-3 rounded-xl shadow-2xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center gap-2 max-w-[90%]">
+    <i id="toastIcon" class="fa-solid fa-circle-info text-emerald-400"></i>
+    <span id="toastMessage">Notificación</span>
+  </div>
+
+  <script>
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMv33uJV8YjYHtE1Y1V4QG7DI-vDLZ2A76voD9EJJs0tZrmhHnFrQ_GQ8sXhvF5Gp5hA/exec";
+    const apiKey = "";
+    let collectionData = [];
+    let currentPhotoBase64 = "";
+
+    window.onload = function() {
+      fetchFromGoogleSheets();
+    };
+
+    function switchTab(tabName) {
+      document.getElementById('secScan').classList.add('hidden');
+      document.getElementById('secCollection').classList.add('hidden');
+      document.getElementById('secConfig').classList.add('hidden');
+
+      document.getElementById('tabNavScan').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors";
+      document.getElementById('tabNavCollection').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors";
+      document.getElementById('tabNavConfig').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors";
+
+      if (tabName === 'scan') {
+        document.getElementById('secScan').classList.remove('hidden');
+        document.getElementById('tabNavScan').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 transition-colors";
+      } else if (tabName === 'collection') {
+        document.getElementById('secCollection').classList.remove('hidden');
+        document.getElementById('tabNavCollection').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 transition-colors";
+        renderCollection();
+      } else if (tabName === 'config') {
+        document.getElementById('secConfig').classList.remove('hidden');
+        document.getElementById('tabNavConfig').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 transition-colors";
+      }
+    }
+
+    // --- CARGAR COLECCIÓN DESDE GOOGLE SHEETS ---
+    async function fetchFromGoogleSheets() {
+      const refreshIcon = document.getElementById('refreshIcon');
+      refreshIcon.classList.add('fa-spin');
+      document.getElementById('syncStatus').innerText = "Cargando desde Google Sheets...";
+
+      try {
+        const response = await fetch(SCRIPT_URL);
+        if (response.ok) {
+          const data = await response.json();
+          if (Array.isArray(data)) {
+            collectionData = data;
+            document.getElementById('syncStatus').innerText = `Conectado (${collectionData.length} discos en Sheets)`;
+            showToast(`Cargados ${collectionData.length} discos desde Google Sheets`, "success");
+            renderCollection();
+          }
+        }
+      } catch (err) {
+        console.error("Error al leer Google Sheets:", err);
+        document.getElementById('syncStatus').innerText = "Sheets Vinculado";
+      } finally {
+        refreshIcon.classList.remove('fa-spin');
+      }
+    }
+
+    // --- ENVIAR NUEVO DISCO A GOOGLE SHEETS ---
+    async function saveAlbumToSheets(event) {
+      event.preventDefault();
+
+      const artist = document.getElementById('fieldArtist').value.trim();
+      const title = document.getElementById('fieldTitle').value.trim();
+
+      if (!artist || !title) {
+        showToast("Ingresa al menos Artista y Título", "warning");
+        return;
+      }
+
+      const btnSave = document.getElementById('btnSave');
+      btnSave.disabled = true;
+      btnSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando en Google Drive y Sheets...`;
+
+      const albumData = {
+        artist: artist,
+        title: title,
+        edition: document.getElementById('fieldEdition').value.trim() || 'Estándar',
+        format: document.getElementById('fieldFormat').value,
+        year: document.getElementById('fieldYear').value,
+        genre: document.getElementById('fieldGenre').value,
+        label: document.getElementById('fieldLabel').value,
+        condition: document.getElementById('fieldCondition').value,
+        location: document.getElementById('fieldLocation').value,
+        price: parseFloat(document.getElementById('fieldPrice').value) || 0,
+        photoBase64: currentPhotoBase64
+      };
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(albumData)
+        });
+
+        showToast("¡Disco guardado en tu Google Sheet y foto subida a Drive!", "success");
+        
+        collectionData.unshift({
+          id: "temp_" + Date.now(),
+          ...albumData,
+          dateAdded: new Date().toLocaleDateString()
+        });
+
+        document.getElementById('albumForm').reset();
+        clearPhoto();
+        
+        setTimeout(() => {
+          fetchFromGoogleSheets();
+          switchTab('collection');
+        }, 1500);
+
+      } catch (e) {
+        console.error("Error al enviar a Google Sheets:", e);
+        showToast("Error al enviar los datos", "warning");
+      } finally {
+        btnSave.disabled = false;
+        btnSave.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i><span>Guardar en Google Sheets & Drive</span>`;
+      }
+    }
+
+    // --- PROCESAR FOTO CON IA GEMINI ---
+    async function processPhotoWithAI(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const aiAnalyzing = document.getElementById('aiAnalyzing');
+      aiAnalyzing.classList.remove('hidden');
+      showToast("Analizando portada con IA...", "info");
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = async function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const MAX_SIZE = 600;
+          let width = img.width;
+          let height = img.height;
+
+          if (width > height) {
+            if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; }
+          } else {
+            if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          currentPhotoBase64 = canvas.toDataURL('image/jpeg', 0.7);
+
+          document.getElementById('photoPreview').src = currentPhotoBase64;
+          document.getElementById('photoPreview').classList.remove('hidden');
+          document.getElementById('photoPlaceholder').classList.add('hidden');
+          document.getElementById('btnClearPhoto').classList.remove('hidden');
+          document.getElementById('photoStatusText').innerText = "Foto optimizada para Drive";
+
+          try {
+            await analyzeImageWithGemini(currentPhotoBase64.split(',')[1]);
+          } catch (err) {
+            console.error("Error al analizar con IA:", err);
+            showToast("Completa los datos manualmente si es necesario", "warning");
+          } finally {
+            aiAnalyzing.classList.add('hidden');
+          }
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    async function analyzeImageWithGemini(base64Data) {
+      const promptText = `Analiza esta portada o disco. Identifica el artista, título del álbum y edición especial (Target Exclusive, Urban Outfitters, Colored Vinyl, Deluxe, Gatefold, 180g, etc.).
+Devuelve ÚNICAMENTE un JSON válido con este formato:
+{
+  "artist": "Nombre del artista",
+  "title": "Título del álbum",
+  "edition": "Detalle de edición o 'Estándar'",
+  "format": "Vinilo 12\"" o "CD" o "Boxset" o "Cassette",
+  "year": 2011,
+  "genre": "Género musical",
+  "label": "Sello discográfico",
+  "estimatedPrice": 35.0
+}`;
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+      const payload = {
+        contents: [{
+          role: "user",
+          parts: [
+            { text: promptText },
+            { inlineData: { mimeType: "image/jpeg", data: base64Data } }
+          ]
+        }],
+        generationConfig: { responseMimeType: "application/json" }
+      };
+
+      let retries = 0;
+      const delays = [1000, 2000, 4000];
+
+      while (retries <= 3) {
+        try {
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+          const result = await response.json();
+          const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+          if (textResponse) {
+            const parsed = JSON.parse(textResponse);
+            if (parsed.artist) document.getElementById('fieldArtist').value = parsed.artist;
+            if (parsed.title) document.getElementById('fieldTitle').value = parsed.title;
+            if (parsed.edition) document.getElementById('fieldEdition').value = parsed.edition;
+            if (parsed.year) document.getElementById('fieldYear').value = parsed.year;
+            if (parsed.genre) document.getElementById('fieldGenre').value = parsed.genre;
+            if (parsed.label) document.getElementById('fieldLabel').value = parsed.label;
+            if (parsed.estimatedPrice) document.getElementById('fieldPrice').value = parsed.estimatedPrice;
+
+            if (parsed.format) {
+              const formatSelect = document.getElementById('fieldFormat');
+              for (let option of formatSelect.options) {
+                if (option.value.toLowerCase().includes(parsed.format.toLowerCase())) {
+                  option.selected = true;
+                  break;
+                }
+              }
+            }
+
+            document.getElementById('aiBadge').classList.remove('hidden');
+            showToast(`IA: Identificado ${parsed.artist} - ${parsed.title}`, "success");
+            return;
+          }
+        } catch (err) {
+          if (retries === 3) throw err;
+          await new Promise(r => setTimeout(r, delays[retries]));
+          retries++;
+        }
+      }
+    }
+
+    function clearPhoto() {
+      currentPhotoBase64 = "";
+      document.getElementById('photoPreview').src = "";
+      document.getElementById('photoPreview').classList.add('hidden');
+      document.getElementById('photoPlaceholder').classList.remove('hidden');
+      document.getElementById('btnClearPhoto').classList.add('hidden');
+      document.getElementById('photoStatusText').innerText = "Sin foto capturada";
+      document.getElementById('aiBadge').classList.add('hidden');
+      document.getElementById('cameraInput').value = "";
+    }
+
+    function renderCollection() {
+      const filterInput = document.getElementById('inputFilter');
+      const filterText = filterInput ? filterInput.value.toLowerCase() : '';
+      const listContainer = document.getElementById('collectionList');
+      if (!listContainer) return;
+
+      listContainer.innerHTML = '';
+
+      let vinylsCount = 0;
+      let cdsCount = 0;
+      let totalValue = 0;
+
+      const filtered = collectionData.filter(item => {
+        if (item.format && item.format.toLowerCase().includes('vinilo')) vinylsCount++;
+        if (item.format === 'CD') cdsCount++;
+        totalValue += (item.price || 0);
+
+        return (item.artist && item.artist.toLowerCase().includes(filterText)) ||
+               (item.title && item.title.toLowerCase().includes(filterText)) ||
+               (item.edition && item.edition.toLowerCase().includes(filterText)) ||
+               (item.genre && item.genre.toLowerCase().includes(filterText));
+      });
+
+      document.getElementById('collectionCount').innerText = collectionData.length;
+      document.getElementById('statVinyls').innerText = vinylsCount;
+      document.getElementById('statCDs').innerText = cdsCount;
+      document.getElementById('statValue').innerText = '$' + totalValue.toFixed(2);
+
+      if (filtered.length === 0) {
+        listContainer.innerHTML = `
+          <div class="text-center py-12 text-slate-500 space-y-3">
+            <i class="fa-solid fa-compact-disc text-4xl text-slate-700"></i>
+            <p class="text-sm">Aún no hay discos cargados en tu Google Sheet.</p>
+            <button onclick="switchTab('scan')" class="text-xs bg-emerald-600 text-white px-4 py-2.5 rounded-xl font-semibold shadow">Escanear primer disco</button>
+          </div>
+        `;
+        return;
+      }
+
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex gap-3 items-center shadow relative overflow-hidden";
+
+        const photoContent = item.photoUrl ? 
+          `<a href="${item.photoUrl}" target="_blank" class="shrink-0"><img src="${item.photoUrl}" class="w-16 h-16 rounded-lg object-cover border border-slate-800" alt="Cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/1e293b/64748b?text=Drive';"></a>` :
+          `<div class="w-16 h-16 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-700 text-2xl shrink-0"><i class="fa-solid fa-compact-disc"></i></div>`;
+
+        const badgeColor = (item.format && item.format.toLowerCase().includes('vinilo')) ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-sky-500/10 text-sky-400 border-sky-500/20';
+
+        card.innerHTML = `
+          ${photoContent}
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-1.5 mb-0.5 flex-wrap">
+              <span class="text-[9px] font-semibold px-2 py-0.5 rounded border ${badgeColor}">${escapeHtml(item.format)}</span>
+              ${item.edition && item.edition !== 'Estándar' ? `<span class="text-[9px] bg-indigo-500/10 text-indigo-300 border border-indigo-500/20 px-1.5 py-0.5 rounded font-medium truncate max-w-[120px]">${escapeHtml(item.edition)}</span>` : ''}
+            </div>
+            <h3 class="text-sm font-bold text-slate-100 truncate">${escapeHtml(item.title)}</h3>
+            <p class="text-xs text-slate-400 truncate">${escapeHtml(item.artist)}</p>
+            <div class="flex gap-2 text-[10px] text-slate-500 mt-1 items-center">
+              ${item.year ? `<span>${item.year}</span> •` : ''}
+              ${item.price ? `<span class="text-emerald-400 font-semibold">$${item.price.toFixed(2)}</span> •` : ''}
+              <span class="text-emerald-400 font-medium"><i class="fa-solid fa-table text-[9px]"></i> Google Sheets</span>
+            </div>
+          </div>
+          ${item.photoUrl ? `
+            <a href="${item.photoUrl}" target="_blank" class="text-slate-400 hover:text-emerald-400 p-2 text-sm" title="Ver en Drive">
+              <i class="fa-solid fa-up-right-from-square"></i>
+            </a>
+          ` : ''}
+        `;
+        listContainer.appendChild(card);
+      });
+    }
+
+    function showToast(msg, type = "info") {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMessage');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.innerText = msg;
+
+      if (type === "success") {
+        toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
+      } else if (type === "warning") {
+        toastIcon.className = "fa-solid fa-triangle-exclamation text-amber-400";
+      } else {
+        toastIcon.className = "fa-solid fa-circle-info text-emerald-400";
+      }
+
+      toast.classList.remove('opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'pointer-events-none');
+      }, 3200);
+    }
+
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/[&<>"']/g, function(m) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' }[m];
+      });
+    }
+  </script>
+</body>
+</html>
