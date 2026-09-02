@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>Vinyl & CD Vault</title>
+  <title>Vinyl & CD Vault - Portable Edition</title>
   
   <!-- Configuración de Pantalla Completa PWA para iPhone -->
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -49,9 +49,9 @@
         <div>
           <h1 class="font-bold text-lg tracking-tight leading-tight flex items-center gap-1.5">
             Vinyl & CD Vault
-            <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold px-1.5 py-0.2 rounded-full">Drive Connected</span>
+            <span id="badgeConn" class="text-[10px] bg-slate-800 text-slate-400 border border-slate-700 font-semibold px-1.5 py-0.2 rounded-full">Sin Configurar</span>
           </h1>
-          <p class="text-xs text-slate-400" id="syncStatus">Conectando a Google Sheets...</p>
+          <p class="text-xs text-slate-400" id="syncStatus">Verificando configuración...</p>
         </div>
       </div>
       <button onclick="fetchFromGoogleSheets()" class="bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 text-xs px-3 py-2 rounded-lg font-medium flex items-center gap-1.5 border border-slate-700 shadow transition-all">
@@ -69,8 +69,9 @@
       <button id="tabNavCollection" onclick="switchTab('collection')" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors">
         <i class="fa-solid fa-list-ul mr-1"></i> Mi Colección (<span id="collectionCount">0</span>)
       </button>
-      <button id="tabNavConfig" onclick="switchTab('config')" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors">
-        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Estado Sheets
+      <button id="tabNavConfig" onclick="switchTab('config')" class="flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors relative">
+        <i class="fa-solid fa-gear mr-1"></i> Ajustes
+        <span id="configDot" class="w-2 h-2 bg-amber-400 rounded-full absolute top-2 right-3"></span>
       </button>
     </div>
   </nav>
@@ -88,14 +89,14 @@
         <div>
           <h2 class="text-base font-bold text-slate-100">Escáner de Vinilos y CDs</h2>
           <p class="text-xs text-slate-300 mt-1">
-            Toma una foto de la portada, vinilo o edición especial. La IA detectará los datos y se guardarán en tu Google Sheet y Drive.
+            Toma una foto de la portada, vinilo o edición especial. La IA detectará los datos y se guardarán en tu Google Sheet y Drive personal.
           </p>
         </div>
 
         <div>
           <label for="cameraInput" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center gap-2 cursor-pointer shadow-lg text-sm transition-all">
             <i class="fa-solid fa-camera text-base"></i>
-            <span>Tomar Foto con iPhone</span>
+            <span>Tomar Foto con Celular</span>
           </label>
           <input type="file" id="cameraInput" accept="image/*" capture="environment" class="hidden" onchange="processPhotoWithAI(event)">
         </div>
@@ -207,7 +208,7 @@
 
         <button type="submit" id="btnSave" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 rounded-xl shadow-lg flex items-center justify-center gap-2 text-sm">
           <i class="fa-solid fa-cloud-arrow-up"></i>
-          <span>Guardar en Google Sheets & Drive</span>
+          <span>Guardar en Mi Google Sheet & Drive</span>
         </button>
       </form>
     </section>
@@ -242,30 +243,79 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 3: ESTADO GOOGLE SHEETS -->
+    <!-- SECCIÓN 3: CONFIGURACIÓN SEGURA & APPS SCRIPT -->
     <section id="secConfig" class="space-y-4 hidden">
-      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-4">
+
+      <!-- Alerta de bienvenida si falta configurar -->
+      <div id="configWarning" class="bg-amber-500/10 border border-amber-500/30 p-4 rounded-xl text-xs text-amber-200 space-y-1">
+        <div class="font-bold flex items-center gap-1.5 text-amber-400">
+          <i class="fa-solid fa-triangle-exclamation"></i> Configura tus credenciales privadas
+        </div>
+        <p class="text-slate-300">
+          Para utilizar esta aplicación con tu propia cuenta de Google de forma 100% privada y segura, ingresa los siguientes datos. Se guardarán únicamente en la memoria de este navegador.
+        </p>
+      </div>
+
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-4 shadow">
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-            <i class="fa-solid fa-circle-check text-lg"></i>
+            <i class="fa-solid fa-shield-halved text-lg"></i>
           </div>
           <div>
-            <h2 class="text-sm font-bold text-slate-100">Google Sheets Vinculado</h2>
-            <p class="text-[11px] text-emerald-400 font-medium">Conexión activa integrada en el código</p>
+            <h2 class="text-sm font-bold text-slate-100">Credenciales Privadas</h2>
+            <p class="text-[11px] text-slate-400">Tus datos nunca salen de tu dispositivo</p>
           </div>
         </div>
 
+        <!-- 1. Google Apps Script Web App URL -->
         <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 space-y-1 text-xs">
-          <div class="text-slate-300 font-semibold">URL de tu Apps Script:</div>
-          <div class="text-[10px] text-slate-400 font-mono break-all bg-slate-900 p-2 rounded border border-slate-800">
-            https://script.google.com/macros/s/AKfycbwMv33uJV8YjYHtE1Y1V4QG7DI-vDLZ2A76voD9EJJs0tZrmhHnFrQ_GQ8sXhvF5Gp5hA/exec
-          </div>
+          <label class="block text-slate-200 font-semibold">1. URL de Tu Google Apps Script (Web App):</label>
+          <input type="text" id="fieldScriptUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-slate-400">El Web App URL generado desde tu Hoja de Cálculo en Google Sheets.</p>
         </div>
 
-        <button onclick="fetchFromGoogleSheets()" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-2 shadow">
-          <i class="fa-solid fa-rotate"></i>
-          <span>Recargar Colección desde Google Sheets</span>
+        <!-- 2. Gemini API Key -->
+        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 space-y-1 text-xs">
+          <label class="block text-slate-200 font-semibold">2. Tu Clave API de Gemini (IA):</label>
+          <input type="password" id="fieldApiKey" placeholder="AIzaSy..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-slate-400">Gratuita en <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-emerald-400 underline">Google AI Studio</a>. Sirve para reconocer portadas.</p>
+        </div>
+
+        <!-- 3. Clave Secreta Token -->
+        <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 space-y-1 text-xs">
+          <label class="block text-slate-200 font-semibold">3. Tu Clave/PIN de Seguridad Secreta:</label>
+          <input type="password" id="fieldSecretToken" placeholder="Escribe un PIN o contraseña..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-xs text-slate-100 focus:outline-none focus:border-emerald-500">
+          <p class="text-[10px] text-slate-400">Debe coincidir con la clave definida dentro del código de tu Apps Script.</p>
+        </div>
+
+        <button onclick="saveAllSettings()" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Guardar Configuración en este Celular/Navegador</span>
         </button>
+      </div>
+
+      <!-- Guía de Configuración Rápida para Compradores / Amigos -->
+      <div class="bg-slate-900 border border-slate-800 p-4 rounded-xl space-y-3">
+        <button onclick="toggleInstructions()" class="w-full flex items-center justify-between text-xs font-bold text-slate-200">
+          <span class="flex items-center gap-1.5"><i class="fa-solid fa-book-open text-emerald-400"></i> ¿Cómo configurar tu propio Google Sheets?</span>
+          <i id="instructionsChevron" class="fa-solid fa-chevron-down text-slate-400"></i>
+        </button>
+        
+        <div id="instructionsContent" class="hidden text-xs text-slate-300 space-y-3 pt-2 border-t border-slate-800">
+          <ol class="list-decimal list-inside space-y-2 text-[11px] leading-relaxed text-slate-300">
+            <li>Crea una nueva <strong>Hoja de Cálculo en Google Sheets</strong>.</li>
+            <li>En la primera fila agrega las columnas: <code class="bg-slate-950 px-1 py-0.5 rounded text-emerald-300">Artista, Título, Edición, Formato, Año, Género, Sello, Condición, Ubicación, Precio, FotoURL, Fecha</code>.</li>
+            <li>Ve al menú <strong>Extensiones &gt; Apps Script</strong> y pega el código backend del script.</li>
+            <li>Haz clic en <strong>Implementar &gt; Nueva implementación</strong>:
+              <ul class="list-disc list-inside pl-3 mt-1 text-slate-400">
+                <li>Selecciona tipo: <strong>Aplicación Web</strong></li>
+                <li>Ejecutar como: <strong>Yo (tu cuenta)</strong></li>
+                <li>Quién tiene acceso: <strong>Cualquier persona</strong></li>
+              </ul>
+            </li>
+            <li>Copia la <strong>URL de la Aplicación Web</strong> generada y pégala en el campo 1 de arriba.</li>
+          </ol>
+        </div>
       </div>
     </section>
 
@@ -278,14 +328,82 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwMv33uJV8YjYHtE1Y1V4QG7DI-vDLZ2A76voD9EJJs0tZrmhHnFrQ_GQ8sXhvF5Gp5hA/exec";
-    const apiKey = "";
     let collectionData = [];
     let currentPhotoBase64 = "";
 
     window.onload = function() {
-      fetchFromGoogleSheets();
+      loadSettingsToInputs();
+      checkConfigurationStatus();
+      if (getScriptUrl()) {
+        fetchFromGoogleSheets();
+      }
     };
+
+    function getScriptUrl() {
+      return (localStorage.getItem('vault_script_url') || '').trim();
+    }
+
+    function getApiKey() {
+      return (localStorage.getItem('vault_gemini_api_key') || '').trim();
+    }
+
+    function getSecretToken() {
+      return (localStorage.getItem('vault_secret_token') || '').trim();
+    }
+
+    function loadSettingsToInputs() {
+      document.getElementById('fieldScriptUrl').value = getScriptUrl();
+      document.getElementById('fieldApiKey').value = getApiKey();
+      document.getElementById('fieldSecretToken').value = getSecretToken();
+    }
+
+    function saveAllSettings() {
+      const scriptUrl = document.getElementById('fieldScriptUrl').value.trim();
+      const apiKey = document.getElementById('fieldApiKey').value.trim();
+      const secretToken = document.getElementById('fieldSecretToken').value.trim();
+
+      localStorage.setItem('vault_script_url', scriptUrl);
+      localStorage.setItem('vault_gemini_api_key', apiKey);
+      localStorage.setItem('vault_secret_token', secretToken);
+
+      showToast("Configuración guardada en tu dispositivo", "success");
+      checkConfigurationStatus();
+
+      if (scriptUrl) {
+        fetchFromGoogleSheets();
+      }
+    }
+
+    function checkConfigurationStatus() {
+      const scriptUrl = getScriptUrl();
+      const badgeConn = document.getElementById('badgeConn');
+      const configWarning = document.getElementById('configWarning');
+      const configDot = document.getElementById('configDot');
+
+      if (scriptUrl) {
+        badgeConn.innerText = "Conectado";
+        badgeConn.className = "text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold px-1.5 py-0.2 rounded-full";
+        if (configWarning) configWarning.classList.add('hidden');
+        if (configDot) configDot.classList.add('hidden');
+      } else {
+        badgeConn.innerText = "Sin Configurar";
+        badgeConn.className = "text-[10px] bg-amber-500/20 text-amber-300 border border-amber-500/30 font-semibold px-1.5 py-0.2 rounded-full";
+        if (configWarning) configWarning.classList.remove('hidden');
+        if (configDot) configDot.classList.remove('hidden');
+      }
+    }
+
+    function toggleInstructions() {
+      const content = document.getElementById('instructionsContent');
+      const chevron = document.getElementById('instructionsChevron');
+      if (content.classList.contains('hidden')) {
+        content.classList.remove('hidden');
+        chevron.className = "fa-solid fa-chevron-up text-slate-400";
+      } else {
+        content.classList.add('hidden');
+        chevron.className = "fa-solid fa-chevron-down text-slate-400";
+      }
+    }
 
     function switchTab(tabName) {
       document.getElementById('secScan').classList.add('hidden');
@@ -294,7 +412,7 @@
 
       document.getElementById('tabNavScan').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors";
       document.getElementById('tabNavCollection').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors";
-      document.getElementById('tabNavConfig').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors";
+      document.getElementById('tabNavConfig').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-transparent text-slate-400 transition-colors relative";
 
       if (tabName === 'scan') {
         document.getElementById('secScan').classList.remove('hidden');
@@ -305,38 +423,60 @@
         renderCollection();
       } else if (tabName === 'config') {
         document.getElementById('secConfig').classList.remove('hidden');
-        document.getElementById('tabNavConfig').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 transition-colors";
+        document.getElementById('tabNavConfig').className = "flex-1 py-3 text-center text-sm font-semibold border-b-2 border-emerald-500 text-emerald-400 transition-colors relative";
       }
     }
 
     // --- CARGAR COLECCIÓN DESDE GOOGLE SHEETS ---
     async function fetchFromGoogleSheets() {
+      const scriptUrl = getScriptUrl();
+      if (!scriptUrl) {
+        document.getElementById('syncStatus').innerText = "Falta configurar URL de Google Sheets";
+        showToast("Ingresa tu Apps Script URL en Ajustes", "warning");
+        return;
+      }
+
       const refreshIcon = document.getElementById('refreshIcon');
-      refreshIcon.classList.add('fa-spin');
+      if (refreshIcon) refreshIcon.classList.add('fa-spin');
       document.getElementById('syncStatus').innerText = "Cargando desde Google Sheets...";
 
       try {
-        const response = await fetch(SCRIPT_URL);
+        const token = getSecretToken();
+        const urlWithToken = token ? `${scriptUrl}?token=${encodeURIComponent(token)}` : scriptUrl;
+        
+        const response = await fetch(urlWithToken);
         if (response.ok) {
           const data = await response.json();
+          if (data.error) {
+            showToast(data.error, "warning");
+            document.getElementById('syncStatus').innerText = "Acceso Denegado (Clave incorrecta)";
+            return;
+          }
           if (Array.isArray(data)) {
             collectionData = data;
-            document.getElementById('syncStatus').innerText = `Conectado (${collectionData.length} discos en Sheets)`;
+            document.getElementById('syncStatus').innerText = `Conectado (${collectionData.length} discos)`;
             showToast(`Cargados ${collectionData.length} discos desde Google Sheets`, "success");
             renderCollection();
           }
         }
       } catch (err) {
         console.error("Error al leer Google Sheets:", err);
-        document.getElementById('syncStatus').innerText = "Sheets Vinculado";
+        document.getElementById('syncStatus').innerText = "Error al conectar con Sheets";
       } finally {
-        refreshIcon.classList.remove('fa-spin');
+        if (refreshIcon) refreshIcon.classList.remove('fa-spin');
       }
     }
 
     // --- ENVIAR NUEVO DISCO A GOOGLE SHEETS ---
     async function saveAlbumToSheets(event) {
       event.preventDefault();
+
+      const scriptUrl = getScriptUrl();
+      if (!scriptUrl) {
+        showToast("Primero configura tu URL de Apps Script en Ajustes", "warning");
+        switchTab('config');
+        return;
+      }
 
       const artist = document.getElementById('fieldArtist').value.trim();
       const title = document.getElementById('fieldTitle').value.trim();
@@ -351,6 +491,7 @@
       btnSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando en Google Drive y Sheets...`;
 
       const albumData = {
+        token: getSecretToken(),
         artist: artist,
         title: title,
         edition: document.getElementById('fieldEdition').value.trim() || 'Estándar',
@@ -365,7 +506,7 @@
       };
 
       try {
-        await fetch(SCRIPT_URL, {
+        await fetch(scriptUrl, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
@@ -393,7 +534,7 @@
         showToast("Error al enviar los datos", "warning");
       } finally {
         btnSave.disabled = false;
-        btnSave.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i><span>Guardar en Google Sheets & Drive</span>`;
+        btnSave.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i><span>Guardar en Mi Google Sheet & Drive</span>`;
       }
     }
 
@@ -402,9 +543,14 @@
       const file = event.target.files[0];
       if (!file) return;
 
+      const apiKey = getApiKey();
+      if (!apiKey) {
+        showToast("Ingresa tu clave de Gemini en Ajustes para activar el reconocimiento", "warning");
+      }
+
       const aiAnalyzing = document.getElementById('aiAnalyzing');
       aiAnalyzing.classList.remove('hidden');
-      showToast("Analizando portada con IA...", "info");
+      showToast("Optimizando y analizando foto...", "info");
 
       const reader = new FileReader();
       reader.onload = function(e) {
@@ -434,12 +580,16 @@
           document.getElementById('btnClearPhoto').classList.remove('hidden');
           document.getElementById('photoStatusText').innerText = "Foto optimizada para Drive";
 
-          try {
-            await analyzeImageWithGemini(currentPhotoBase64.split(',')[1]);
-          } catch (err) {
-            console.error("Error al analizar con IA:", err);
-            showToast("Completa los datos manualmente si es necesario", "warning");
-          } finally {
+          if (apiKey) {
+            try {
+              await analyzeImageWithGemini(currentPhotoBase64.split(',')[1], apiKey);
+            } catch (err) {
+              console.error("Error al analizar con IA:", err);
+              showToast("Completa los datos manualmente si es necesario", "warning");
+            } finally {
+              aiAnalyzing.classList.add('hidden');
+            }
+          } else {
             aiAnalyzing.classList.add('hidden');
           }
         };
@@ -448,36 +598,36 @@
       reader.readAsDataURL(file);
     }
 
-    async function analyzeImageWithGemini(base64Data) {
+    async function analyzeImageWithGemini(base64Data, apiKey) {
       const promptText = `Analiza esta portada o disco. Identifica el artista, título del álbum y edición especial (Target Exclusive, Urban Outfitters, Colored Vinyl, Deluxe, Gatefold, 180g, etc.).
-Devuelve ÚNICAMENTE un JSON válido con este formato:
+Devuelve ÚNICAMENTE un JSON válido con este formato exacto:
 {
   "artist": "Nombre del artista",
   "title": "Título del álbum",
   "edition": "Detalle de edición o 'Estándar'",
-  "format": "Vinilo 12\"" o "CD" o "Boxset" o "Cassette",
+  "format": "Vinilo 12\"",
   "year": 2011,
   "genre": "Género musical",
   "label": "Sello discográfico",
   "estimatedPrice": 35.0
 }`;
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
-      const payload = {
-        contents: [{
-          role: "user",
-          parts: [
-            { text: promptText },
-            { inlineData: { mimeType: "image/jpeg", data: base64Data } }
-          ]
-        }],
-        generationConfig: { responseMimeType: "application/json" }
-      };
+      const models = ["gemini-2.5-flash", "gemini-1.5-flash"];
+      let success = false;
 
-      let retries = 0;
-      const delays = [1000, 2000, 4000];
+      for (const model of models) {
+        if (success) break;
+        const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+        const payload = {
+          contents: [{
+            role: "user",
+            parts: [
+              { text: promptText },
+              { inlineData: { mimeType: "image/jpeg", data: base64Data } }
+            ]
+          }]
+        };
 
-      while (retries <= 3) {
         try {
           const response = await fetch(url, {
             method: 'POST',
@@ -485,40 +635,50 @@ Devuelve ÚNICAMENTE un JSON válido con este formato:
             body: JSON.stringify(payload)
           });
 
-          if (!response.ok) throw new Error(`HTTP ${response.status}`);
+          if (!response.ok) {
+            console.warn(`Modelo ${model} no respondió correctamente (HTTP ${response.status})`);
+            continue;
+          }
 
           const result = await response.json();
           const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
           if (textResponse) {
-            const parsed = JSON.parse(textResponse);
-            if (parsed.artist) document.getElementById('fieldArtist').value = parsed.artist;
-            if (parsed.title) document.getElementById('fieldTitle').value = parsed.title;
-            if (parsed.edition) document.getElementById('fieldEdition').value = parsed.edition;
-            if (parsed.year) document.getElementById('fieldYear').value = parsed.year;
-            if (parsed.genre) document.getElementById('fieldGenre').value = parsed.genre;
-            if (parsed.label) document.getElementById('fieldLabel').value = parsed.label;
-            if (parsed.estimatedPrice) document.getElementById('fieldPrice').value = parsed.estimatedPrice;
+            // Extraer JSON robustamente eliminando etiquetas markdown o texto extra
+            const jsonMatch = textResponse.match(/\{[\s\S]*\}/);
+            if (jsonMatch) {
+              const parsed = JSON.parse(jsonMatch[0]);
+              if (parsed.artist) document.getElementById('fieldArtist').value = parsed.artist;
+              if (parsed.title) document.getElementById('fieldTitle').value = parsed.title;
+              if (parsed.edition) document.getElementById('fieldEdition').value = parsed.edition;
+              if (parsed.year) document.getElementById('fieldYear').value = parsed.year;
+              if (parsed.genre) document.getElementById('fieldGenre').value = parsed.genre;
+              if (parsed.label) document.getElementById('fieldLabel').value = parsed.label;
+              if (parsed.estimatedPrice) document.getElementById('fieldPrice').value = parsed.estimatedPrice;
 
-            if (parsed.format) {
-              const formatSelect = document.getElementById('fieldFormat');
-              for (let option of formatSelect.options) {
-                if (option.value.toLowerCase().includes(parsed.format.toLowerCase())) {
-                  option.selected = true;
-                  break;
+              if (parsed.format) {
+                const formatSelect = document.getElementById('fieldFormat');
+                for (let option of formatSelect.options) {
+                  if (option.value.toLowerCase().includes(parsed.format.toLowerCase())) {
+                    option.selected = true;
+                    break;
+                  }
                 }
               }
-            }
 
-            document.getElementById('aiBadge').classList.remove('hidden');
-            showToast(`IA: Identificado ${parsed.artist} - ${parsed.title}`, "success");
-            return;
+              document.getElementById('aiBadge').classList.remove('hidden');
+              showToast(`IA: Detectado ${parsed.artist || 'Disco'} - ${parsed.title || ''}`, "success");
+              success = true;
+              break;
+            }
           }
         } catch (err) {
-          if (retries === 3) throw err;
-          await new Promise(r => setTimeout(r, delays[retries]));
-          retries++;
+          console.error(`Error procesando respuesta con ${model}:`, err);
         }
+      }
+
+      if (!success) {
+        showToast("No se reconocieron los datos de la portada. Ingrésalos manualmente.", "warning");
       }
     }
 
