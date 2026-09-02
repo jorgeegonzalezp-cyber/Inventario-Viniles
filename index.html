@@ -132,7 +132,7 @@
             </div>
             <div class="flex-1 space-y-1">
               <div class="text-xs font-semibold text-slate-200" id="photoStatusText">Sin foto capturada</div>
-              <p class="text-[11px] text-slate-400">La foto se enviará automáticamente a tu Google Drive.</p>
+              <p class="text-[11px] text-slate-400">La foto se subirá automáticamente a tu Google Drive.</p>
               <button type="button" onclick="clearPhoto()" id="btnClearPhoto" class="text-xs text-red-400 hover:text-red-300 hidden">
                 <i class="fa-solid fa-trash mr-1"></i> Quitar foto
               </button>
@@ -288,10 +288,14 @@
           <p class="text-[10px] text-slate-400">Solo necesario si configuraste un token de validación en tu Apps Script.</p>
         </div>
 
-        <button onclick="saveAllSettings()" class="w-full bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3.5 rounded-xl text-xs flex items-center justify-center gap-2 shadow">
-          <i class="fa-solid fa-floppy-disk"></i>
-          <span>Guardar Configuración en este Celular/Navegador</span>
-        </button>
+        <div class="flex gap-2">
+          <button onclick="testConnection()" class="flex-1 bg-slate-800 hover:bg-slate-700 active:bg-slate-600 text-slate-200 font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 border border-slate-700">
+            <i class="fa-solid fa-plug text-emerald-400"></i> Probar Conexión
+          </button>
+          <button onclick="saveAllSettings()" class="flex-1 bg-emerald-600 active:bg-emerald-700 text-white font-bold py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 shadow">
+            <i class="fa-solid fa-floppy-disk"></i> Guardar Ajustes
+          </button>
+        </div>
       </div>
 
       <!-- Guía de Configuración Rápida y Código de Google Apps Script -->
@@ -302,7 +306,7 @@
         </button>
         
         <div id="instructionsContent" class="hidden text-xs text-slate-300 space-y-3 pt-2 border-t border-slate-800">
-          <p class="text-[11px] text-slate-400">Pega este código en el editor de Google Apps Script de tu Hoja de Cálculo para asegurar lectura y escritura fluidas:</p>
+          <p class="text-[11px] text-slate-400">Para que la app guarde las fotos en Google Drive y los datos en Sheets, asegúrate de tener este código actualizado en tu Apps Script:</p>
           <div class="relative">
             <pre class="bg-slate-950 text-emerald-300 text-[10px] p-3 rounded-lg overflow-x-auto max-h-48 border border-slate-800 font-mono"><code>function doGet(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
@@ -325,24 +329,48 @@
 }
 
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
-  
-  sheet.appendRow([
-    data.artist || "",
-    data.title || "",
-    data.edition || "",
-    data.format || "",
-    data.year || "",
-    data.genre || "",
-    data.label || "",
-    data.condition || "",
-    data.location || "",
-    data.price || 0,
-    data.photoUrl || "",
-    new Date().toLocaleDateString()
-  ]);
-  return responseJSON({ status: "success" });
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var photoUrl = "";
+    
+    if (data.photoBase64) {
+      var folder = getOrCreateFolder("Vinyl Vault Photos");
+      var base64Data = data.photoBase64.split(",")[1];
+      var blob = Utilities.newBlob(Utilities.base64Decode(base64Data), "image/jpeg", "vinilo_" + new Date().getTime() + ".jpg");
+      var file = folder.createFile(blob);
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      photoUrl = file.getUrl();
+    }
+    
+    sheet.appendRow([
+      data.artist || "",
+      data.title || "",
+      data.edition || "",
+      data.format || "",
+      data.year || "",
+      data.genre || "",
+      data.label || "",
+      data.condition || "",
+      data.location || "",
+      data.price || 0,
+      photoUrl,
+      new Date().toLocaleDateString()
+    ]);
+    
+    return responseJSON({ status: "success", photoUrl: photoUrl });
+  } catch(err) {
+    return responseJSON({ status: "error", message: err.toString() });
+  }
+}
+
+function getOrCreateFolder(folderName) {
+  var folders = DriveApp.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    return DriveApp.createFolder(folderName);
+  }
 }
 
 function responseJSON(data) {
@@ -404,11 +432,32 @@ function responseJSON(data) {
       localStorage.setItem('vault_gemini_api_key', apiKey);
       localStorage.setItem('vault_secret_token', secretToken);
 
-      showToast("Configuración guardada en tu dispositivo", "success");
+      showToast("Ajustes guardados en tu dispositivo", "success");
       checkConfigurationStatus();
 
       if (scriptUrl) {
         fetchFromGoogleSheets();
+      }
+    }
+
+    async function testConnection() {
+      const scriptUrl = getScriptUrl();
+      if (!scriptUrl) {
+        showToast("Ingresa primero la URL de tu Apps Script", "warning");
+        return;
+      }
+      showToast("Probando conexión...", "info");
+      try {
+        const response = await fetch(scriptUrl);
+        if (response.ok) {
+          showToast("¡Conexión exitosa con Google Sheets!", "success");
+          checkConfigurationStatus();
+        } else {
+          showToast("Respuesta incorrecta del servidor", "warning");
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("Error de conexión. Revisa la URL.", "warning");
       }
     }
 
@@ -465,24 +514,48 @@ function responseJSON(data) {
 }
 
 function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  var data = JSON.parse(e.postData.contents);
-  
-  sheet.appendRow([
-    data.artist || "",
-    data.title || "",
-    data.edition || "",
-    data.format || "",
-    data.year || "",
-    data.genre || "",
-    data.label || "",
-    data.condition || "",
-    data.location || "",
-    data.price || 0,
-    data.photoUrl || "",
-    new Date().toLocaleDateString()
-  ]);
-  return responseJSON({ status: "success" });
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var photoUrl = "";
+    
+    if (data.photoBase64) {
+      var folder = getOrCreateFolder("Vinyl Vault Photos");
+      var base64Data = data.photoBase64.split(",")[1];
+      var blob = Utilities.newBlob(Utilities.base64Decode(base64Data), "image/jpeg", "vinilo_" + new Date().getTime() + ".jpg");
+      var file = folder.createFile(blob);
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      photoUrl = file.getUrl();
+    }
+    
+    sheet.appendRow([
+      data.artist || "",
+      data.title || "",
+      data.edition || "",
+      data.format || "",
+      data.year || "",
+      data.genre || "",
+      data.label || "",
+      data.condition || "",
+      data.location || "",
+      data.price || 0,
+      photoUrl,
+      new Date().toLocaleDateString()
+    ]);
+    
+    return responseJSON({ status: "success", photoUrl: photoUrl });
+  } catch(err) {
+    return responseJSON({ status: "error", message: err.toString() });
+  }
+}
+
+function getOrCreateFolder(folderName) {
+  var folders = DriveApp.getFoldersByName(folderName);
+  if (folders.hasNext()) {
+    return folders.next();
+  } else {
+    return DriveApp.createFolder(folderName);
+  }
 }
 
 function responseJSON(data) {
@@ -522,33 +595,17 @@ function responseJSON(data) {
 
     async function fetchFromGoogleSheets() {
       const scriptUrl = getScriptUrl();
-      if (!scriptUrl) {
-        document.getElementById('syncStatus').innerText = "Falta configurar URL de Google Sheets";
-        showToast("Ingresa tu Apps Script URL en Ajustes", "warning");
-        return;
-      }
+      if (!scriptUrl) return;
 
       const refreshIcon = document.getElementById('refreshIcon');
       if (refreshIcon) refreshIcon.classList.add('fa-spin');
       document.getElementById('syncStatus').innerText = "Cargando desde Google Sheets...";
 
       try {
-        const token = getSecretToken();
-        const urlWithToken = token ? `${scriptUrl}?token=${encodeURIComponent(token)}` : scriptUrl;
-        
-        const response = await fetch(urlWithToken);
-        if (!response.ok) {
-          throw new Error(`HTTP Error ${response.status}`);
-        }
+        const response = await fetch(scriptUrl);
+        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
         const rawData = await response.json();
-        if (rawData && rawData.error) {
-          showToast(rawData.error, "warning");
-          document.getElementById('syncStatus').innerText = "Acceso Denegado";
-          return;
-        }
-
-        // Extraer arreglo de cualquier estructura recibida
         let itemsArray = [];
         if (Array.isArray(rawData)) {
           itemsArray = rawData;
@@ -564,19 +621,15 @@ function responseJSON(data) {
 
         collectionData = normalizeSheetItems(itemsArray);
         document.getElementById('syncStatus').innerText = `Conectado (${collectionData.length} discos)`;
-        showToast(`Cargados ${collectionData.length} discos desde Google Sheets`, "success");
         renderCollection();
-
       } catch (err) {
         console.error("Error al leer Google Sheets:", err);
-        document.getElementById('syncStatus').innerText = "Error al conectar con Sheets";
-        showToast("Error al leer Google Sheets. Revisa el código del Apps Script.", "warning");
+        document.getElementById('syncStatus').innerText = "Error de sincronización";
       } finally {
         if (refreshIcon) refreshIcon.classList.remove('fa-spin');
       }
     }
 
-    // Normaliza automáticamente las variaciones de encabezados de la Hoja de Cálculo
     function normalizeSheetItems(items) {
       if (!Array.isArray(items)) return [];
       return items.map((item, index) => {
@@ -644,7 +697,7 @@ function responseJSON(data) {
 
       const btnSave = document.getElementById('btnSave');
       btnSave.disabled = true;
-      btnSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Guardando en Google Drive y Sheets...`;
+      btnSave.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Subiendo foto a Drive y guardando...`;
 
       const albumData = {
         token: getSecretToken(),
@@ -662,18 +715,20 @@ function responseJSON(data) {
       };
 
       try {
-        await fetch(scriptUrl, {
+        const response = await fetch(scriptUrl, {
           method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(albumData)
         });
 
-        showToast("¡Disco enviado a tu Google Sheet!", "success");
+        const result = await response.json();
+
+        showToast("¡Disco y foto guardados en Google Drive!", "success");
         
         collectionData.unshift({
           id: "temp_" + Date.now(),
           ...albumData,
+          photoUrl: result.photoUrl || currentPhotoBase64,
           dateAdded: new Date().toLocaleDateString()
         });
 
@@ -683,11 +738,11 @@ function responseJSON(data) {
         setTimeout(() => {
           fetchFromGoogleSheets();
           switchTab('collection');
-        }, 1500);
+        }, 1200);
 
       } catch (e) {
         console.error("Error al enviar a Google Sheets:", e);
-        showToast("Error al enviar los datos", "warning");
+        showToast("Error al enviar los datos. Revisa permisos de red.", "warning");
       } finally {
         btnSave.disabled = false;
         btnSave.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i><span>Guardar en Mi Google Sheet & Drive</span>`;
@@ -698,8 +753,7 @@ function responseJSON(data) {
       const file = event.target.files[0];
       if (!file) return;
 
-      const userApiKey = getApiKey(); // Puede ser vacía si utiliza el entorno
-
+      const userApiKey = getApiKey();
       const aiAnalyzing = document.getElementById('aiAnalyzing');
       aiAnalyzing.classList.remove('hidden');
       showToast("Optimizando y analizando portada con IA...", "info");
@@ -730,7 +784,7 @@ function responseJSON(data) {
           document.getElementById('photoPreview').classList.remove('hidden');
           document.getElementById('photoPlaceholder').classList.add('hidden');
           document.getElementById('btnClearPhoto').classList.remove('hidden');
-          document.getElementById('photoStatusText').innerText = "Foto capturada";
+          document.getElementById('photoStatusText').innerText = "Foto lista para subir";
 
           try {
             await analyzeImageWithGemini(currentPhotoBase64.split(',')[1], userApiKey);
@@ -748,7 +802,7 @@ function responseJSON(data) {
 
     async function analyzeImageWithGemini(base64Data, apiKey = "") {
       const promptText = `Analiza detenidamente esta imagen de portada de disco o vinilo.
-Identifica el nombre exacto del artista/banda, el título del álbum, la edición especial/variante si aplica (ej. Target Exclusive, Red Vinyl, Remastered, Deluxe, Gatefold, etc.), formato probable, año de lanzamiento, género musical, sello discográfico y valor estimado en USD.
+Identifica el nombre exacto del artista/banda, el título del álbum, la edición especial/variante si aplica, formato probable, año de lanzamiento, género musical, sello discográfico y valor estimado en USD.
 
 Devuelve ÚNICAMENTE un JSON válido sin Markdown con este formato exacto:
 {
@@ -762,7 +816,6 @@ Devuelve ÚNICAMENTE un JSON válido sin Markdown con este formato exacto:
   "estimatedPrice": 25.0
 }`;
 
-      // gemini-3-flash-preview es el modelo primario
       const models = ["gemini-3-flash-preview", "gemini-2.5-flash"];
       let success = false;
 
@@ -786,10 +839,7 @@ Devuelve ÚNICAMENTE un JSON válido sin Markdown con este formato exacto:
             body: JSON.stringify(payload)
           });
 
-          if (!response.ok) {
-            console.warn(`Modelo ${model} devolvió respuesta HTTP ${response.status}`);
-            continue;
-          }
+          if (!response.ok) continue;
 
           const result = await response.json();
           const textResponse = result.candidates?.[0]?.content?.parts?.[0]?.text;
@@ -817,18 +867,14 @@ Devuelve ÚNICAMENTE un JSON válido sin Markdown con este formato exacto:
               }
 
               document.getElementById('aiBadge').classList.remove('hidden');
-              showToast(`IA detectó: ${parsed.artist || 'Disco'} - ${parsed.title || ''}`, "success");
+              showToast(`IA detectó: ${parsed.artist || 'Disco'}`, "success");
               success = true;
               break;
             }
           }
         } catch (err) {
-          console.error(`Error procesando respuesta con ${model}:`, err);
+          console.error(`Error procesando con ${model}:`, err);
         }
-      }
-
-      if (!success) {
-        showToast("No se reconocieron los datos de la portada. Puedes ingresarlos manualmente.", "warning");
       }
     }
 
@@ -841,6 +887,30 @@ Devuelve ÚNICAMENTE un JSON válido sin Markdown con este formato exacto:
       document.getElementById('photoStatusText').innerText = "Sin foto capturada";
       document.getElementById('aiBadge').classList.add('hidden');
       document.getElementById('cameraInput').value = "";
+    }
+
+    // Helper robusto para transformar enlaces de Google Drive en vistas previas de imagen directas
+    function getDirectImageUrl(url) {
+      if (!url) return '';
+      const trimmed = url.trim();
+      if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) return trimmed;
+
+      let fileId = '';
+      const match1 = trimmed.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      if (match1 && match1[1]) {
+        fileId = match1[1];
+      } else {
+        const match2 = trimmed.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+        if (match2 && match2[1]) {
+          fileId = match2[1];
+        }
+      }
+
+      if (fileId) {
+        // Enlace directo de visualización de Google Drive compatible con img tags
+        return `https://lh3.googleusercontent.com/d/${fileId}`;
+      }
+      return trimmed;
     }
 
     function renderCollection() {
@@ -886,8 +956,9 @@ Devuelve ÚNICAMENTE un JSON válido sin Markdown con este formato exacto:
         const card = document.createElement('div');
         card.className = "bg-slate-900 border border-slate-800 rounded-xl p-3 flex gap-3 items-center shadow relative overflow-hidden";
 
-        const photoContent = item.photoUrl ? 
-          `<a href="${item.photoUrl}" target="_blank" class="shrink-0"><img src="${item.photoUrl}" class="w-16 h-16 rounded-lg object-cover border border-slate-800" alt="Cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/1e293b/64748b?text=Drive';"></a>` :
+        const directImgUrl = getDirectImageUrl(item.photoUrl);
+        const photoContent = directImgUrl ? 
+          `<a href="${item.photoUrl}" target="_blank" class="shrink-0"><img src="${directImgUrl}" class="w-16 h-16 rounded-lg object-cover border border-slate-800" alt="Cover" onerror="this.onerror=null; this.src='https://placehold.co/150x150/1e293b/64748b?text=Drive';"></a>` :
           `<div class="w-16 h-16 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-center text-slate-700 text-2xl shrink-0"><i class="fa-solid fa-compact-disc"></i></div>`;
 
         const badgeColor = (item.format && item.format.toLowerCase().includes('vinilo')) ? 'bg-amber-500/10 text-amber-400 border-amber-500/20' : 'bg-sky-500/10 text-sky-400 border-sky-500/20';
@@ -923,7 +994,6 @@ Devuelve ÚNICAMENTE un JSON válido sin Markdown con este formato exacto:
       const toastIcon = document.getElementById('toastIcon');
 
       toastMsg.innerText = msg;
-
       if (type === "success") {
         toastIcon.className = "fa-solid fa-circle-check text-emerald-400";
       } else if (type === "warning") {
