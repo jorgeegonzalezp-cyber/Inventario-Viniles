@@ -3,9 +3,15 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>ViniloVault - Inventario Inteligente</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>
+        ViniloVault
+    </title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -16,518 +22,392 @@
 </head>
 
 
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
+<body
+    class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans"
+>
 
 
-    <!-- =====================================================
-         HEADER
-    ====================================================== -->
+<!-- ======================================================
+     HEADER
+====================================================== -->
 
-    <header
-        class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 flex justify-between items-center shadow-md"
+<header
+    class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-40 flex justify-between items-center shadow-md"
+>
+
+    <h1
+        class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2"
     >
 
-        <h1
-            class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2"
-        >
-            <i class="fa-solid fa-compact-disc"></i>
-            ViniloVault
-        </h1>
+        <i
+            class="fa-solid fa-compact-disc"
+        ></i>
 
+        ViniloVault
+
+    </h1>
+
+
+    <div
+        id="connectionStatus"
+        class="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1"
+    >
+
+        <span
+            class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"
+        ></span>
+
+        Verificando...
+
+    </div>
+
+</header>
+
+
+
+<!-- ======================================================
+     MAIN
+====================================================== -->
+
+<main
+    class="flex-1 max-w-md w-full mx-auto p-4 pb-28"
+>
+
+
+    <!-- ==================================================
+         ESCANEAR
+    =================================================== -->
+
+    <section
+        id="tab-scan"
+        class="tab-content space-y-4"
+    >
+
+
+        <!-- PORTADA -->
 
         <div
-            id="connectionStatus"
-            class="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1"
-        >
-            <span
-                class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"
-            ></span>
-
-            Verificando...
-        </div>
-
-    </header>
-
-
-
-    <!-- =====================================================
-         CONTENIDO PRINCIPAL
-    ====================================================== -->
-
-    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-24">
-
-
-        <!-- =================================================
-             TAB 1 - ESCANEAR
-        ================================================== -->
-
-        <section
-            id="tab-scan"
-            class="tab-content space-y-4"
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl"
         >
 
-
-            <!-- FOTO -->
-
-            <div
-                class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl"
+            <h2
+                class="text-lg font-semibold text-slate-200 flex items-center gap-2"
             >
 
-                <h2
-                    class="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2"
+                <i
+                    class="fa-solid fa-camera text-emerald-400"
+                ></i>
+
+                Escanear portada
+
+            </h2>
+
+
+            <p
+                class="text-xs text-slate-500 mt-1 mb-4"
+            >
+                Fotografía la portada frontal del disco
+            </p>
+
+
+
+            <div
+                class="relative border-2 border-dashed border-slate-700 rounded-2xl overflow-hidden bg-slate-950/60 hover:border-emerald-500 transition cursor-pointer"
+                onclick="document.getElementById('fileInput').click()"
+            >
+
+                <input
+                    type="file"
+                    id="fileInput"
+                    accept="image/*"
+                    capture="environment"
+                    class="hidden"
+                    onchange="handleImageSelection(event)"
                 >
-                    <i
-                        class="fa-solid fa-camera text-emerald-400"
-                    ></i>
 
-                    Escanear Portada
-                </h2>
 
+
+                <!-- VACÍO -->
 
                 <div
-                    class="relative border-2 border-dashed border-slate-700 rounded-xl p-6 text-center bg-slate-950/50 hover:border-emerald-500 transition cursor-pointer"
-                    onclick="document.getElementById('fileInput').click()"
+                    id="dropZoneContent"
+                    class="aspect-square flex flex-col items-center justify-center text-center p-8"
                 >
 
-                    <input
-                        type="file"
-                        id="fileInput"
-                        accept="image/*"
-                        capture="environment"
-                        class="hidden"
-                        onchange="handleImageSelection(event)"
-                    >
-
-
                     <div
-                        id="dropZoneContent"
-                        class="space-y-2"
+                        class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4"
                     >
 
                         <i
-                            class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-400"
+                            class="fa-solid fa-camera text-2xl text-emerald-400"
                         ></i>
-
-                        <p class="text-sm text-slate-300">
-                            Toca para tomar foto o subir portada
-                        </p>
-
-                        <p class="text-xs text-slate-500">
-                            Gemini IA leerá los datos automáticamente
-                        </p>
 
                     </div>
 
+
+                    <p
+                        class="text-sm font-medium text-slate-200"
+                    >
+                        Tomar foto
+                    </p>
+
+
+                    <p
+                        class="text-xs text-slate-500 mt-1"
+                    >
+                        También puedes elegir una imagen existente
+                    </p>
+
+
+                    <p
+                        class="mt-5 text-[10px] text-slate-600"
+                    >
+                        Gemini identificará automáticamente el disco
+                    </p>
+
+                </div>
+
+
+
+                <!-- PREVIEW -->
+
+                <div
+                    id="imagePreviewContainer"
+                    class="hidden relative aspect-square bg-black"
+                >
+
+                    <img
+                        id="imagePreview"
+                        alt="Portada seleccionada"
+                        class="w-full h-full object-contain"
+                    >
 
 
                     <div
-                        id="imagePreviewContainer"
-                        class="hidden relative"
+                        class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-14 pointer-events-none"
                     >
 
-                        <img
-                            id="imagePreview"
-                            class="max-h-56 mx-auto rounded-lg shadow-md object-contain"
+                        <p
+                            class="text-xs text-slate-200"
                         >
+                            Portada seleccionada
+                        </p>
 
-
-                        <button
-                            onclick="event.stopPropagation(); resetImageCapture();"
-                            class="absolute top-2 right-2 bg-slate-900/80 hover:bg-red-500 text-slate-200 p-2 rounded-full text-xs transition shadow"
+                        <p
+                            class="text-[10px] text-slate-400"
                         >
-
-                            <i
-                                class="fa-solid fa-xmark"
-                            ></i>
-
-                        </button>
+                            Toca la imagen para elegir otra
+                        </p>
 
                     </div>
 
+
+                    <button
+                        type="button"
+                        onclick="event.stopPropagation(); resetImageCapture();"
+                        class="absolute top-3 right-3 w-9 h-9 bg-black/70 hover:bg-red-500 rounded-full flex items-center justify-center shadow-lg transition"
+                    >
+
+                        <i
+                            class="fa-solid fa-xmark"
+                        ></i>
+
+                    </button>
+
                 </div>
 
+            </div>
 
 
-                <!-- ESTADO GEMINI -->
+
+            <!-- ANALIZANDO -->
+
+            <div
+                id="aiLoading"
+                class="hidden mt-4"
+            >
 
                 <div
-                    id="aiLoading"
-                    class="hidden mt-4 text-center py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-sm"
+                    class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center gap-3"
                 >
 
                     <i
-                        class="fa-solid fa-wand-magic-sparkles animate-bounce"
+                        class="fa-solid fa-wand-magic-sparkles animate-pulse text-emerald-400"
                     ></i>
 
-                    Analizando disco con IA...
+
+                    <div>
+
+                        <p
+                            class="text-sm text-emerald-400 font-medium"
+                        >
+                            Analizando portada...
+                        </p>
+
+                        <p
+                            class="text-[10px] text-slate-500"
+                        >
+                            Buscando artista, álbum y metadatos
+                        </p>
+
+                    </div>
 
                 </div>
 
             </div>
 
+        </div>
 
 
-            <!-- =================================================
-                 FORMULARIO
-            ================================================== -->
 
-            <div
-                class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3"
-            >
+        <!-- DATOS -->
 
-                <h2
-                    class="text-lg font-semibold text-slate-200 mb-2"
-                >
-                    Detalles del Disco
-                </h2>
-
-
-                <!-- ARTISTA / TITULO -->
-
-                <div class="grid grid-cols-2 gap-3">
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Artista *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="formArtist"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Álbum / Título *
-                        </label>
-
-                        <input
-                            type="text"
-                            id="formTitle"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- FORMATO / AÑO / GENERO -->
-
-                <div class="grid grid-cols-3 gap-2">
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Formato
-                        </label>
-
-                        <select
-                            id="formFormat"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                            <option value="Vinilo">
-                                Vinilo
-                            </option>
-
-                            <option value="CD">
-                                CD
-                            </option>
-
-                            <option value="Casete">
-                                Casete
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Año
-                        </label>
-
-                        <input
-                            type="text"
-                            id="formYear"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                    </div>
-
-
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Género
-                        </label>
-
-                        <input
-                            type="text"
-                            id="formGenre"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- SELLO / CONDICION -->
-
-                <div class="grid grid-cols-2 gap-3">
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Sello / Disquera
-                        </label>
-
-                        <input
-                            type="text"
-                            id="formLabel"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Condición
-                        </label>
-
-                        <input
-                            type="text"
-                            id="formCondition"
-                            placeholder="Ej. NM, VG+"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- UBICACION / PRECIO -->
-
-                <div class="grid grid-cols-2 gap-3">
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Ubicación
-                        </label>
-
-                        <input
-                            type="text"
-                            id="formLocation"
-                            placeholder="Ej. Estante 1"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                    </div>
-
-
-                    <div>
-
-                        <label
-                            class="text-xs text-slate-400 font-medium"
-                        >
-                            Precio ($)
-                        </label>
-
-                        <input
-                            type="number"
-                            id="formPrice"
-                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                        >
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- BOTON GUARDAR -->
-
-                <button
-                    onclick="saveItem()"
-                    id="saveBtn"
-                    class="w-full mt-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2"
-                >
-
-                    <i
-                        class="fa-solid fa-floppy-disk"
-                    ></i>
-
-                    Guardar en Colección
-
-                </button>
-
-            </div>
-
-        </section>
-
-
-
-        <!-- =================================================
-             TAB 2 - COLECCION
-        ================================================== -->
-
-        <section
-            id="tab-collection"
-            class="tab-content hidden space-y-4"
+        <div
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
         >
 
-            <div
-                class="flex justify-between items-center"
-            >
+            <div>
 
                 <h2
                     class="text-lg font-semibold text-slate-200"
                 >
-                    Mi Colección
+                    Datos del disco
                 </h2>
 
+                <p
+                    class="text-xs text-slate-500 mt-1"
+                >
+                    Revisa los datos detectados antes de guardar
+                </p>
 
-                <button
-                    onclick="loadCollection()"
-                    class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-emerald-400 flex items-center gap-1 transition"
+            </div>
+
+
+
+            <!-- DUPLICADO -->
+
+            <div
+                id="duplicateWarning"
+                class="hidden bg-amber-500/10 border border-amber-500/30 rounded-xl p-3"
+            >
+
+                <div
+                    class="flex gap-3"
                 >
 
                     <i
-                        class="fa-solid fa-rotate"
+                        class="fa-solid fa-lock text-amber-400 mt-0.5"
                     ></i>
 
-                    Actualizar
 
-                </button>
+                    <div
+                        class="min-w-0"
+                    >
 
-            </div>
+                        <p
+                            class="text-sm text-amber-400 font-semibold"
+                        >
+                            Posible duplicado
+                        </p>
 
+                        <p
+                            id="duplicateWarningText"
+                            class="text-xs text-slate-300 mt-1"
+                        ></p>
 
+                        <p
+                            class="text-[10px] text-slate-500 mt-1"
+                        >
+                            Al guardar volveremos a verificarlo.
+                        </p>
 
-            <!-- FILTROS -->
+                    </div>
 
-            <div
-                class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1"
-            >
-
-                <button
-                    onclick="setCollectionFilter('todos')"
-                    id="filter-todos"
-                    class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow"
-                >
-                    Todos
-                </button>
-
-
-                <button
-                    onclick="setCollectionFilter('vinilo')"
-                    id="filter-vinilo"
-                    class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
-                >
-                    Vinilos
-                </button>
-
-
-                <button
-                    onclick="setCollectionFilter('cd')"
-                    id="filter-cd"
-                    class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
-                >
-                    CDs
-                </button>
+                </div>
 
             </div>
 
 
 
-            <!-- BUSCADOR -->
+            <!-- ARTISTA -->
 
-            <div class="relative">
+            <div>
 
-                <i
-                    class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-sm"
-                ></i>
+                <label
+                    class="text-xs text-slate-400 font-medium"
+                >
+                    Artista *
+                </label>
 
                 <input
                     type="text"
-                    id="searchInput"
-                    oninput="filterCollection()"
-                    placeholder="Buscar por artista o álbum..."
-                    class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                    id="formArtist"
+                    placeholder="Artista o grupo"
+                    oninput="scheduleDuplicateCheck()"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
                 >
 
             </div>
 
 
 
-            <div
-                id="collectionList"
-                class="space-y-3"
-            ></div>
+            <!-- TÍTULO -->
 
-        </section>
+            <div>
 
+                <label
+                    class="text-xs text-slate-400 font-medium"
+                >
+                    Álbum / Título *
+                </label>
 
-
-        <!-- =================================================
-             TAB 3 - AJUSTES
-        ================================================== -->
-
-        <section
-            id="tab-settings"
-            class="tab-content hidden space-y-4"
-        >
-
-            <div
-                class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
-            >
-
-                <h2
-                    class="text-lg font-semibold text-slate-200 flex items-center gap-2"
+                <input
+                    type="text"
+                    id="formTitle"
+                    placeholder="Título del álbum"
+                    oninput="scheduleDuplicateCheck()"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
                 >
 
-                    <i
-                        class="fa-solid fa-gear text-emerald-400"
-                    ></i>
+            </div>
 
-                    Configuración de Enlace
 
-                </h2>
+
+            <!-- FORMATO / AÑO -->
+
+            <div
+                class="grid grid-cols-2 gap-3"
+            >
+
+                <div>
+
+                    <label
+                        class="text-xs text-slate-400 font-medium"
+                    >
+                        Formato
+                    </label>
+
+                    <select
+                        id="formFormat"
+                        onchange="scheduleDuplicateCheck()"
+                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                    >
+
+                        <option value="Vinilo">
+                            Vinilo
+                        </option>
+
+                        <option value="CD">
+                            CD
+                        </option>
+
+                        <option value="Casete">
+                            Casete
+                        </option>
+
+                    </select>
+
+                </div>
 
 
 
@@ -536,223 +416,674 @@
                     <label
                         class="text-xs text-slate-400 font-medium"
                     >
-                        URL de Google Apps Script
+                        Año
                     </label>
 
                     <input
                         type="text"
-                        id="settingUrl"
-                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none font-mono"
+                        id="formYear"
+                        placeholder="Ej. 1977"
+                        inputmode="numeric"
+                        oninput="scheduleDuplicateCheck()"
+                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
                     >
-
-                </div>
-
-
-
-                <div class="flex gap-2">
-
-                    <button
-                        onclick="saveSettings()"
-                        class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition"
-                    >
-                        Guardar Configuración
-                    </button>
-
-
-                    <button
-                        onclick="testConnection()"
-                        class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm transition"
-                    >
-                        Probar
-                    </button>
 
                 </div>
 
             </div>
 
-        </section>
-
-    </main>
 
 
+            <!-- GÉNERO -->
 
-    <!-- =====================================================
-         NAVEGACION
-    ====================================================== -->
+            <div>
 
-    <nav
-        class="bg-slate-900 border-t border-slate-800 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-3 z-50"
-    >
+                <label
+                    class="text-xs text-slate-400 font-medium"
+                >
+                    Género
+                </label>
 
-        <button
-            onclick="switchTab('scan')"
-            id="nav-scan"
-            class="flex flex-col items-center text-emerald-400 transition"
-        >
+                <input
+                    type="text"
+                    id="formGenre"
+                    placeholder="Ej. Rock, Jazz, Pop"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                >
 
-            <i class="fa-solid fa-camera text-lg"></i>
-
-            <span class="text-[10px] mt-1">
-                Escanear
-            </span>
-
-        </button>
+            </div>
 
 
 
-        <button
-            onclick="switchTab('collection')"
-            id="nav-collection"
-            class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition"
-        >
+            <!-- SELLO -->
 
-            <i class="fa-solid fa-compact-disc text-lg"></i>
+            <div>
 
-            <span class="text-[10px] mt-1">
-                Colección
-            </span>
+                <label
+                    class="text-xs text-slate-400 font-medium"
+                >
+                    Sello / Disquera
+                </label>
 
-        </button>
+                <input
+                    type="text"
+                    id="formLabel"
+                    placeholder="Sello discográfico"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                >
 
-
-
-        <button
-            onclick="switchTab('settings')"
-            id="nav-settings"
-            class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition"
-        >
-
-            <i class="fa-solid fa-gear text-lg"></i>
-
-            <span class="text-[10px] mt-1">
-                Ajustes
-            </span>
-
-        </button>
-
-    </nav>
+            </div>
 
 
 
-    <!-- =====================================================
-         MODAL
-    ====================================================== -->
+            <!-- CONDICIÓN / UBICACIÓN -->
 
-    <div
-        id="appModal"
-        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            <div
+                class="grid grid-cols-2 gap-3"
+            >
+
+                <div>
+
+                    <label
+                        class="text-xs text-slate-400 font-medium"
+                    >
+                        Condición
+                    </label>
+
+                    <select
+                        id="formCondition"
+                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                    >
+
+                        <option value="">
+                            Sin especificar
+                        </option>
+
+                        <option value="M">
+                            M
+                        </option>
+
+                        <option value="NM">
+                            NM
+                        </option>
+
+                        <option value="VG+">
+                            VG+
+                        </option>
+
+                        <option value="VG">
+                            VG
+                        </option>
+
+                        <option value="G+">
+                            G+
+                        </option>
+
+                        <option value="G">
+                            G
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div>
+
+                    <label
+                        class="text-xs text-slate-400 font-medium"
+                    >
+                        Ubicación
+                    </label>
+
+                    <input
+                        type="text"
+                        id="formLocation"
+                        placeholder="Ej. Estante 1"
+                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                    >
+
+                </div>
+
+            </div>
+
+
+
+            <!-- GUARDAR -->
+
+            <button
+                onclick="saveItem(false)"
+                id="saveBtn"
+                class="w-full mt-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:text-slate-500 text-slate-950 font-bold py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2"
+            >
+
+                <i
+                    class="fa-solid fa-floppy-disk"
+                ></i>
+
+                Guardar en colección
+
+            </button>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- ==================================================
+         COLECCIÓN
+    =================================================== -->
+
+    <section
+        id="tab-collection"
+        class="tab-content hidden space-y-4"
     >
 
         <div
-            class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xs w-full p-5 text-center space-y-3 shadow-2xl"
+            class="flex justify-between items-center"
+        >
+
+            <div>
+
+                <h2
+                    class="text-lg font-semibold text-slate-200"
+                >
+                    Mi Colección
+                </h2>
+
+                <p
+                    id="collectionCount"
+                    class="text-xs text-slate-500"
+                >
+                    0 discos
+                </p>
+
+            </div>
+
+
+            <button
+                onclick="loadCollection()"
+                class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg text-emerald-400 flex items-center gap-1 transition"
+            >
+
+                <i
+                    class="fa-solid fa-rotate"
+                ></i>
+
+                Actualizar
+
+            </button>
+
+        </div>
+
+
+
+        <!-- FILTROS -->
+
+        <div
+            class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1"
+        >
+
+            <button
+                onclick="setCollectionFilter('todos')"
+                id="filter-todos"
+                class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow"
+            >
+                Todos
+            </button>
+
+
+            <button
+                onclick="setCollectionFilter('vinilo')"
+                id="filter-vinilo"
+                class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
+            >
+                Vinilos
+            </button>
+
+
+            <button
+                onclick="setCollectionFilter('cd')"
+                id="filter-cd"
+                class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
+            >
+                CDs
+            </button>
+
+        </div>
+
+
+
+        <!-- BUSCADOR -->
+
+        <div
+            class="relative"
+        >
+
+            <i
+                class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-sm"
+            ></i>
+
+            <input
+                type="text"
+                id="searchInput"
+                oninput="filterCollection()"
+                placeholder="Buscar por artista o álbum..."
+                class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+            >
+
+        </div>
+
+
+
+        <div
+            id="collectionList"
+            class="space-y-3"
+        ></div>
+
+    </section>
+
+
+
+    <!-- ==================================================
+         AJUSTES
+    =================================================== -->
+
+    <section
+        id="tab-settings"
+        class="tab-content hidden space-y-4"
+    >
+
+        <div
+            class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
+        >
+
+            <h2
+                class="text-lg font-semibold text-slate-200 flex items-center gap-2"
+            >
+
+                <i
+                    class="fa-solid fa-gear text-emerald-400"
+                ></i>
+
+                Configuración
+
+            </h2>
+
+
+            <div>
+
+                <label
+                    class="text-xs text-slate-400 font-medium"
+                >
+                    URL de Google Apps Script
+                </label>
+
+                <input
+                    type="text"
+                    id="settingUrl"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none font-mono"
+                >
+
+            </div>
+
+
+
+            <div
+                class="flex gap-2"
+            >
+
+                <button
+                    onclick="saveSettings()"
+                    class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition"
+                >
+                    Guardar
+                </button>
+
+
+                <button
+                    onclick="testConnection()"
+                    class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm transition"
+                >
+                    Probar
+                </button>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<!-- ======================================================
+     NAVEGACIÓN
+====================================================== -->
+
+<nav
+    class="bg-slate-900 border-t border-slate-800 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-3 z-40"
+>
+
+    <button
+        onclick="switchTab('scan')"
+        id="nav-scan"
+        class="flex flex-col items-center text-emerald-400 transition"
+    >
+
+        <i
+            class="fa-solid fa-camera text-lg"
+        ></i>
+
+        <span
+            class="text-[10px] mt-1"
+        >
+            Escanear
+        </span>
+
+    </button>
+
+
+
+    <button
+        onclick="switchTab('collection')"
+        id="nav-collection"
+        class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition"
+    >
+
+        <i
+            class="fa-solid fa-compact-disc text-lg"
+        ></i>
+
+        <span
+            class="text-[10px] mt-1"
+        >
+            Colección
+        </span>
+
+    </button>
+
+
+
+    <button
+        onclick="switchTab('settings')"
+        id="nav-settings"
+        class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition"
+    >
+
+        <i
+            class="fa-solid fa-gear text-lg"
+        ></i>
+
+        <span
+            class="text-[10px] mt-1"
+        >
+            Ajustes
+        </span>
+
+    </button>
+
+</nav>
+
+
+
+<!-- ======================================================
+     MODAL NORMAL
+====================================================== -->
+
+<div
+    id="appModal"
+    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+>
+
+    <div
+        class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xs w-full p-5 text-center space-y-3 shadow-2xl"
+    >
+
+        <div
+            id="modalIcon"
+            class="text-3xl"
+        ></div>
+
+
+        <h3
+            id="modalTitle"
+            class="font-bold text-slate-100"
+        >
+            Aviso
+        </h3>
+
+
+        <p
+            id="modalMessage"
+            class="text-xs text-slate-300"
+        ></p>
+
+
+        <button
+            onclick="closeModal()"
+            class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition"
+        >
+            Aceptar
+        </button>
+
+    </div>
+
+</div>
+
+
+
+<!-- ======================================================
+     MODAL DUPLICADO
+====================================================== -->
+
+<div
+    id="duplicateModal"
+    class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+>
+
+    <div
+        class="bg-slate-900 border border-amber-500/30 rounded-2xl max-w-sm w-full p-5 shadow-2xl"
+    >
+
+        <div
+            class="text-center"
         >
 
             <div
-                id="modalIcon"
-                class="text-3xl text-emerald-400"
-            ></div>
+                class="w-14 h-14 mx-auto rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center"
+            >
+
+                <i
+                    class="fa-solid fa-lock text-amber-400 text-xl"
+                ></i>
+
+            </div>
 
 
             <h3
-                id="modalTitle"
-                class="font-bold text-slate-100"
+                class="font-bold text-slate-100 mt-4"
             >
-                Aviso
+                Disco posiblemente duplicado
             </h3>
 
 
             <p
-                id="modalMessage"
-                class="text-xs text-slate-300"
+                class="text-xs text-slate-400 mt-2"
+            >
+                Ya existe un registro similar en tu colección.
+            </p>
+
+        </div>
+
+
+
+        <div
+            class="bg-slate-950 border border-slate-800 rounded-xl p-3 mt-4"
+        >
+
+            <p
+                id="duplicateModalTitle"
+                class="text-sm font-semibold text-slate-100"
             ></p>
 
 
+            <p
+                id="duplicateModalArtist"
+                class="text-xs text-emerald-400 mt-1"
+            ></p>
+
+
+            <p
+                id="duplicateModalMeta"
+                class="text-[10px] text-slate-500 mt-1"
+            ></p>
+
+        </div>
+
+
+
+        <p
+            class="text-xs text-slate-400 mt-4 text-center"
+        >
+            Si realmente tienes otra copia puedes guardarla de todos modos.
+        </p>
+
+
+
+        <div
+            class="grid grid-cols-2 gap-2 mt-4"
+        >
+
             <button
-                onclick="closeModal()"
-                class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 rounded-xl text-xs transition"
+                onclick="closeDuplicateModal()"
+                class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-xs transition"
             >
-                Aceptar
+                Cancelar
+            </button>
+
+
+            <button
+                onclick="confirmDuplicateSave()"
+                id="forceSaveBtn"
+                class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition"
+            >
+                Guardar otra copia
             </button>
 
         </div>
 
     </div>
 
+</div>
+
 
 
 <script>
 
 
-/* =========================================================
-   CONFIGURACION
-========================================================= */
+/* ======================================================
+   CONFIGURACIÓN
+====================================================== */
 
 const DEFAULT_GAS_URL =
-    "https://script.google.com/macros/s/AKfycbw5om1Z0fb9rVY6PJfLYnwdafZengkv5wFaoL3d8EYNzVFO2x18TKw4KWnaLp3-PlJ1yQ/exec";
+    "https://script.google.com/macros/s/AKfycby0fNHV6k124rhzEg-8DMba6OcQYkSeRwrrVeJ-CdEpZ66Z6n9Gb2_Fv7ZZSy1IiqvaVw/exec";
 
 
-let currentImageBase64 = "";
+let currentImageBase64 =
+    "";
 
-let fullCollectionData = [];
+let fullCollectionData =
+    [];
 
-let currentCollectionFilter = "todos";
+let currentCollectionFilter =
+    "todos";
+
+let currentDuplicate =
+    null;
+
+let duplicateTimer =
+    null;
 
 
 
-/* =========================================================
+/* ======================================================
    INICIO
-========================================================= */
+====================================================== */
 
-window.onload = function () {
+window.addEventListener(
+    "load",
+    function () {
 
-    let savedUrl =
-        localStorage.getItem("gas_url");
+        let savedUrl =
+            localStorage.getItem(
+                "gas_url"
+            );
 
-    if (!savedUrl) {
 
-        savedUrl = DEFAULT_GAS_URL;
+        if (!savedUrl) {
 
-        localStorage.setItem(
-            "gas_url",
-            savedUrl
-        );
+            savedUrl =
+                DEFAULT_GAS_URL;
+
+            localStorage.setItem(
+                "gas_url",
+                savedUrl
+            );
+
+        }
+
+
+        document.getElementById(
+            "settingUrl"
+        ).value =
+            savedUrl;
+
+
+        testConnection();
+
+        loadCollection();
 
     }
-
-    document.getElementById(
-        "settingUrl"
-    ).value = savedUrl;
-
-
-    testConnection();
-
-    loadCollection();
-
-};
+);
 
 
 
-/* =========================================================
-   NAVEGACION
-========================================================= */
+/* ======================================================
+   NAVEGACIÓN
+====================================================== */
 
 function switchTab(tabName) {
 
     document
-        .querySelectorAll(".tab-content")
-        .forEach(function (el) {
+        .querySelectorAll(
+            ".tab-content"
+        )
+        .forEach(
+            function (element) {
 
-            el.classList.add("hidden");
+                element
+                    .classList
+                    .add(
+                        "hidden"
+                    );
 
-        });
+            }
+        );
 
 
     document
         .getElementById(
-            "tab-" + tabName
+            "tab-" +
+            tabName
         )
         .classList
-        .remove("hidden");
+        .remove(
+            "hidden"
+        );
 
 
     [
@@ -760,147 +1091,69 @@ function switchTab(tabName) {
         "collection",
         "settings"
 
-    ].forEach(function (t) {
+    ].forEach(
+        function (tab) {
 
-        const btn =
-            document.getElementById(
-                "nav-" + t
-            );
-
-
-        btn.className =
-            t === tabName
-
-                ? "flex flex-col items-center text-emerald-400 transition"
-
-                : "flex flex-col items-center text-slate-400 hover:text-slate-200 transition";
-
-    });
+            const button =
+                document.getElementById(
+                    "nav-" +
+                    tab
+                );
 
 
-    if (
-        tabName === "collection"
-    ) {
+            button.className =
+                tab === tabName
 
-        loadCollection();
+                    ? "flex flex-col items-center text-emerald-400 transition"
 
-    }
-
-}
-
-
-
-/* =========================================================
-   FILTROS
-========================================================= */
-
-function setCollectionFilter(filter) {
-
-    currentCollectionFilter =
-        filter;
-
-
-    [
-        "todos",
-        "vinilo",
-        "cd"
-
-    ].forEach(function (f) {
-
-        const btn =
-            document.getElementById(
-                "filter-" + f
-            );
-
-
-        if (
-            f === filter
-        ) {
-
-            btn.className =
-                "flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow";
-
-        } else {
-
-            btn.className =
-                "flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition";
+                    : "flex flex-col items-center text-slate-400 hover:text-slate-200 transition";
 
         }
-
-    });
-
-
-    filterCollection();
-
-}
-
-
-
-/* =========================================================
-   ESTADO CONEXION
-========================================================= */
-
-function updateStatus(
-    isOnline,
-    text
-) {
-
-    const statusEl =
-        document.getElementById(
-            "connectionStatus"
-        );
+    );
 
 
     if (
-        isOnline
+        tabName ===
+        "collection"
     ) {
-
-        statusEl.className =
-            "text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1";
-
-        statusEl.innerHTML =
-            '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> ' +
-            escapeHtml(text);
-
-    } else {
-
-        statusEl.className =
-            "text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 flex items-center gap-1";
-
-        statusEl.innerHTML =
-            '<span class="w-2 h-2 rounded-full bg-red-400"></span> ' +
-            escapeHtml(text);
-
+        loadCollection();
     }
 
 }
 
 
 
-/* =========================================================
+/* ======================================================
    MODAL
-========================================================= */
+====================================================== */
 
 function showModal(
     title,
     message,
-    isError = false
+    isError
 ) {
+
+    isError =
+        Boolean(
+            isError
+        );
+
 
     document.getElementById(
         "modalTitle"
-    ).innerText = title;
+    ).innerText =
+        title;
 
 
     document.getElementById(
         "modalMessage"
-    ).innerText = message;
+    ).innerText =
+        message;
 
 
     document.getElementById(
         "modalIcon"
     ).innerHTML =
-
         isError
 
             ? '<i class="fa-solid fa-triangle-exclamation text-red-400"></i>'
@@ -910,7 +1163,9 @@ function showModal(
 
     document.getElementById(
         "appModal"
-    ).classList.remove(
+    )
+    .classList
+    .remove(
         "hidden"
     );
 
@@ -922,7 +1177,9 @@ function closeModal() {
 
     document.getElementById(
         "appModal"
-    ).classList.add(
+    )
+    .classList
+    .add(
         "hidden"
     );
 
@@ -930,21 +1187,188 @@ function closeModal() {
 
 
 
-/* =========================================================
+/* ======================================================
+   MODAL DUPLICADO
+====================================================== */
+
+function showDuplicateModal(
+    duplicate
+) {
+
+    currentDuplicate =
+        duplicate || {};
+
+
+    const title =
+        duplicate.title ||
+        "Sin título";
+
+
+    const artist =
+        duplicate.artist ||
+        "Artista desconocido";
+
+
+    const format =
+        duplicate.format ||
+        "";
+
+
+    const year =
+        duplicate.year ||
+        "";
+
+
+    const location =
+        duplicate.location ||
+        "";
+
+
+    document.getElementById(
+        "duplicateModalTitle"
+    ).innerText =
+        title;
+
+
+    document.getElementById(
+        "duplicateModalArtist"
+    ).innerText =
+        artist;
+
+
+    let meta = format;
+
+
+    if (year) {
+
+        meta +=
+            (
+                meta
+                    ? " • "
+                    : ""
+            ) +
+            year;
+
+    }
+
+
+    if (location) {
+
+        meta +=
+            (
+                meta
+                    ? " • "
+                    : ""
+            ) +
+            location;
+
+    }
+
+
+    document.getElementById(
+        "duplicateModalMeta"
+    ).innerText =
+        meta;
+
+
+    document.getElementById(
+        "duplicateModal"
+    )
+    .classList
+    .remove(
+        "hidden"
+    );
+
+}
+
+
+
+function closeDuplicateModal() {
+
+    document.getElementById(
+        "duplicateModal"
+    )
+    .classList
+    .add(
+        "hidden"
+    );
+
+}
+
+
+
+function confirmDuplicateSave() {
+
+    closeDuplicateModal();
+
+    saveItem(
+        true
+    );
+
+}
+
+
+
+/* ======================================================
+   CONEXIÓN
+====================================================== */
+
+function updateStatus(
+    online,
+    text
+) {
+
+    const element =
+        document.getElementById(
+            "connectionStatus"
+        );
+
+
+    if (online) {
+
+        element.className =
+            "text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1";
+
+
+        element.innerHTML =
+            '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> ' +
+            escapeHtml(
+                text
+            );
+
+    } else {
+
+        element.className =
+            "text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 flex items-center gap-1";
+
+
+        element.innerHTML =
+            '<span class="w-2 h-2 rounded-full bg-red-400"></span> ' +
+            escapeHtml(
+                text
+            );
+
+    }
+
+}
+
+
+
+/* ======================================================
    AJUSTES
-========================================================= */
+====================================================== */
 
 function saveSettings() {
 
     const url =
         document.getElementById(
             "settingUrl"
-        ).value.trim();
+        )
+        .value
+        .trim();
 
 
-    if (
-        !url
-    ) {
+    if (!url) {
 
         showModal(
             "URL requerida",
@@ -965,7 +1389,8 @@ function saveSettings() {
 
     showModal(
         "Guardado",
-        "Enlace configurado correctamente."
+        "Enlace configurado correctamente.",
+        false
     );
 
 
@@ -977,32 +1402,27 @@ function saveSettings() {
 
 
 
-/* =========================================================
-   PROBAR CONEXION
-========================================================= */
+/* ======================================================
+   PROBAR CONEXIÓN
+====================================================== */
 
 async function testConnection() {
 
     const url =
-        localStorage.getItem(
-            "gas_url"
-        ) || DEFAULT_GAS_URL;
+        getGasUrl();
 
 
     try {
 
         const response =
             await fetch(
-                url,
-                {
-                    method: "GET"
-                }
+                url +
+                "?t=" +
+                Date.now()
             );
 
 
-        if (
-            !response.ok
-        ) {
+        if (!response.ok) {
 
             throw new Error(
                 "HTTP " +
@@ -1012,17 +1432,28 @@ async function testConnection() {
         }
 
 
-        const data =
+        const result =
             await response.json();
+
+
+        if (
+            result &&
+            result.status ===
+            "error"
+        ) {
+
+            throw new Error(
+                result.message ||
+                "Error de servidor"
+            );
+
+        }
 
 
         updateStatus(
             true,
             "Conectado"
         );
-
-
-        return data;
 
     } catch (error) {
 
@@ -1043,26 +1474,25 @@ async function testConnection() {
 
 
 
-/* =========================================================
-   CAPTURA DE IMAGEN
-========================================================= */
+/* ======================================================
+   FOTO
+====================================================== */
 
-function handleImageSelection(event) {
+function handleImageSelection(
+    event
+) {
 
     const file =
         event.target.files[0];
 
 
-    if (
-        !file
-    ) {
-
+    if (!file) {
         return;
-
     }
 
 
     if (
+        !file.type ||
         !file.type.startsWith(
             "image/"
         )
@@ -1079,167 +1509,203 @@ function handleImageSelection(event) {
     }
 
 
+    hideDuplicateWarning();
+
+
     const reader =
         new FileReader();
 
 
     reader.onload =
-        function (e) {
+        function (loadEvent) {
 
-            const img =
+            const image =
                 new Image();
 
 
-            img.onload =
+            image.onload =
                 function () {
 
+                    try {
 
-                    const canvas =
-                        document.createElement(
-                            "canvas"
-                        );
-
-
-                    /*
-                     * 1000px es suficiente para que
-                     * Gemini lea una portada y mantiene
-                     * reducido el tamaño del payload.
-                     */
-
-                    const MAX_WIDTH =
-                        1000;
-
-                    const MAX_HEIGHT =
-                        1000;
+                        const canvas =
+                            document.createElement(
+                                "canvas"
+                            );
 
 
-                    let width =
-                        img.width;
+                        /*
+                         * Mantener el archivo pequeño ayuda
+                         * especialmente en Safari/iPhone.
+                         */
 
-                    let height =
-                        img.height;
+                        const MAX_SIZE =
+                            900;
 
 
-                    if (
-                        width > height
-                    ) {
+                        let width =
+                            image.width;
+
+                        let height =
+                            image.height;
+
 
                         if (
-                            width > MAX_WIDTH
-                        ) {
-
-                            height *=
-                                MAX_WIDTH /
-                                width;
-
-                            width =
-                                MAX_WIDTH;
-
-                        }
-
-                    } else {
-
-                        if (
-                            height > MAX_HEIGHT
-                        ) {
-
-                            width *=
-                                MAX_HEIGHT /
-                                height;
-
-                            height =
-                                MAX_HEIGHT;
-
-                        }
-
-                    }
-
-
-                    width =
-                        Math.round(
-                            width
-                        );
-
-                    height =
-                        Math.round(
+                            width >
                             height
+                        ) {
+
+                            if (
+                                width >
+                                MAX_SIZE
+                            ) {
+
+                                height =
+                                    Math.round(
+                                        height *
+                                        MAX_SIZE /
+                                        width
+                                    );
+
+                                width =
+                                    MAX_SIZE;
+
+                            }
+
+                        } else {
+
+                            if (
+                                height >
+                                MAX_SIZE
+                            ) {
+
+                                width =
+                                    Math.round(
+                                        width *
+                                        MAX_SIZE /
+                                        height
+                                    );
+
+                                height =
+                                    MAX_SIZE;
+
+                            }
+
+                        }
+
+
+                        canvas.width =
+                            Math.max(
+                                1,
+                                Math.round(
+                                    width
+                                )
+                            );
+
+
+                        canvas.height =
+                            Math.max(
+                                1,
+                                Math.round(
+                                    height
+                                )
+                            );
+
+
+                        const ctx =
+                            canvas.getContext(
+                                "2d"
+                            );
+
+
+                        ctx.drawImage(
+                            image,
+                            0,
+                            0,
+                            canvas.width,
+                            canvas.height
                         );
 
 
-                    canvas.width =
-                        width;
-
-                    canvas.height =
-                        height;
-
-
-                    const ctx =
-                        canvas.getContext(
-                            "2d"
-                        );
+                        currentImageBase64 =
+                            canvas.toDataURL(
+                                "image/jpeg",
+                                0.78
+                            );
 
 
-                    ctx.drawImage(
-                        img,
-                        0,
-                        0,
-                        width,
-                        height
-                    );
-
-
-                    currentImageBase64 =
-                        canvas.toDataURL(
-                            "image/jpeg",
-                            0.82
-                        );
-
-
-                    const preview =
                         document.getElementById(
                             "imagePreview"
+                        ).src =
+                            currentImageBase64;
+
+
+                        document.getElementById(
+                            "imagePreviewContainer"
+                        )
+                        .classList
+                        .remove(
+                            "hidden"
                         );
 
 
-                    preview.src =
-                        currentImageBase64;
+                        document.getElementById(
+                            "dropZoneContent"
+                        )
+                        .classList
+                        .add(
+                            "hidden"
+                        );
 
 
-                    document.getElementById(
-                        "imagePreviewContainer"
-                    ).classList.remove(
-                        "hidden"
-                    );
+                        analyzeImageWithGemini(
+                            currentImageBase64
+                        );
+
+                    } catch (error) {
+
+                        console.error(
+                            error
+                        );
 
 
-                    document.getElementById(
-                        "dropZoneContent"
-                    ).classList.add(
-                        "hidden"
-                    );
+                        showModal(
+                            "Error de imagen",
+                            "No se pudo preparar la fotografía.",
+                            true
+                        );
 
-
-                    analyzeImageWithGemini(
-                        currentImageBase64
-                    );
+                    }
 
                 };
 
 
-            img.onerror =
+            image.onerror =
                 function () {
 
                     showModal(
-                        "Error",
-                        "No se pudo leer la imagen.",
+                        "Error de imagen",
+                        "No se pudo abrir la fotografía seleccionada.",
                         true
                     );
 
                 };
 
 
-            img.src =
-                e.target.result;
+            image.src =
+                loadEvent.target.result;
+
+        };
+
+
+    reader.onerror =
+        function () {
+
+            showModal(
+                "Error",
+                "No se pudo leer la fotografía.",
+                true
+            );
 
         };
 
@@ -1252,9 +1718,9 @@ function handleImageSelection(event) {
 
 
 
-/* =========================================================
-   RESETEAR IMAGEN
-========================================================= */
+/* ======================================================
+   RESET FOTO
+====================================================== */
 
 function resetImageCapture() {
 
@@ -1264,35 +1730,43 @@ function resetImageCapture() {
 
     document.getElementById(
         "fileInput"
-    ).value = "";
+    ).value =
+        "";
 
 
     document.getElementById(
         "imagePreview"
-    ).src = "";
+    ).src =
+        "";
 
 
     document.getElementById(
         "imagePreviewContainer"
-    ).classList.add(
+    )
+    .classList
+    .add(
         "hidden"
     );
 
 
     document.getElementById(
         "dropZoneContent"
-    ).classList.remove(
+    )
+    .classList
+    .remove(
         "hidden"
     );
+
+
+    hideDuplicateWarning();
 
 }
 
 
 
-/* =========================================================
-   ANALIZAR CON GEMINI
-   LA API KEY YA NO ESTA EN EL INDEX
-========================================================= */
+/* ======================================================
+   GEMINI
+====================================================== */
 
 async function analyzeImageWithGemini(
     base64Data
@@ -1304,67 +1778,23 @@ async function analyzeImageWithGemini(
         );
 
 
-    loading.classList.remove(
-        "hidden"
-    );
+    loading
+        .classList
+        .remove(
+            "hidden"
+        );
 
 
     try {
 
-        const url =
-            localStorage.getItem(
-                "gas_url"
-            ) || DEFAULT_GAS_URL;
-
-
-        if (
-            !url
-        ) {
-
-            throw new Error(
-                "No está configurada la URL de Apps Script."
-            );
-
-        }
-
-
-        const response =
-            await fetch(
-                url,
-                {
-                    method: "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "text/plain;charset=utf-8"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            action:
-                                "analyze",
-
-                            photo:
-                                base64Data
-                        })
-                }
-            );
-
-
-        if (
-            !response.ok
-        ) {
-
-            throw new Error(
-                "Error HTTP " +
-                response.status
-            );
-
-        }
-
-
         const result =
-            await response.json();
+            await postToBackend({
+                action:
+                    "analyze",
+
+                photo:
+                    base64Data
+            });
 
 
         if (
@@ -1374,7 +1804,7 @@ async function analyzeImageWithGemini(
 
             throw new Error(
                 result.message ||
-                "No se pudo analizar la imagen."
+                "No se pudo analizar la portada."
             );
 
         }
@@ -1396,37 +1826,12 @@ async function analyzeImageWithGemini(
             data.title || "";
 
 
-        if (
-            data.format
-        ) {
-
-            const fmt =
-                String(
-                    data.format
-                ).toLowerCase();
-
-
-            if (
-                fmt.includes(
-                    "cd"
-                )
-            ) {
-
-                document.getElementById(
-                    "formFormat"
-                ).value =
-                    "CD";
-
-            } else {
-
-                document.getElementById(
-                    "formFormat"
-                ).value =
-                    "Vinilo";
-
-            }
-
-        }
+        document.getElementById(
+            "formFormat"
+        ).value =
+            normalizeFormatFrontend(
+                data.format
+            );
 
 
         document.getElementById(
@@ -1447,11 +1852,7 @@ async function analyzeImageWithGemini(
             data.label || "";
 
 
-        document.getElementById(
-            "formCondition"
-        ).value =
-            data.condition || "";
-
+        await checkDuplicate();
 
     } catch (error) {
 
@@ -1468,12 +1869,13 @@ async function analyzeImageWithGemini(
             true
         );
 
-
     } finally {
 
-        loading.classList.add(
-            "hidden"
-        );
+        loading
+            .classList
+            .add(
+                "hidden"
+            );
 
     }
 
@@ -1481,48 +1883,245 @@ async function analyzeImageWithGemini(
 
 
 
-/* =========================================================
-   GUARDAR DISCO
-========================================================= */
+/* ======================================================
+   DEBOUNCE DUPLICADO
+====================================================== */
 
-async function saveItem() {
+function scheduleDuplicateCheck() {
 
-    const url =
-        localStorage.getItem(
-            "gas_url"
-        ) || DEFAULT_GAS_URL;
+    clearTimeout(
+        duplicateTimer
+    );
+
+
+    duplicateTimer =
+        setTimeout(
+            function () {
+
+                checkDuplicate();
+
+            },
+            600
+        );
+
+}
+
+
+
+/* ======================================================
+   VERIFICAR DUPLICADO
+====================================================== */
+
+async function checkDuplicate() {
+
+    const artist =
+        document.getElementById(
+            "formArtist"
+        )
+        .value
+        .trim();
+
+
+    const title =
+        document.getElementById(
+            "formTitle"
+        )
+        .value
+        .trim();
 
 
     if (
-        !url
+        !artist ||
+        !title
     ) {
 
-        showModal(
-            "Falta configurar",
-            "Configura el enlace de Apps Script.",
-            true
-        );
+        hideDuplicateWarning();
 
-        return;
+        return null;
 
     }
 
 
-    const artistVal =
-        document.getElementById(
-            "formArtist"
-        ).value.trim();
+    try {
+
+        const result =
+            await postToBackend({
+                action:
+                    "checkDuplicate",
+
+                artist:
+                    artist,
+
+                title:
+                    title,
+
+                format:
+                    document.getElementById(
+                        "formFormat"
+                    ).value,
+
+                year:
+                    document.getElementById(
+                        "formYear"
+                    ).value
+            });
 
 
-    const titleVal =
-        document.getElementById(
-            "formTitle"
-        ).value.trim();
+        if (
+            result.status !==
+            "success"
+        ) {
+
+            return null;
+
+        }
+
+
+        if (
+            result.duplicate
+        ) {
+
+            showDuplicateWarning(
+                result.duplicate
+            );
+
+            return result.duplicate;
+
+        }
+
+
+        hideDuplicateWarning();
+
+        return null;
+
+    } catch (error) {
+
+        /*
+         * Un fallo del chequeo preventivo
+         * no impide usar la aplicación.
+         *
+         * El backend vuelve a comprobar
+         * obligatoriamente al guardar.
+         */
+
+        console.warn(
+            "No se pudo comprobar duplicado:",
+            error
+        );
+
+        return null;
+
+    }
+
+}
+
+
+
+/* ======================================================
+   WARNING DUPLICADO
+====================================================== */
+
+function showDuplicateWarning(
+    duplicate
+) {
+
+    currentDuplicate =
+        duplicate;
+
+
+    let text =
+        (
+            duplicate.artist ||
+            ""
+        ) +
+        " — " +
+        (
+            duplicate.title ||
+            ""
+        );
 
 
     if (
-        !artistVal ||
-        !titleVal
+        duplicate.year
+    ) {
+
+        text +=
+            " (" +
+            duplicate.year +
+            ")";
+
+    }
+
+
+    document.getElementById(
+        "duplicateWarningText"
+    ).innerText =
+        text;
+
+
+    document.getElementById(
+        "duplicateWarning"
+    )
+    .classList
+    .remove(
+        "hidden"
+    );
+
+}
+
+
+
+function hideDuplicateWarning() {
+
+    currentDuplicate =
+        null;
+
+
+    document.getElementById(
+        "duplicateWarning"
+    )
+    .classList
+    .add(
+        "hidden"
+    );
+
+}
+
+
+
+/* ======================================================
+   GUARDAR
+====================================================== */
+
+async function saveItem(
+    forceDuplicate
+) {
+
+    forceDuplicate =
+        Boolean(
+            forceDuplicate
+        );
+
+
+    const artist =
+        document.getElementById(
+            "formArtist"
+        )
+        .value
+        .trim();
+
+
+    const title =
+        document.getElementById(
+            "formTitle"
+        )
+        .value
+        .trim();
+
+
+    if (
+        !artist ||
+        !title
     ) {
 
         showModal(
@@ -1537,15 +2136,17 @@ async function saveItem() {
 
 
     const payload = {
-
         action:
             "save",
 
+        forceDuplicate:
+            forceDuplicate,
+
         artist:
-            artistVal,
+            artist,
 
         title:
-            titleVal,
+            title,
 
         edition:
             "",
@@ -1580,67 +2181,62 @@ async function saveItem() {
                 "formLocation"
             ).value,
 
-        price:
-            document.getElementById(
-                "formPrice"
-            ).value,
-
         photo:
             currentImageBase64
-
     };
 
 
-    const btn =
+    const button =
         document.getElementById(
             "saveBtn"
         );
 
 
-    btn.innerHTML =
-        '<i class="fa-solid fa-spinner animate-spin"></i> Guardando...';
-
-
-    btn.disabled =
+    button.disabled =
         true;
+
+
+    button.innerHTML =
+        '<i class="fa-solid fa-spinner animate-spin"></i> Verificando...';
 
 
     try {
 
-        const response =
-            await fetch(
-                url,
-                {
-                    method:
-                        "POST",
-
-                    headers: {
-                        "Content-Type":
-                            "text/plain;charset=utf-8"
-                    },
-
-                    body:
-                        JSON.stringify(
-                            payload
-                        )
-                }
+        const result =
+            await postToBackend(
+                payload
             );
 
+
+        /*
+         * CANDADO
+         */
 
         if (
-            !response.ok
+            result.status ===
+            "duplicate"
         ) {
 
-            throw new Error(
-                "HTTP " +
-                response.status
+            button.disabled =
+                false;
+
+
+            button.innerHTML =
+                '<i class="fa-solid fa-floppy-disk"></i> Guardar en colección';
+
+
+            showDuplicateWarning(
+                result.duplicate
             );
 
+
+            showDuplicateModal(
+                result.duplicate
+            );
+
+
+            return;
         }
-
-
-        const result =
-            await response.json();
 
 
         if (
@@ -1650,7 +2246,7 @@ async function saveItem() {
 
             throw new Error(
                 result.message ||
-                "El servidor no pudo guardar el disco."
+                "No se pudo guardar el disco."
             );
 
         }
@@ -1658,7 +2254,10 @@ async function saveItem() {
 
         showModal(
             "Guardado",
-            "Disco guardado correctamente en tu colección."
+            forceDuplicate
+                ? "La copia adicional se guardó correctamente."
+                : "Disco guardado correctamente.",
+            false
         );
 
 
@@ -1666,7 +2265,6 @@ async function saveItem() {
 
 
         await loadCollection();
-
 
     } catch (error) {
 
@@ -1683,15 +2281,14 @@ async function saveItem() {
             true
         );
 
-
     } finally {
 
-        btn.innerHTML =
-            '<i class="fa-solid fa-floppy-disk"></i> Guardar en Colección';
-
-
-        btn.disabled =
+        button.disabled =
             false;
+
+
+        button.innerHTML =
+            '<i class="fa-solid fa-floppy-disk"></i> Guardar en colección';
 
     }
 
@@ -1699,9 +2296,9 @@ async function saveItem() {
 
 
 
-/* =========================================================
+/* ======================================================
    RESET FORMULARIO
-========================================================= */
+====================================================== */
 
 function resetForm() {
 
@@ -1723,14 +2320,18 @@ function resetForm() {
 
     document.getElementById(
         "imagePreviewContainer"
-    ).classList.add(
+    )
+    .classList
+    .add(
         "hidden"
     );
 
 
     document.getElementById(
         "dropZoneContent"
-    ).classList.remove(
+    )
+    .classList
+    .remove(
         "hidden"
     );
 
@@ -1741,9 +2342,7 @@ function resetForm() {
         "formYear",
         "formGenre",
         "formLabel",
-        "formCondition",
-        "formLocation",
-        "formPrice"
+        "formLocation"
 
     ].forEach(
         function (id) {
@@ -1758,33 +2357,96 @@ function resetForm() {
 
 
     document.getElementById(
+        "formCondition"
+    ).value =
+        "";
+
+
+    document.getElementById(
         "formFormat"
     ).value =
         "Vinilo";
+
+
+    hideDuplicateWarning();
 
 }
 
 
 
-/* =========================================================
-   CARGAR COLECCION
-========================================================= */
+/* ======================================================
+   POST BACKEND
+====================================================== */
+
+async function postToBackend(
+    payload
+) {
+
+    const url =
+        getGasUrl();
+
+
+    const response =
+        await fetch(
+            url,
+            {
+                method:
+                    "POST",
+
+                headers: {
+                    "Content-Type":
+                        "text/plain;charset=utf-8"
+                },
+
+                body:
+                    JSON.stringify(
+                        payload
+                    )
+            }
+        );
+
+
+    if (!response.ok) {
+
+        throw new Error(
+            "Error HTTP " +
+            response.status
+        );
+
+    }
+
+
+    return await response.json();
+
+}
+
+
+
+/* ======================================================
+   URL BACKEND
+====================================================== */
+
+function getGasUrl() {
+
+    return (
+        localStorage.getItem(
+            "gas_url"
+        ) ||
+        DEFAULT_GAS_URL
+    );
+
+}
+
+
+
+/* ======================================================
+   COLECCIÓN
+====================================================== */
 
 async function loadCollection() {
 
     const url =
-        localStorage.getItem(
-            "gas_url"
-        ) || DEFAULT_GAS_URL;
-
-
-    if (
-        !url
-    ) {
-
-        return;
-
-    }
+        getGasUrl();
 
 
     try {
@@ -1797,9 +2459,7 @@ async function loadCollection() {
             );
 
 
-        if (
-            !response.ok
-        ) {
+        if (!response.ok) {
 
             throw new Error(
                 "HTTP " +
@@ -1825,9 +2485,10 @@ async function loadCollection() {
         } else {
 
             console.error(
-                "Respuesta colección:",
+                "Respuesta inesperada:",
                 data
             );
+
 
             fullCollectionData =
                 [];
@@ -1835,13 +2496,14 @@ async function loadCollection() {
         }
 
 
-        filterCollection();
+        updateCollectionCount();
 
+        filterCollection();
 
     } catch (error) {
 
         console.error(
-            "Error cargando colección:",
+            "Error colección:",
             error
         );
 
@@ -1861,200 +2523,167 @@ async function loadCollection() {
 
 
 
-/* =========================================================
-   URL DE IMAGEN
-========================================================= */
+/* ======================================================
+   CONTADOR
+====================================================== */
 
-function getDirectImageUrl(
-    rawUrl
-) {
+function updateCollectionCount() {
 
-    if (
-        !rawUrl
-    ) {
-
-        return "";
-
-    }
+    const count =
+        fullCollectionData
+            .length;
 
 
-    rawUrl =
-        String(
-            rawUrl
-        ).trim();
+    document.getElementById(
+        "collectionCount"
+    ).innerText =
+        count === 1
 
+            ? "1 disco"
 
-    /*
-     * Las nuevas imágenes ya vienen como:
-     *
-     * drive.google.com/thumbnail?id=...
-     *
-     * y pueden usarse directamente.
-     */
-
-    if (
-        rawUrl.includes(
-            "drive.google.com/thumbnail"
-        )
-    ) {
-
-        return rawUrl;
-
-    }
-
-
-    /*
-     * Compatibilidad con registros antiguos:
-     *
-     * drive.google.com/file/d/FILE_ID/view
-     */
-
-    if (
-        rawUrl.includes(
-            "drive.google.com"
-        )
-    ) {
-
-        const matchId =
-            rawUrl.match(
-                /\/d\/([a-zA-Z0-9_-]+)/
-            ) ||
-
-            rawUrl.match(
-                /[?&]id=([a-zA-Z0-9_-]+)/
-            );
-
-
-        if (
-            matchId &&
-            matchId[1]
-        ) {
-
-            return (
-                "https://drive.google.com/thumbnail?id=" +
-                matchId[1] +
-                "&sz=w500"
-            );
-
-        }
-
-    }
-
-
-    return rawUrl;
+            : count +
+              " discos";
 
 }
 
 
 
-/* =========================================================
-   FILTRAR COLECCION
-========================================================= */
+/* ======================================================
+   FILTRO
+====================================================== */
+
+function setCollectionFilter(
+    filter
+) {
+
+    currentCollectionFilter =
+        filter;
+
+
+    [
+        "todos",
+        "vinilo",
+        "cd"
+
+    ].forEach(
+        function (item) {
+
+            const button =
+                document.getElementById(
+                    "filter-" +
+                    item
+                );
+
+
+            button.className =
+                item === filter
+
+                    ? "flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow"
+
+                    : "flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition";
+
+        }
+    );
+
+
+    filterCollection();
+
+}
+
+
+
+/* ======================================================
+   FILTRAR COLECCIÓN
+====================================================== */
 
 function filterCollection() {
 
-    const searchEl =
+    const query =
         document.getElementById(
             "searchInput"
-        );
-
-
-    const query =
-        searchEl
-
-            ? searchEl.value
-                .toLowerCase()
-                .trim()
-
-            : "";
+        )
+        .value
+        .toLowerCase()
+        .trim();
 
 
     const filtered =
-        fullCollectionData.filter(
-            function (item) {
+        fullCollectionData
+            .filter(
+                function (item) {
+
+                    const artist =
+                        String(
+                            item.artist ||
+                            ""
+                        )
+                        .toLowerCase();
 
 
-                const artist =
-                    String(
-
-                        item.artist ||
-                        item.artista ||
-                        ""
-
-                    ).toLowerCase();
+                    const title =
+                        String(
+                            item.title ||
+                            ""
+                        )
+                        .toLowerCase();
 
 
-                const title =
-                    String(
-
-                        item.title ||
-                        item.título ||
-                        item.titulo ||
-                        item.album ||
-                        ""
-
-                    ).toLowerCase();
+                    const format =
+                        String(
+                            item.format ||
+                            ""
+                        )
+                        .toLowerCase();
 
 
-                const format =
-                    String(
-
-                        item.format ||
-                        item.formato ||
-                        ""
-
-                    ).toLowerCase();
-
-
-                const matchesQuery =
-                    artist.includes(
-                        query
-                    ) ||
-
-                    title.includes(
-                        query
-                    );
+                    const matchesText =
+                        artist.includes(
+                            query
+                        ) ||
+                        title.includes(
+                            query
+                        );
 
 
-                if (
-                    currentCollectionFilter ===
-                    "vinilo"
-                ) {
+                    if (
+                        currentCollectionFilter ===
+                        "vinilo"
+                    ) {
 
-                    return (
-                        matchesQuery &&
-                        (
-                            format.includes(
-                                "vinilo"
-                            ) ||
-                            format.includes(
-                                "vinyl"
+                        return (
+                            matchesText &&
+                            (
+                                format.includes(
+                                    "vinilo"
+                                ) ||
+                                format.includes(
+                                    "vinyl"
+                                )
                             )
-                        )
-                    );
+                        );
+
+                    }
+
+
+                    if (
+                        currentCollectionFilter ===
+                        "cd"
+                    ) {
+
+                        return (
+                            matchesText &&
+                            format.includes(
+                                "cd"
+                            )
+                        );
+
+                    }
+
+
+                    return matchesText;
 
                 }
-
-
-                if (
-                    currentCollectionFilter ===
-                    "cd"
-                ) {
-
-                    return (
-                        matchesQuery &&
-                        format.includes(
-                            "cd"
-                        )
-                    );
-
-                }
-
-
-                return matchesQuery;
-
-            }
-        );
+            );
 
 
     renderCollection(
@@ -2065,15 +2694,75 @@ function filterCollection() {
 
 
 
-/* =========================================================
-   RENDER COLECCION
-========================================================= */
+/* ======================================================
+   FOTO DIRECTA
+====================================================== */
+
+function getDirectImageUrl(
+    rawUrl
+) {
+
+    if (!rawUrl) {
+        return "";
+    }
+
+
+    const url =
+        String(
+            rawUrl
+        )
+        .trim();
+
+
+    if (
+        url.includes(
+            "drive.google.com/thumbnail"
+        )
+    ) {
+
+        return url;
+
+    }
+
+
+    const match =
+        url.match(
+            /\/d\/([a-zA-Z0-9_-]+)/
+        ) ||
+        url.match(
+            /[?&]id=([a-zA-Z0-9_-]+)/
+        );
+
+
+    if (
+        match &&
+        match[1]
+    ) {
+
+        return (
+            "https://drive.google.com/thumbnail?id=" +
+            match[1] +
+            "&sz=w600"
+        );
+
+    }
+
+
+    return url;
+
+}
+
+
+
+/* ======================================================
+   RENDER
+====================================================== */
 
 function renderCollection(
     items
 ) {
 
-    const listEl =
+    const list =
         document.getElementById(
             "collectionList"
         );
@@ -2083,10 +2772,10 @@ function renderCollection(
         items.length === 0
     ) {
 
-        listEl.innerHTML =
+        list.innerHTML =
             `
             <div class="text-center py-12 text-slate-500 text-xs">
-                No hay discos registrados en esta categoría.
+                No hay discos registrados.
             </div>
             `;
 
@@ -2095,134 +2784,89 @@ function renderCollection(
     }
 
 
-    listEl.innerHTML =
+    list.innerHTML =
         items.map(
             function (item) {
 
-
                 const artist =
                     item.artist ||
-                    item.artista ||
                     "Desconocido";
 
 
                 const title =
                     item.title ||
-                    item.título ||
-                    item.titulo ||
-                    item.album ||
                     "Sin título";
 
 
                 const format =
                     item.format ||
-                    item.formato ||
                     "Vinilo";
 
 
                 const year =
                     item.year ||
-                    item.año ||
-                    item.ano ||
                     "";
 
 
-                /*
-                 * Soporta varios nombres de columna,
-                 * incluidos los que pudieras tener
-                 * de versiones anteriores.
-                 */
+                const genre =
+                    item.genre ||
+                    "";
 
-                const photoRaw =
 
-                    item.photo ||
+                const condition =
+                    item.condition ||
+                    "";
 
-                    item.fotourl ||
 
-                    item["foto url"] ||
-
-                    item["photo url"] ||
-
-                    item.imagen ||
-
-                    item.image ||
-
+                const location =
+                    item.location ||
                     "";
 
 
                 const photoUrl =
                     getDirectImageUrl(
-                        photoRaw
-                    );
-
-
-                const safeTitle =
-                    escapeHtml(
-                        title
-                    );
-
-
-                const safeArtist =
-                    escapeHtml(
-                        artist
-                    );
-
-
-                const safeFormat =
-                    escapeHtml(
-                        format
-                    );
-
-
-                const safeYear =
-                    escapeHtml(
-                        year
-                    );
-
-
-                const safePhoto =
-                    escapeAttribute(
-                        photoUrl
+                        item.photo ||
+                        ""
                     );
 
 
                 return `
                     <div
-                        class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex gap-3 items-center shadow-md"
+                        class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex gap-3 shadow-md"
                     >
 
                         <div
-                            class="w-16 h-16 bg-slate-950 rounded-lg overflow-hidden flex-shrink-0 border border-slate-800 flex items-center justify-center"
+                            class="w-20 h-20 bg-slate-950 rounded-lg overflow-hidden flex-shrink-0 border border-slate-800 flex items-center justify-center"
                         >
 
                             ${
                                 photoUrl
 
-                                    ? `
-                                        <img
-                                            src="${safePhoto}"
-                                            alt="${safeTitle}"
-                                            class="w-full h-full object-cover"
-                                            loading="lazy"
-                                            referrerpolicy="no-referrer"
-                                            onerror="
-                                                this.onerror=null;
-                                                this.style.display='none';
-                                                this.nextElementSibling.style.display='block';
-                                            "
-                                        >
+                                ? `
+                                    <img
+                                        src="${escapeHtml(photoUrl)}"
+                                        class="w-full h-full object-cover"
+                                        alt="${escapeHtml(title)}"
+                                        loading="lazy"
+                                        referrerpolicy="no-referrer"
+                                        onerror="
+                                            this.onerror=null;
+                                            this.style.display='none';
+                                            this.nextElementSibling.style.display='block';
+                                        "
+                                    >
 
-                                        <i
-                                            class="fa-solid fa-compact-disc text-emerald-400 text-lg"
-                                            style="display:none;"
-                                        ></i>
-                                    `
+                                    <i
+                                        class="fa-solid fa-compact-disc text-emerald-400 text-xl"
+                                        style="display:none"
+                                    ></i>
+                                `
 
-                                    : `
-                                        <i
-                                            class="fa-solid fa-compact-disc text-emerald-400 text-lg"
-                                        ></i>
-                                    `
+                                : `
+                                    <i
+                                        class="fa-solid fa-compact-disc text-emerald-400 text-xl"
+                                    ></i>
+                                `
                             }
 
                         </div>
@@ -2235,30 +2879,74 @@ function renderCollection(
                             <h4
                                 class="text-sm font-bold text-slate-100 truncate"
                             >
-                                ${safeTitle}
+                                ${escapeHtml(title)}
                             </h4>
 
 
                             <p
-                                class="text-xs text-emerald-400 truncate"
+                                class="text-xs text-emerald-400 truncate mt-0.5"
                             >
-                                ${safeArtist}
+                                ${escapeHtml(artist)}
                             </p>
 
 
                             <p
-                                class="text-[10px] text-slate-400 mt-0.5"
+                                class="text-[10px] text-slate-400 mt-2"
                             >
-
-                                ${safeFormat}
-
+                                ${escapeHtml(format)}
                                 ${
-                                    safeYear
-                                        ? " • " + safeYear
-                                        : ""
+                                    year
+                                    ? " • " +
+                                      escapeHtml(year)
+                                    : ""
                                 }
-
                             </p>
+
+
+                            ${
+                                genre
+                                ? `
+                                    <p
+                                        class="text-[10px] text-slate-500 truncate mt-1"
+                                    >
+                                        ${escapeHtml(genre)}
+                                    </p>
+                                `
+                                : ""
+                            }
+
+
+                            ${
+                                condition ||
+                                location
+
+                                ? `
+                                    <p
+                                        class="text-[10px] text-slate-600 truncate mt-1"
+                                    >
+                                        ${
+                                            condition
+                                            ? escapeHtml(condition)
+                                            : ""
+                                        }
+
+                                        ${
+                                            condition &&
+                                            location
+                                            ? " • "
+                                            : ""
+                                        }
+
+                                        ${
+                                            location
+                                            ? escapeHtml(location)
+                                            : ""
+                                        }
+                                    </p>
+                                `
+
+                                : ""
+                            }
 
                         </div>
 
@@ -2266,17 +2954,66 @@ function renderCollection(
                 `;
 
             }
-        ).join("");
+        )
+        .join("");
 
 }
 
 
 
-/* =========================================================
-   SEGURIDAD HTML
-========================================================= */
+/* ======================================================
+   FORMAT
+====================================================== */
 
-function escapeHtml(value) {
+function normalizeFormatFrontend(
+    value
+) {
+
+    const format =
+        String(
+            value || ""
+        )
+        .toLowerCase();
+
+
+    if (
+        format.includes(
+            "cd"
+        )
+    ) {
+
+        return "CD";
+
+    }
+
+
+    if (
+        format.includes(
+            "casete"
+        ) ||
+        format.includes(
+            "cassette"
+        )
+    ) {
+
+        return "Casete";
+
+    }
+
+
+    return "Vinilo";
+
+}
+
+
+
+/* ======================================================
+   ESCAPE
+====================================================== */
+
+function escapeHtml(
+    value
+) {
 
     return String(
         value == null
@@ -2302,16 +3039,6 @@ function escapeHtml(value) {
     .replace(
         /'/g,
         "&#039;"
-    );
-
-}
-
-
-
-function escapeAttribute(value) {
-
-    return escapeHtml(
-        value
     );
 
 }
