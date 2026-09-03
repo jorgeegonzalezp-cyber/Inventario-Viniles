@@ -400,7 +400,7 @@
             btn.disabled = true;
 
             try {
-                // Usando text/plain para evitar problemas de CORS preflight en Apps Script POST
+                // Usando text/plain para evitar errores de CORS con Apps Script POST
                 await fetch(url, {
                     method: 'POST',
                     mode: 'no-cors',
