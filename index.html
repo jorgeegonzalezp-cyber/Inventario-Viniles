@@ -1,511 +1,2324 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>ViniloVault - Inventario Inteligente</title>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link
+        rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    >
 </head>
+
+
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-    <!-- Header -->
-    <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 flex justify-between items-center shadow-md">
-        <h1 class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2">
-            <i class="fa-solid fa-compact-disc"></i> ViniloVault
+
+    <!-- =====================================================
+         HEADER
+    ====================================================== -->
+
+    <header
+        class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 flex justify-between items-center shadow-md"
+    >
+
+        <h1
+            class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2"
+        >
+            <i class="fa-solid fa-compact-disc"></i>
+            ViniloVault
         </h1>
-        <div id="connectionStatus" class="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1">
-            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span> Verificando...
+
+
+        <div
+            id="connectionStatus"
+            class="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1"
+        >
+            <span
+                class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"
+            ></span>
+
+            Verificando...
         </div>
+
     </header>
 
-    <!-- Main Container -->
+
+
+    <!-- =====================================================
+         CONTENIDO PRINCIPAL
+    ====================================================== -->
+
     <main class="flex-1 max-w-md w-full mx-auto p-4 pb-24">
 
-        <!-- TAB 1: ESCANEAR Y REGISTRAR -->
-        <section id="tab-scan" class="tab-content space-y-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
-                <h2 class="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2">
-                    <i class="fa-solid fa-camera text-emerald-400"></i> Escanear Portada
+
+        <!-- =================================================
+             TAB 1 - ESCANEAR
+        ================================================== -->
+
+        <section
+            id="tab-scan"
+            class="tab-content space-y-4"
+        >
+
+
+            <!-- FOTO -->
+
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl"
+            >
+
+                <h2
+                    class="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2"
+                >
+                    <i
+                        class="fa-solid fa-camera text-emerald-400"
+                    ></i>
+
+                    Escanear Portada
                 </h2>
-                
-                <div class="relative border-2 border-dashed border-slate-700 rounded-xl p-6 text-center bg-slate-950/50 hover:border-emerald-500 transition cursor-pointer" onclick="document.getElementById('fileInput').click()">
-                    <input type="file" id="fileInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(event)">
-                    
-                    <div id="dropZoneContent" class="space-y-2">
-                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-400"></i>
-                        <p class="text-sm text-slate-300">Toca para tomar foto o subir portada</p>
-                        <p class="text-xs text-slate-500">Gemini IA leerá los datos automáticamente</p>
+
+
+                <div
+                    class="relative border-2 border-dashed border-slate-700 rounded-xl p-6 text-center bg-slate-950/50 hover:border-emerald-500 transition cursor-pointer"
+                    onclick="document.getElementById('fileInput').click()"
+                >
+
+                    <input
+                        type="file"
+                        id="fileInput"
+                        accept="image/*"
+                        capture="environment"
+                        class="hidden"
+                        onchange="handleImageSelection(event)"
+                    >
+
+
+                    <div
+                        id="dropZoneContent"
+                        class="space-y-2"
+                    >
+
+                        <i
+                            class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-400"
+                        ></i>
+
+                        <p class="text-sm text-slate-300">
+                            Toca para tomar foto o subir portada
+                        </p>
+
+                        <p class="text-xs text-slate-500">
+                            Gemini IA leerá los datos automáticamente
+                        </p>
+
                     </div>
 
-                    <div id="imagePreviewContainer" class="hidden relative">
-                        <img id="imagePreview" class="max-h-56 mx-auto rounded-lg shadow-md object-contain">
-                        <button onclick="event.stopPropagation(); resetImageCapture();" class="absolute top-2 right-2 bg-slate-900/80 hover:bg-red-500 text-slate-200 p-2 rounded-full text-xs transition shadow">
-                            <i class="fa-solid fa-xmark"></i>
+
+
+                    <div
+                        id="imagePreviewContainer"
+                        class="hidden relative"
+                    >
+
+                        <img
+                            id="imagePreview"
+                            class="max-h-56 mx-auto rounded-lg shadow-md object-contain"
+                        >
+
+
+                        <button
+                            onclick="event.stopPropagation(); resetImageCapture();"
+                            class="absolute top-2 right-2 bg-slate-900/80 hover:bg-red-500 text-slate-200 p-2 rounded-full text-xs transition shadow"
+                        >
+
+                            <i
+                                class="fa-solid fa-xmark"
+                            ></i>
+
                         </button>
+
                     </div>
+
                 </div>
 
-                <div id="aiLoading" class="hidden mt-4 text-center py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-sm">
-                    <i class="fa-solid fa-wand-magic-sparkles animate-bounce"></i> Analizando disco con IA...
+
+
+                <!-- ESTADO GEMINI -->
+
+                <div
+                    id="aiLoading"
+                    class="hidden mt-4 text-center py-3 bg-emerald-500/10 border border-emerald-500/20 rounded-xl text-emerald-400 text-sm"
+                >
+
+                    <i
+                        class="fa-solid fa-wand-magic-sparkles animate-bounce"
+                    ></i>
+
+                    Analizando disco con IA...
+
                 </div>
+
             </div>
 
-            <!-- Formulario de Registro -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
-                <h2 class="text-lg font-semibold text-slate-200 mb-2">Detalles del Disco</h2>
-                
+
+
+            <!-- =================================================
+                 FORMULARIO
+            ================================================== -->
+
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3"
+            >
+
+                <h2
+                    class="text-lg font-semibold text-slate-200 mb-2"
+                >
+                    Detalles del Disco
+                </h2>
+
+
+                <!-- ARTISTA / TITULO -->
+
                 <div class="grid grid-cols-2 gap-3">
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Artista *</label>
-                        <input type="text" id="formArtist" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Artista *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="formArtist"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
                     </div>
+
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Álbum / Título *</label>
-                        <input type="text" id="formTitle" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Álbum / Título *
+                        </label>
+
+                        <input
+                            type="text"
+                            id="formTitle"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
                     </div>
+
                 </div>
+
+
+
+                <!-- FORMATO / AÑO / GENERO -->
 
                 <div class="grid grid-cols-3 gap-2">
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Formato</label>
-                        <select id="formFormat" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
-                            <option value="Vinilo">Vinilo</option>
-                            <option value="CD">CD</option>
-                            <option value="Casete">Casete</option>
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Formato
+                        </label>
+
+                        <select
+                            id="formFormat"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
+                            <option value="Vinilo">
+                                Vinilo
+                            </option>
+
+                            <option value="CD">
+                                CD
+                            </option>
+
+                            <option value="Casete">
+                                Casete
+                            </option>
+
                         </select>
+
                     </div>
+
+
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Año</label>
-                        <input type="text" id="formYear" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Año
+                        </label>
+
+                        <input
+                            type="text"
+                            id="formYear"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
                     </div>
+
+
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Género</label>
-                        <input type="text" id="formGenre" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Género
+                        </label>
+
+                        <input
+                            type="text"
+                            id="formGenre"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
                     </div>
+
                 </div>
+
+
+
+                <!-- SELLO / CONDICION -->
 
                 <div class="grid grid-cols-2 gap-3">
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Sello / Disquera</label>
-                        <input type="text" id="formLabel" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Sello / Disquera
+                        </label>
+
+                        <input
+                            type="text"
+                            id="formLabel"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
                     </div>
+
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Condición</label>
-                        <input type="text" id="formCondition" placeholder="Ej. NM, VG+" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Condición
+                        </label>
+
+                        <input
+                            type="text"
+                            id="formCondition"
+                            placeholder="Ej. NM, VG+"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
                     </div>
+
                 </div>
+
+
+
+                <!-- UBICACION / PRECIO -->
 
                 <div class="grid grid-cols-2 gap-3">
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Ubicación</label>
-                        <input type="text" id="formLocation" placeholder="Ej. Estante 1" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Ubicación
+                        </label>
+
+                        <input
+                            type="text"
+                            id="formLocation"
+                            placeholder="Ej. Estante 1"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
                     </div>
+
+
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Precio ($)</label>
-                        <input type="number" id="formPrice" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
+
+                        <label
+                            class="text-xs text-slate-400 font-medium"
+                        >
+                            Precio ($)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="formPrice"
+                            class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                        >
+
                     </div>
+
                 </div>
 
-                <button onclick="saveItem()" id="saveBtn" class="w-full mt-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-floppy-disk"></i> Guardar en Colección
+
+
+                <!-- BOTON GUARDAR -->
+
+                <button
+                    onclick="saveItem()"
+                    id="saveBtn"
+                    class="w-full mt-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-3 rounded-xl transition shadow-lg flex items-center justify-center gap-2"
+                >
+
+                    <i
+                        class="fa-solid fa-floppy-disk"
+                    ></i>
+
+                    Guardar en Colección
+
                 </button>
+
             </div>
+
         </section>
 
-        <!-- TAB 2: COLECCIÓN CON SUBMENÚ Y BÚSQUEDA -->
-        <section id="tab-collection" class="tab-content hidden space-y-4">
-            <div class="flex justify-between items-center">
-                <h2 class="text-lg font-semibold text-slate-200">Mi Colección</h2>
-                <button onclick="loadCollection()" class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-emerald-400 flex items-center gap-1 transition">
-                    <i class="fa-solid fa-rotate"></i> Actualizar
-                </button>
-            </div>
 
-            <!-- Submenú de Categorías -->
-            <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1">
-                <button onclick="setCollectionFilter('todos')" id="filter-todos" class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow">Todos</button>
-                <button onclick="setCollectionFilter('vinilo')" id="filter-vinilo" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition">Vinilos</button>
-                <button onclick="setCollectionFilter('cd')" id="filter-cd" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition">CDs</button>
-            </div>
 
-            <!-- Barra de Búsqueda -->
-            <div class="relative">
-                <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-sm"></i>
-                <input type="text" id="searchInput" oninput="filterCollection()" placeholder="Buscar por artista o álbum..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
-            </div>
+        <!-- =================================================
+             TAB 2 - COLECCION
+        ================================================== -->
 
-            <div id="collectionList" class="space-y-3">
-                <!-- Se llena dinámicamente -->
-            </div>
-        </section>
+        <section
+            id="tab-collection"
+            class="tab-content hidden space-y-4"
+        >
 
-        <!-- TAB 3: AJUSTES -->
-        <section id="tab-settings" class="tab-content hidden space-y-4">
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
-                <h2 class="text-lg font-semibold text-slate-200 flex items-center gap-2">
-                    <i class="fa-solid fa-gear text-emerald-400"></i> Configuración de Enlace
+            <div
+                class="flex justify-between items-center"
+            >
+
+                <h2
+                    class="text-lg font-semibold text-slate-200"
+                >
+                    Mi Colección
                 </h2>
 
+
+                <button
+                    onclick="loadCollection()"
+                    class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-emerald-400 flex items-center gap-1 transition"
+                >
+
+                    <i
+                        class="fa-solid fa-rotate"
+                    ></i>
+
+                    Actualizar
+
+                </button>
+
+            </div>
+
+
+
+            <!-- FILTROS -->
+
+            <div
+                class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1"
+            >
+
+                <button
+                    onclick="setCollectionFilter('todos')"
+                    id="filter-todos"
+                    class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow"
+                >
+                    Todos
+                </button>
+
+
+                <button
+                    onclick="setCollectionFilter('vinilo')"
+                    id="filter-vinilo"
+                    class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
+                >
+                    Vinilos
+                </button>
+
+
+                <button
+                    onclick="setCollectionFilter('cd')"
+                    id="filter-cd"
+                    class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
+                >
+                    CDs
+                </button>
+
+            </div>
+
+
+
+            <!-- BUSCADOR -->
+
+            <div class="relative">
+
+                <i
+                    class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-sm"
+                ></i>
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    oninput="filterCollection()"
+                    placeholder="Buscar por artista o álbum..."
+                    class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                >
+
+            </div>
+
+
+
+            <div
+                id="collectionList"
+                class="space-y-3"
+            ></div>
+
+        </section>
+
+
+
+        <!-- =================================================
+             TAB 3 - AJUSTES
+        ================================================== -->
+
+        <section
+            id="tab-settings"
+            class="tab-content hidden space-y-4"
+        >
+
+            <div
+                class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
+            >
+
+                <h2
+                    class="text-lg font-semibold text-slate-200 flex items-center gap-2"
+                >
+
+                    <i
+                        class="fa-solid fa-gear text-emerald-400"
+                    ></i>
+
+                    Configuración de Enlace
+
+                </h2>
+
+
+
                 <div>
-                    <label class="text-xs text-slate-400 font-medium">URL de Google Apps Script (Web App)</label>
-                    <input type="text" id="settingUrl" placeholder="https://script.google.com/macros/s/.../exec" class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none font-mono">
+
+                    <label
+                        class="text-xs text-slate-400 font-medium"
+                    >
+                        URL de Google Apps Script
+                    </label>
+
+                    <input
+                        type="text"
+                        id="settingUrl"
+                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none font-mono"
+                    >
+
                 </div>
 
+
+
                 <div class="flex gap-2">
-                    <button onclick="saveSettings()" class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition">
+
+                    <button
+                        onclick="saveSettings()"
+                        class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition"
+                    >
                         Guardar Configuración
                     </button>
-                    <button onclick="testConnection()" class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm transition">
+
+
+                    <button
+                        onclick="testConnection()"
+                        class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm transition"
+                    >
                         Probar
                     </button>
+
                 </div>
+
             </div>
+
         </section>
 
     </main>
 
-    <!-- Navegación Inferior -->
-    <nav class="bg-slate-900 border-t border-slate-800 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-3 z-50">
-        <button onclick="switchTab('scan')" id="nav-scan" class="flex flex-col items-center text-emerald-400 transition">
+
+
+    <!-- =====================================================
+         NAVEGACION
+    ====================================================== -->
+
+    <nav
+        class="bg-slate-900 border-t border-slate-800 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-3 z-50"
+    >
+
+        <button
+            onclick="switchTab('scan')"
+            id="nav-scan"
+            class="flex flex-col items-center text-emerald-400 transition"
+        >
+
             <i class="fa-solid fa-camera text-lg"></i>
-            <span class="text-[10px] mt-1">Escanear</span>
+
+            <span class="text-[10px] mt-1">
+                Escanear
+            </span>
+
         </button>
-        <button onclick="switchTab('collection')" id="nav-collection" class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition">
+
+
+
+        <button
+            onclick="switchTab('collection')"
+            id="nav-collection"
+            class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition"
+        >
+
             <i class="fa-solid fa-compact-disc text-lg"></i>
-            <span class="text-[10px] mt-1">Colección</span>
+
+            <span class="text-[10px] mt-1">
+                Colección
+            </span>
+
         </button>
-        <button onclick="switchTab('settings')" id="nav-settings" class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition">
+
+
+
+        <button
+            onclick="switchTab('settings')"
+            id="nav-settings"
+            class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition"
+        >
+
             <i class="fa-solid fa-gear text-lg"></i>
-            <span class="text-[10px] mt-1">Ajustes</span>
+
+            <span class="text-[10px] mt-1">
+                Ajustes
+            </span>
+
         </button>
+
     </nav>
 
-    <!-- Modal Personalizado -->
-    <div id="appModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xs w-full p-5 text-center space-y-3 shadow-2xl">
-            <div id="modalIcon" class="text-3xl text-emerald-400"></div>
-            <h3 id="modalTitle" class="font-bold text-slate-100">Aviso</h3>
-            <p id="modalMessage" class="text-xs text-slate-300"></p>
-            <button onclick="closeModal()" class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 rounded-xl text-xs transition">Aceptar</button>
+
+
+    <!-- =====================================================
+         MODAL
+    ====================================================== -->
+
+    <div
+        id="appModal"
+        class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    >
+
+        <div
+            class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xs w-full p-5 text-center space-y-3 shadow-2xl"
+        >
+
+            <div
+                id="modalIcon"
+                class="text-3xl text-emerald-400"
+            ></div>
+
+
+            <h3
+                id="modalTitle"
+                class="font-bold text-slate-100"
+            >
+                Aviso
+            </h3>
+
+
+            <p
+                id="modalMessage"
+                class="text-xs text-slate-300"
+            ></p>
+
+
+            <button
+                onclick="closeModal()"
+                class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2 rounded-xl text-xs transition"
+            >
+                Aceptar
+            </button>
+
         </div>
+
     </div>
 
-    <script>
-        let currentImageBase64 = "";
-        let fullCollectionData = [];
-        let currentCollectionFilter = 'todos';
 
-        window.onload = function() {
-            const savedUrl = localStorage.getItem("gas_url") || "";
-            document.getElementById("settingUrl").value = savedUrl;
-            if (savedUrl) {
-                testConnection();
-                loadCollection();
-            } else {
-                updateStatus(false, "Configura tu URL en Ajustes");
-            }
-        };
 
-        function switchTab(tabName) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById('tab-' + tabName).classList.remove('hidden');
+<script>
 
-            ['scan', 'collection', 'settings'].forEach(t => {
-                const btn = document.getElementById('nav-' + t);
-                btn.className = t === tabName ? "flex flex-col items-center text-emerald-400 transition" : "flex flex-col items-center text-slate-400 hover:text-slate-200 transition";
-            });
 
-            if (tabName === 'collection') {
-                loadCollection();
-            }
+/* =========================================================
+   CONFIGURACION
+========================================================= */
+
+const DEFAULT_GAS_URL =
+    "https://script.google.com/macros/s/AKfycbw5om1Z0fb9rVY6PJfLYnwdafZengkv5wFaoL3d8EYNzVFO2x18TKw4KWnaLp3-PlJ1yQ/exec";
+
+
+let currentImageBase64 = "";
+
+let fullCollectionData = [];
+
+let currentCollectionFilter = "todos";
+
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+window.onload = function () {
+
+    let savedUrl =
+        localStorage.getItem("gas_url");
+
+    if (!savedUrl) {
+
+        savedUrl = DEFAULT_GAS_URL;
+
+        localStorage.setItem(
+            "gas_url",
+            savedUrl
+        );
+
+    }
+
+    document.getElementById(
+        "settingUrl"
+    ).value = savedUrl;
+
+
+    testConnection();
+
+    loadCollection();
+
+};
+
+
+
+/* =========================================================
+   NAVEGACION
+========================================================= */
+
+function switchTab(tabName) {
+
+    document
+        .querySelectorAll(".tab-content")
+        .forEach(function (el) {
+
+            el.classList.add("hidden");
+
+        });
+
+
+    document
+        .getElementById(
+            "tab-" + tabName
+        )
+        .classList
+        .remove("hidden");
+
+
+    [
+        "scan",
+        "collection",
+        "settings"
+
+    ].forEach(function (t) {
+
+        const btn =
+            document.getElementById(
+                "nav-" + t
+            );
+
+
+        btn.className =
+            t === tabName
+
+                ? "flex flex-col items-center text-emerald-400 transition"
+
+                : "flex flex-col items-center text-slate-400 hover:text-slate-200 transition";
+
+    });
+
+
+    if (
+        tabName === "collection"
+    ) {
+
+        loadCollection();
+
+    }
+
+}
+
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+function setCollectionFilter(filter) {
+
+    currentCollectionFilter =
+        filter;
+
+
+    [
+        "todos",
+        "vinilo",
+        "cd"
+
+    ].forEach(function (f) {
+
+        const btn =
+            document.getElementById(
+                "filter-" + f
+            );
+
+
+        if (
+            f === filter
+        ) {
+
+            btn.className =
+                "flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow";
+
+        } else {
+
+            btn.className =
+                "flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition";
+
         }
 
-        function setCollectionFilter(filter) {
-            currentCollectionFilter = filter;
-            ['todos', 'vinilo', 'cd'].forEach(f => {
-                const btn = document.getElementById('filter-' + f);
-                if (f === filter) {
-                    btn.className = "flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow";
-                } else {
-                    btn.className = "flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition";
+    });
+
+
+    filterCollection();
+
+}
+
+
+
+/* =========================================================
+   ESTADO CONEXION
+========================================================= */
+
+function updateStatus(
+    isOnline,
+    text
+) {
+
+    const statusEl =
+        document.getElementById(
+            "connectionStatus"
+        );
+
+
+    if (
+        isOnline
+    ) {
+
+        statusEl.className =
+            "text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1";
+
+        statusEl.innerHTML =
+            '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> ' +
+            escapeHtml(text);
+
+    } else {
+
+        statusEl.className =
+            "text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 flex items-center gap-1";
+
+        statusEl.innerHTML =
+            '<span class="w-2 h-2 rounded-full bg-red-400"></span> ' +
+            escapeHtml(text);
+
+    }
+
+}
+
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function showModal(
+    title,
+    message,
+    isError = false
+) {
+
+    document.getElementById(
+        "modalTitle"
+    ).innerText = title;
+
+
+    document.getElementById(
+        "modalMessage"
+    ).innerText = message;
+
+
+    document.getElementById(
+        "modalIcon"
+    ).innerHTML =
+
+        isError
+
+            ? '<i class="fa-solid fa-triangle-exclamation text-red-400"></i>'
+
+            : '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+
+
+    document.getElementById(
+        "appModal"
+    ).classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+function closeModal() {
+
+    document.getElementById(
+        "appModal"
+    ).classList.add(
+        "hidden"
+    );
+
+}
+
+
+
+/* =========================================================
+   AJUSTES
+========================================================= */
+
+function saveSettings() {
+
+    const url =
+        document.getElementById(
+            "settingUrl"
+        ).value.trim();
+
+
+    if (
+        !url
+    ) {
+
+        showModal(
+            "URL requerida",
+            "Ingresa la URL de Apps Script.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    localStorage.setItem(
+        "gas_url",
+        url
+    );
+
+
+    showModal(
+        "Guardado",
+        "Enlace configurado correctamente."
+    );
+
+
+    testConnection();
+
+    loadCollection();
+
+}
+
+
+
+/* =========================================================
+   PROBAR CONEXION
+========================================================= */
+
+async function testConnection() {
+
+    const url =
+        localStorage.getItem(
+            "gas_url"
+        ) || DEFAULT_GAS_URL;
+
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "GET"
                 }
-            });
-            filterCollection();
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+
         }
 
-        function updateStatus(isOnline, text) {
-            const statusEl = document.getElementById('connectionStatus');
-            if (isOnline) {
-                statusEl.className = "text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1";
-                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-400"></span> ${text}`;
-            } else {
-                statusEl.className = "text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 flex items-center gap-1";
-                statusEl.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-400"></span> ${text}`;
-            }
-        }
 
-        function showModal(title, message, isError = false) {
-            document.getElementById('modalTitle').innerText = title;
-            document.getElementById('modalMessage').innerText = message;
-            document.getElementById('modalIcon').innerHTML = isError ? '<i class="fa-solid fa-triangle-exclamation text-red-400"></i>' : '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
-            document.getElementById('appModal').classList.remove('hidden');
-        }
+        const data =
+            await response.json();
 
-        function closeModal() {
-            document.getElementById('appModal').classList.add('hidden');
-        }
 
-        function saveSettings() {
-            const url = document.getElementById('settingUrl').value.trim();
-            localStorage.setItem("gas_url", url);
-            showModal("Guardado", "Enlace configurado correctamente.");
-            testConnection();
-            loadCollection();
-        }
+        updateStatus(
+            true,
+            "Conectado"
+        );
 
-        async function testConnection() {
-            const url = localStorage.getItem("gas_url");
-            if (!url) return;
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                updateStatus(true, "Conectado");
-            } catch (err) {
-                updateStatus(false, "Error de enlace");
-            }
-        }
 
-        function handleImageSelection(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        return data;
 
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const img = new Image();
-                img.onload = function() {
-                    const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 800;
-                    let width = img.width;
-                    let height = img.height;
+    } catch (error) {
 
-                    if (width > height) {
-                        if (width > MAX_WIDTH) { height *= MAX_WIDTH / width; width = MAX_WIDTH; }
+        console.error(
+            "Error conexión:",
+            error
+        );
+
+
+        updateStatus(
+            false,
+            "Error de enlace"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   CAPTURA DE IMAGEN
+========================================================= */
+
+function handleImageSelection(event) {
+
+    const file =
+        event.target.files[0];
+
+
+    if (
+        !file
+    ) {
+
+        return;
+
+    }
+
+
+    if (
+        !file.type.startsWith(
+            "image/"
+        )
+    ) {
+
+        showModal(
+            "Archivo inválido",
+            "Selecciona una imagen.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    const reader =
+        new FileReader();
+
+
+    reader.onload =
+        function (e) {
+
+            const img =
+                new Image();
+
+
+            img.onload =
+                function () {
+
+
+                    const canvas =
+                        document.createElement(
+                            "canvas"
+                        );
+
+
+                    /*
+                     * 1000px es suficiente para que
+                     * Gemini lea una portada y mantiene
+                     * reducido el tamaño del payload.
+                     */
+
+                    const MAX_WIDTH =
+                        1000;
+
+                    const MAX_HEIGHT =
+                        1000;
+
+
+                    let width =
+                        img.width;
+
+                    let height =
+                        img.height;
+
+
+                    if (
+                        width > height
+                    ) {
+
+                        if (
+                            width > MAX_WIDTH
+                        ) {
+
+                            height *=
+                                MAX_WIDTH /
+                                width;
+
+                            width =
+                                MAX_WIDTH;
+
+                        }
+
                     } else {
-                        if (height > MAX_HEIGHT) { width *= MAX_HEIGHT / height; height = MAX_HEIGHT; }
+
+                        if (
+                            height > MAX_HEIGHT
+                        ) {
+
+                            width *=
+                                MAX_HEIGHT /
+                                height;
+
+                            height =
+                                MAX_HEIGHT;
+
+                        }
+
                     }
 
-                    canvas.width = width;
-                    canvas.height = height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0, width, height);
 
-                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
-                    
-                    const preview = document.getElementById('imagePreview');
-                    preview.src = currentImageBase64;
-                    document.getElementById('imagePreviewContainer').classList.remove('hidden');
-                    document.getElementById('dropZoneContent').classList.add('hidden');
+                    width =
+                        Math.round(
+                            width
+                        );
 
-                    analyzeImageWithGemini(currentImageBase64);
+                    height =
+                        Math.round(
+                            height
+                        );
+
+
+                    canvas.width =
+                        width;
+
+                    canvas.height =
+                        height;
+
+
+                    const ctx =
+                        canvas.getContext(
+                            "2d"
+                        );
+
+
+                    ctx.drawImage(
+                        img,
+                        0,
+                        0,
+                        width,
+                        height
+                    );
+
+
+                    currentImageBase64 =
+                        canvas.toDataURL(
+                            "image/jpeg",
+                            0.82
+                        );
+
+
+                    const preview =
+                        document.getElementById(
+                            "imagePreview"
+                        );
+
+
+                    preview.src =
+                        currentImageBase64;
+
+
+                    document.getElementById(
+                        "imagePreviewContainer"
+                    ).classList.remove(
+                        "hidden"
+                    );
+
+
+                    document.getElementById(
+                        "dropZoneContent"
+                    ).classList.add(
+                        "hidden"
+                    );
+
+
+                    analyzeImageWithGemini(
+                        currentImageBase64
+                    );
+
                 };
-                img.src = e.target.result;
-            };
-            reader.readAsDataURL(file);
+
+
+            img.onerror =
+                function () {
+
+                    showModal(
+                        "Error",
+                        "No se pudo leer la imagen.",
+                        true
+                    );
+
+                };
+
+
+            img.src =
+                e.target.result;
+
+        };
+
+
+    reader.readAsDataURL(
+        file
+    );
+
+}
+
+
+
+/* =========================================================
+   RESETEAR IMAGEN
+========================================================= */
+
+function resetImageCapture() {
+
+    currentImageBase64 =
+        "";
+
+
+    document.getElementById(
+        "fileInput"
+    ).value = "";
+
+
+    document.getElementById(
+        "imagePreview"
+    ).src = "";
+
+
+    document.getElementById(
+        "imagePreviewContainer"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "dropZoneContent"
+    ).classList.remove(
+        "hidden"
+    );
+
+}
+
+
+
+/* =========================================================
+   ANALIZAR CON GEMINI
+   LA API KEY YA NO ESTA EN EL INDEX
+========================================================= */
+
+async function analyzeImageWithGemini(
+    base64Data
+) {
+
+    const loading =
+        document.getElementById(
+            "aiLoading"
+        );
+
+
+    loading.classList.remove(
+        "hidden"
+    );
+
+
+    try {
+
+        const url =
+            localStorage.getItem(
+                "gas_url"
+            ) || DEFAULT_GAS_URL;
+
+
+        if (
+            !url
+        ) {
+
+            throw new Error(
+                "No está configurada la URL de Apps Script."
+            );
+
         }
 
-        function resetImageCapture() {
-            currentImageBase64 = "";
-            document.getElementById('fileInput').value = "";
-            document.getElementById('imagePreview').src = "";
-            document.getElementById('imagePreviewContainer').classList.add('hidden');
-            document.getElementById('dropZoneContent').classList.remove('hidden');
-        }
 
-        async function analyzeImageWithGemini(base64Data) {
-            const loading = document.getElementById('aiLoading');
-            loading.classList.remove('hidden');
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "POST",
 
-            const base64Clean = base64Data.split(',')[1];
-            const systemPrompt = "Analiza esta portada de disco de vinilo o CD. Devuelve estrictamente un objeto JSON válido con las claves: artist, title, format ('Vinilo' o 'CD'), year, genre, label, condition. No agregues texto adicional fuera del JSON.";
-            const apiKey = ""; 
+                    headers: {
+                        "Content-Type":
+                            "text/plain;charset=utf-8"
+                    },
 
-            try {
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [
-                                { text: "Extrae los metadatos de este disco." },
-                                { inlineData: { mimeType: "image/jpeg", data: base64Clean } }
-                            ]
-                        }],
-                        systemInstruction: { parts: [{ text: systemPrompt }] }
-                    })
-                });
+                    body:
+                        JSON.stringify({
+                            action:
+                                "analyze",
 
-                const result = await response.json();
-                const textOutput = result.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
-                const cleanJson = textOutput.replace(/```json/g, '').replace(/```/g, '').trim();
-                const data = JSON.parse(cleanJson);
-
-                document.getElementById('formArtist').value = data.artist || "";
-                document.getElementById('formTitle').value = data.title || "";
-                if (data.format) {
-                    const fmt = data.format.toLowerCase();
-                    if (fmt.includes('cd')) document.getElementById('formFormat').value = 'CD';
-                    else if (fmt.includes('vinil') || fmt.includes('vinyl')) document.getElementById('formFormat').value = 'Vinilo';
+                            photo:
+                                base64Data
+                        })
                 }
-                document.getElementById('formYear').value = data.year || "";
-                document.getElementById('formGenre').value = data.genre || "";
-                document.getElementById('formLabel').value = data.label || "";
-                document.getElementById('formCondition').value = data.condition || "";
+            );
 
-            } catch (err) {
-                console.warn("AI analysis skipped or failed", err);
-            } finally {
-                loading.classList.add('hidden');
-            }
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                "Error HTTP " +
+                response.status
+            );
+
         }
 
-        async function saveItem() {
-            const url = localStorage.getItem("gas_url");
-            if (!url) {
-                showModal("Falta configurar", "Configura tu enlace de Apps Script en Ajustes.", true);
-                return;
-            }
 
-            const artistVal = document.getElementById('formArtist').value.trim();
-            const titleVal = document.getElementById('formTitle').value.trim();
+        const result =
+            await response.json();
 
-            if (!artistVal || !titleVal) {
-                showModal("Campos incompletos", "Por favor ingresa al menos el Artista y el Título del disco.", true);
-                return;
-            }
 
-            const payload = {
-                artist: artistVal,
-                title: titleVal,
-                format: document.getElementById('formFormat').value,
-                year: document.getElementById('formYear').value,
-                genre: document.getElementById('formGenre').value,
-                label: document.getElementById('formLabel').value,
-                condition: document.getElementById('formCondition').value,
-                location: document.getElementById('formLocation').value,
-                price: document.getElementById('formPrice').value,
-                photo: currentImageBase64
-            };
+        if (
+            result.status !==
+            "success"
+        ) {
 
-            const btn = document.getElementById('saveBtn');
-            btn.innerHTML = '<i class="fa-solid fa-spinner animate-spin"></i> Guardando...';
-            btn.disabled = true;
+            throw new Error(
+                result.message ||
+                "No se pudo analizar la imagen."
+            );
 
-            try {
-                await fetch(url, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                    body: JSON.stringify(payload)
-                });
-
-                showModal("¡Éxito!", "Disco guardado en tu colección y Google Sheet.");
-                resetForm();
-                setTimeout(() => loadCollection(), 2000);
-
-            } catch (err) {
-                showModal("Error", "No se pudo enviar el registro al servidor.", true);
-            } finally {
-                btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar en Colección';
-                btn.disabled = false;
-            }
         }
 
-        function resetForm() {
-            currentImageBase64 = "";
-            document.getElementById('fileInput').value = "";
-            document.getElementById('imagePreview').src = "";
-            document.getElementById('imagePreviewContainer').classList.add('hidden');
-            document.getElementById('dropZoneContent').classList.remove('hidden');
-            ['formArtist', 'formTitle', 'formYear', 'formGenre', 'formLabel', 'formCondition', 'formLocation', 'formPrice'].forEach(id => {
-                document.getElementById(id).value = "";
-            });
-        }
 
-        async function loadCollection() {
-            const url = localStorage.getItem("gas_url");
-            if (!url) return;
+        const data =
+            result.data || {};
 
-            try {
-                const res = await fetch(url);
-                const data = await res.json();
-                fullCollectionData = Array.isArray(data) ? data : [];
-                filterCollection();
-            } catch (err) {
-                console.error(err);
+
+        document.getElementById(
+            "formArtist"
+        ).value =
+            data.artist || "";
+
+
+        document.getElementById(
+            "formTitle"
+        ).value =
+            data.title || "";
+
+
+        if (
+            data.format
+        ) {
+
+            const fmt =
+                String(
+                    data.format
+                ).toLowerCase();
+
+
+            if (
+                fmt.includes(
+                    "cd"
+                )
+            ) {
+
+                document.getElementById(
+                    "formFormat"
+                ).value =
+                    "CD";
+
+            } else {
+
+                document.getElementById(
+                    "formFormat"
+                ).value =
+                    "Vinilo";
+
             }
+
         }
 
-        function getDirectImageUrl(rawUrl) {
-            if (!rawUrl) return "";
-            if (rawUrl.includes("drive.google.com")) {
-                const matchId = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/) || rawUrl.match(/id=([a-zA-Z0-9_-]+)/);
-                if (matchId && matchId[1]) {
-                    return `https://lh3.googleusercontent.com/d/${matchId[1]}`;
+
+        document.getElementById(
+            "formYear"
+        ).value =
+            data.year || "";
+
+
+        document.getElementById(
+            "formGenre"
+        ).value =
+            data.genre || "";
+
+
+        document.getElementById(
+            "formLabel"
+        ).value =
+            data.label || "";
+
+
+        document.getElementById(
+            "formCondition"
+        ).value =
+            data.condition || "";
+
+
+    } catch (error) {
+
+        console.error(
+            "Error Gemini:",
+            error
+        );
+
+
+        showModal(
+            "Error de reconocimiento",
+            error.message ||
+            "No se pudo analizar la portada.",
+            true
+        );
+
+
+    } finally {
+
+        loading.classList.add(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+
+/* =========================================================
+   GUARDAR DISCO
+========================================================= */
+
+async function saveItem() {
+
+    const url =
+        localStorage.getItem(
+            "gas_url"
+        ) || DEFAULT_GAS_URL;
+
+
+    if (
+        !url
+    ) {
+
+        showModal(
+            "Falta configurar",
+            "Configura el enlace de Apps Script.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    const artistVal =
+        document.getElementById(
+            "formArtist"
+        ).value.trim();
+
+
+    const titleVal =
+        document.getElementById(
+            "formTitle"
+        ).value.trim();
+
+
+    if (
+        !artistVal ||
+        !titleVal
+    ) {
+
+        showModal(
+            "Campos incompletos",
+            "Ingresa al menos el artista y el título.",
+            true
+        );
+
+        return;
+
+    }
+
+
+    const payload = {
+
+        action:
+            "save",
+
+        artist:
+            artistVal,
+
+        title:
+            titleVal,
+
+        edition:
+            "",
+
+        format:
+            document.getElementById(
+                "formFormat"
+            ).value,
+
+        year:
+            document.getElementById(
+                "formYear"
+            ).value,
+
+        genre:
+            document.getElementById(
+                "formGenre"
+            ).value,
+
+        label:
+            document.getElementById(
+                "formLabel"
+            ).value,
+
+        condition:
+            document.getElementById(
+                "formCondition"
+            ).value,
+
+        location:
+            document.getElementById(
+                "formLocation"
+            ).value,
+
+        price:
+            document.getElementById(
+                "formPrice"
+            ).value,
+
+        photo:
+            currentImageBase64
+
+    };
+
+
+    const btn =
+        document.getElementById(
+            "saveBtn"
+        );
+
+
+    btn.innerHTML =
+        '<i class="fa-solid fa-spinner animate-spin"></i> Guardando...';
+
+
+    btn.disabled =
+        true;
+
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method:
+                        "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "text/plain;charset=utf-8"
+                    },
+
+                    body:
+                        JSON.stringify(
+                            payload
+                        )
                 }
-            }
-            return rawUrl;
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+
         }
 
-        function filterCollection() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = fullCollectionData.filter(item => {
-                const artist = String(item.artist || item.artista || "").toLowerCase();
-                const title = String(item.title || item.título || item.album || "").toLowerCase();
-                const format = String(item.format || item.formato || "").toLowerCase();
 
-                const matchesQuery = artist.includes(query) || title.includes(query);
-                
-                if (currentCollectionFilter === 'vinilo') {
-                    return matchesQuery && format.includes('vinilo');
-                } else if (currentCollectionFilter === 'cd') {
-                    return matchesQuery && format.includes('cd');
+        const result =
+            await response.json();
+
+
+        if (
+            result.status !==
+            "success"
+        ) {
+
+            throw new Error(
+                result.message ||
+                "El servidor no pudo guardar el disco."
+            );
+
+        }
+
+
+        showModal(
+            "Guardado",
+            "Disco guardado correctamente en tu colección."
+        );
+
+
+        resetForm();
+
+
+        await loadCollection();
+
+
+    } catch (error) {
+
+        console.error(
+            "Error guardando:",
+            error
+        );
+
+
+        showModal(
+            "Error",
+            error.message ||
+            "No se pudo guardar el registro.",
+            true
+        );
+
+
+    } finally {
+
+        btn.innerHTML =
+            '<i class="fa-solid fa-floppy-disk"></i> Guardar en Colección';
+
+
+        btn.disabled =
+            false;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   RESET FORMULARIO
+========================================================= */
+
+function resetForm() {
+
+    currentImageBase64 =
+        "";
+
+
+    document.getElementById(
+        "fileInput"
+    ).value =
+        "";
+
+
+    document.getElementById(
+        "imagePreview"
+    ).src =
+        "";
+
+
+    document.getElementById(
+        "imagePreviewContainer"
+    ).classList.add(
+        "hidden"
+    );
+
+
+    document.getElementById(
+        "dropZoneContent"
+    ).classList.remove(
+        "hidden"
+    );
+
+
+    [
+        "formArtist",
+        "formTitle",
+        "formYear",
+        "formGenre",
+        "formLabel",
+        "formCondition",
+        "formLocation",
+        "formPrice"
+
+    ].forEach(
+        function (id) {
+
+            document.getElementById(
+                id
+            ).value =
+                "";
+
+        }
+    );
+
+
+    document.getElementById(
+        "formFormat"
+    ).value =
+        "Vinilo";
+
+}
+
+
+
+/* =========================================================
+   CARGAR COLECCION
+========================================================= */
+
+async function loadCollection() {
+
+    const url =
+        localStorage.getItem(
+            "gas_url"
+        ) || DEFAULT_GAS_URL;
+
+
+    if (
+        !url
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                url +
+                "?t=" +
+                Date.now()
+            );
+
+
+        if (
+            !response.ok
+        ) {
+
+            throw new Error(
+                "HTTP " +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (
+            Array.isArray(
+                data
+            )
+        ) {
+
+            fullCollectionData =
+                data;
+
+        } else {
+
+            console.error(
+                "Respuesta colección:",
+                data
+            );
+
+            fullCollectionData =
+                [];
+
+        }
+
+
+        filterCollection();
+
+
+    } catch (error) {
+
+        console.error(
+            "Error cargando colección:",
+            error
+        );
+
+
+        document.getElementById(
+            "collectionList"
+        ).innerHTML =
+            `
+            <div class="text-center py-12 text-red-400 text-xs">
+                No se pudo cargar la colección.
+            </div>
+            `;
+
+    }
+
+}
+
+
+
+/* =========================================================
+   URL DE IMAGEN
+========================================================= */
+
+function getDirectImageUrl(
+    rawUrl
+) {
+
+    if (
+        !rawUrl
+    ) {
+
+        return "";
+
+    }
+
+
+    rawUrl =
+        String(
+            rawUrl
+        ).trim();
+
+
+    /*
+     * Las nuevas imágenes ya vienen como:
+     *
+     * drive.google.com/thumbnail?id=...
+     *
+     * y pueden usarse directamente.
+     */
+
+    if (
+        rawUrl.includes(
+            "drive.google.com/thumbnail"
+        )
+    ) {
+
+        return rawUrl;
+
+    }
+
+
+    /*
+     * Compatibilidad con registros antiguos:
+     *
+     * drive.google.com/file/d/FILE_ID/view
+     */
+
+    if (
+        rawUrl.includes(
+            "drive.google.com"
+        )
+    ) {
+
+        const matchId =
+            rawUrl.match(
+                /\/d\/([a-zA-Z0-9_-]+)/
+            ) ||
+
+            rawUrl.match(
+                /[?&]id=([a-zA-Z0-9_-]+)/
+            );
+
+
+        if (
+            matchId &&
+            matchId[1]
+        ) {
+
+            return (
+                "https://drive.google.com/thumbnail?id=" +
+                matchId[1] +
+                "&sz=w500"
+            );
+
+        }
+
+    }
+
+
+    return rawUrl;
+
+}
+
+
+
+/* =========================================================
+   FILTRAR COLECCION
+========================================================= */
+
+function filterCollection() {
+
+    const searchEl =
+        document.getElementById(
+            "searchInput"
+        );
+
+
+    const query =
+        searchEl
+
+            ? searchEl.value
+                .toLowerCase()
+                .trim()
+
+            : "";
+
+
+    const filtered =
+        fullCollectionData.filter(
+            function (item) {
+
+
+                const artist =
+                    String(
+
+                        item.artist ||
+                        item.artista ||
+                        ""
+
+                    ).toLowerCase();
+
+
+                const title =
+                    String(
+
+                        item.title ||
+                        item.título ||
+                        item.titulo ||
+                        item.album ||
+                        ""
+
+                    ).toLowerCase();
+
+
+                const format =
+                    String(
+
+                        item.format ||
+                        item.formato ||
+                        ""
+
+                    ).toLowerCase();
+
+
+                const matchesQuery =
+                    artist.includes(
+                        query
+                    ) ||
+
+                    title.includes(
+                        query
+                    );
+
+
+                if (
+                    currentCollectionFilter ===
+                    "vinilo"
+                ) {
+
+                    return (
+                        matchesQuery &&
+                        (
+                            format.includes(
+                                "vinilo"
+                            ) ||
+                            format.includes(
+                                "vinyl"
+                            )
+                        )
+                    );
+
                 }
+
+
+                if (
+                    currentCollectionFilter ===
+                    "cd"
+                ) {
+
+                    return (
+                        matchesQuery &&
+                        format.includes(
+                            "cd"
+                        )
+                    );
+
+                }
+
+
                 return matchesQuery;
-            });
-            renderCollection(filtered);
-        }
 
-        function renderCollection(items) {
-            const listEl = document.getElementById('collectionList');
-            if (items.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-12 text-slate-500 text-xs">No hay discos registrados en esta categoría.</div>`;
-                return;
             }
+        );
 
-            listEl.innerHTML = items.map(item => {
-                const artist = item.artist || item.artista || "Desconocido";
-                const title = item.title || item.título || item.album || "Sin título";
-                const format = item.format || item.formato || "Vinilo";
-                const year = item.year || item.año || "";
-                const photoRaw = item.photo || item.fotourl || item.imagen || "";
-                const photoUrl = getDirectImageUrl(photoRaw);
+
+    renderCollection(
+        filtered
+    );
+
+}
+
+
+
+/* =========================================================
+   RENDER COLECCION
+========================================================= */
+
+function renderCollection(
+    items
+) {
+
+    const listEl =
+        document.getElementById(
+            "collectionList"
+        );
+
+
+    if (
+        items.length === 0
+    ) {
+
+        listEl.innerHTML =
+            `
+            <div class="text-center py-12 text-slate-500 text-xs">
+                No hay discos registrados en esta categoría.
+            </div>
+            `;
+
+        return;
+
+    }
+
+
+    listEl.innerHTML =
+        items.map(
+            function (item) {
+
+
+                const artist =
+                    item.artist ||
+                    item.artista ||
+                    "Desconocido";
+
+
+                const title =
+                    item.title ||
+                    item.título ||
+                    item.titulo ||
+                    item.album ||
+                    "Sin título";
+
+
+                const format =
+                    item.format ||
+                    item.formato ||
+                    "Vinilo";
+
+
+                const year =
+                    item.year ||
+                    item.año ||
+                    item.ano ||
+                    "";
+
+
+                /*
+                 * Soporta varios nombres de columna,
+                 * incluidos los que pudieras tener
+                 * de versiones anteriores.
+                 */
+
+                const photoRaw =
+
+                    item.photo ||
+
+                    item.fotourl ||
+
+                    item["foto url"] ||
+
+                    item["photo url"] ||
+
+                    item.imagen ||
+
+                    item.image ||
+
+                    "";
+
+
+                const photoUrl =
+                    getDirectImageUrl(
+                        photoRaw
+                    );
+
+
+                const safeTitle =
+                    escapeHtml(
+                        title
+                    );
+
+
+                const safeArtist =
+                    escapeHtml(
+                        artist
+                    );
+
+
+                const safeFormat =
+                    escapeHtml(
+                        format
+                    );
+
+
+                const safeYear =
+                    escapeHtml(
+                        year
+                    );
+
+
+                const safePhoto =
+                    escapeAttribute(
+                        photoUrl
+                    );
+
 
                 return `
-                    <div class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex gap-3 items-center shadow-md">
-                        <div class="w-14 h-14 bg-slate-950 rounded-lg overflow-hidden flex-shrink-0 border border-slate-800 flex items-center justify-center">
-                            ${photoUrl ? `<img src="${photoUrl}" class="w-full h-full object-cover" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fa-solid fa-compact-disc text-emerald-400 text-lg\'></i>';">` : `<i class="fa-solid fa-compact-disc text-emerald-400 text-lg"></i>`}
+                    <div
+                        class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex gap-3 items-center shadow-md"
+                    >
+
+                        <div
+                            class="w-16 h-16 bg-slate-950 rounded-lg overflow-hidden flex-shrink-0 border border-slate-800 flex items-center justify-center"
+                        >
+
+                            ${
+                                photoUrl
+
+                                    ? `
+                                        <img
+                                            src="${safePhoto}"
+                                            alt="${safeTitle}"
+                                            class="w-full h-full object-cover"
+                                            loading="lazy"
+                                            referrerpolicy="no-referrer"
+                                            onerror="
+                                                this.onerror=null;
+                                                this.style.display='none';
+                                                this.nextElementSibling.style.display='block';
+                                            "
+                                        >
+
+                                        <i
+                                            class="fa-solid fa-compact-disc text-emerald-400 text-lg"
+                                            style="display:none;"
+                                        ></i>
+                                    `
+
+                                    : `
+                                        <i
+                                            class="fa-solid fa-compact-disc text-emerald-400 text-lg"
+                                        ></i>
+                                    `
+                            }
+
                         </div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="text-sm font-bold text-slate-100 truncate">${title}</h4>
-                            <p class="text-xs text-emerald-400 truncate">${artist}</p>
-                            <p class="text-[10px] text-slate-400 mt-0.5">${format} ${year ? '• ' + year : ''}</p>
+
+
+                        <div
+                            class="flex-1 min-w-0"
+                        >
+
+                            <h4
+                                class="text-sm font-bold text-slate-100 truncate"
+                            >
+                                ${safeTitle}
+                            </h4>
+
+
+                            <p
+                                class="text-xs text-emerald-400 truncate"
+                            >
+                                ${safeArtist}
+                            </p>
+
+
+                            <p
+                                class="text-[10px] text-slate-400 mt-0.5"
+                            >
+
+                                ${safeFormat}
+
+                                ${
+                                    safeYear
+                                        ? " • " + safeYear
+                                        : ""
+                                }
+
+                            </p>
+
                         </div>
+
                     </div>
                 `;
-            }).join('');
-        }
-    </script>
+
+            }
+        ).join("");
+
+}
+
+
+
+/* =========================================================
+   SEGURIDAD HTML
+========================================================= */
+
+function escapeHtml(value) {
+
+    return String(
+        value == null
+            ? ""
+            : value
+    )
+    .replace(
+        /&/g,
+        "&amp;"
+    )
+    .replace(
+        /</g,
+        "&lt;"
+    )
+    .replace(
+        />/g,
+        "&gt;"
+    )
+    .replace(
+        /"/g,
+        "&quot;"
+    )
+    .replace(
+        /'/g,
+        "&#039;"
+    );
+
+}
+
+
+
+function escapeAttribute(value) {
+
+    return escapeHtml(
+        value
+    );
+
+}
+
+
+</script>
+
+
 </body>
 </html>
