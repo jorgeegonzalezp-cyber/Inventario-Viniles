@@ -20,7 +20,7 @@
 
     <main class="flex-1 max-w-md w-full mx-auto p-4 pb-24">
 
-        <!-- Tab 1: Escanear / Agregar -->
+        <!-- Pestaña de Escaneo y Registro -->
         <section id="tab-scan" class="tab-content space-y-4">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl">
                 <h2 class="text-lg font-semibold text-slate-200 mb-3 flex items-center gap-2">
@@ -49,7 +49,6 @@
                 </div>
             </div>
 
-            <!-- Formulario de Registro -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
                 <h2 class="text-lg font-semibold text-slate-200 mb-2">Detalles del Disco</h2>
                 
@@ -111,7 +110,7 @@
             </div>
         </section>
 
-        <!-- Tab 2: Colección con Submenú de Formatos -->
+        <!-- Pestaña de Colección con Submenú y Búsqueda -->
         <section id="tab-collection" class="tab-content hidden space-y-4">
             <div class="flex justify-between items-center">
                 <h2 class="text-lg font-semibold text-slate-200">Mi Colección</h2>
@@ -120,7 +119,7 @@
                 </button>
             </div>
 
-            <!-- Submenú de Categorías (Vinilos / CDs / Todos) -->
+            <!-- Submenú de Categorías -->
             <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1">
                 <button onclick="setCollectionFilter('todos')" id="filter-todos" class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow">Todos</button>
                 <button onclick="setCollectionFilter('vinilo')" id="filter-vinilo" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition">Vinilos</button>
@@ -138,7 +137,7 @@
             </div>
         </section>
 
-        <!-- Tab 3: Ajustes -->
+        <!-- Pestaña de Ajustes -->
         <section id="tab-settings" class="tab-content hidden space-y-4">
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4">
                 <h2 class="text-lg font-semibold text-slate-200 flex items-center gap-2">
@@ -163,7 +162,7 @@
 
     </main>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Barra de Navegación Inferior -->
     <nav class="bg-slate-900 border-t border-slate-800 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-3 z-50">
         <button onclick="switchTab('scan')" id="nav-scan" class="flex flex-col items-center text-emerald-400 transition">
             <i class="fa-solid fa-camera text-lg"></i>
@@ -179,7 +178,7 @@
         </button>
     </nav>
 
-    <!-- Custom Modal Notification -->
+    <!-- Modal Personalizado -->
     <div id="appModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xs w-full p-5 text-center space-y-3 shadow-2xl">
             <div id="modalIcon" class="text-3xl text-emerald-400"></div>
@@ -283,8 +282,8 @@
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 900;
-                    const MAX_HEIGHT = 900;
+                    const MAX_WIDTH = 800;
+                    const MAX_HEIGHT = 800;
                     let width = img.width;
                     let height = img.height;
 
@@ -299,7 +298,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
                     
                     const preview = document.getElementById('imagePreview');
                     preview.src = currentImageBase64;
@@ -362,14 +361,14 @@
                 document.getElementById('formCondition').value = data.condition || "";
 
             } catch (err) {
-                showModal("Aviso IA", "No se pudieron extraer datos automáticos, puedes llenarlos manualmente.", true);
+                console.warn("AI analysis skipped or failed", err);
             } finally {
                 loading.classList.add('hidden');
             }
         }
 
         async function saveItem() {
-            const url = localStorage.getItem("gas_url");
+            const url = document.getElementById('settingUrl').value.trim() || localStorage.getItem("gas_url");
             if (!url) {
                 showModal("Falta configurar", "Configura tu enlace de Apps Script en Ajustes.", true);
                 return;
@@ -401,21 +400,20 @@
             btn.disabled = true;
 
             try {
-                const res = await fetch(url, {
+                // Usando text/plain para evitar problemas de CORS preflight en Apps Script POST
+                await fetch(url, {
                     method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                     body: JSON.stringify(payload)
                 });
-                const result = await res.json();
 
-                if (result.status === "duplicate") {
-                    showModal("Registro Duplicado", result.message, true);
-                } else {
-                    showModal("¡Éxito!", "Disco guardado en tu colección y Google Sheet.");
-                    resetForm();
-                    loadCollection();
-                }
+                showModal("¡Éxito!", "Disco guardado en tu colección y Google Sheet.");
+                resetForm();
+                setTimeout(() => loadCollection(), 2000);
+
             } catch (err) {
-                showModal("Error", "No se pudo guardar el registro.", true);
+                showModal("Error", "No se pudo enviar el registro al servidor.", true);
             } finally {
                 btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Guardar en Colección';
                 btn.disabled = false;
