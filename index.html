@@ -2,6 +2,7 @@
 <html lang="es">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -13,12 +14,15 @@
         ViniloVault
     </title>
 
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+        src="https://cdn.tailwindcss.com"
+    ></script>
 
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     >
+
 </head>
 
 
@@ -74,643 +78,337 @@
 >
 
 
-    <!-- ==================================================
-         ESCANEAR
-    =================================================== -->
+<!-- ======================================================
+     ESCANEAR
+====================================================== -->
 
-    <section
-        id="tab-scan"
-        class="tab-content space-y-4"
+<section
+    id="tab-scan"
+    class="tab-content space-y-4"
+>
+
+
+    <!-- FOTO -->
+
+    <div
+        class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl"
     >
 
-
-        <!-- PORTADA -->
-
-        <div
-            class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl"
+        <h2
+            class="text-lg font-semibold text-slate-200 flex items-center gap-2"
         >
 
-            <h2
-                class="text-lg font-semibold text-slate-200 flex items-center gap-2"
+            <i
+                class="fa-solid fa-camera text-emerald-400"
+            ></i>
+
+            Escanear portada
+
+        </h2>
+
+
+        <p
+            class="text-xs text-slate-500 mt-1 mb-4"
+        >
+            Fotografía la portada frontal del disco
+        </p>
+
+
+
+        <div
+            class="relative border-2 border-dashed border-slate-700 rounded-2xl overflow-hidden bg-slate-950/60 hover:border-emerald-500 transition cursor-pointer"
+            onclick="document.getElementById('fileInput').click()"
+        >
+
+            <input
+                type="file"
+                id="fileInput"
+                accept="image/*"
+                capture="environment"
+                class="hidden"
+                onchange="handleImageSelection(event)"
             >
 
-                <i
-                    class="fa-solid fa-camera text-emerald-400"
-                ></i>
 
-                Escanear portada
-
-            </h2>
-
-
-            <p
-                class="text-xs text-slate-500 mt-1 mb-4"
-            >
-                Fotografía la portada frontal del disco
-            </p>
-
-
+            <!-- ESTADO VACÍO -->
 
             <div
-                class="relative border-2 border-dashed border-slate-700 rounded-2xl overflow-hidden bg-slate-950/60 hover:border-emerald-500 transition cursor-pointer"
-                onclick="document.getElementById('fileInput').click()"
-            >
-
-                <input
-                    type="file"
-                    id="fileInput"
-                    accept="image/*"
-                    capture="environment"
-                    class="hidden"
-                    onchange="handleImageSelection(event)"
-                >
-
-
-
-                <!-- VACÍO -->
-
-                <div
-                    id="dropZoneContent"
-                    class="aspect-square flex flex-col items-center justify-center text-center p-8"
-                >
-
-                    <div
-                        class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4"
-                    >
-
-                        <i
-                            class="fa-solid fa-camera text-2xl text-emerald-400"
-                        ></i>
-
-                    </div>
-
-
-                    <p
-                        class="text-sm font-medium text-slate-200"
-                    >
-                        Tomar foto
-                    </p>
-
-
-                    <p
-                        class="text-xs text-slate-500 mt-1"
-                    >
-                        También puedes elegir una imagen existente
-                    </p>
-
-
-                    <p
-                        class="mt-5 text-[10px] text-slate-600"
-                    >
-                        Gemini identificará automáticamente el disco
-                    </p>
-
-                </div>
-
-
-
-                <!-- PREVIEW -->
-
-                <div
-                    id="imagePreviewContainer"
-                    class="hidden relative aspect-square bg-black"
-                >
-
-                    <img
-                        id="imagePreview"
-                        alt="Portada seleccionada"
-                        class="w-full h-full object-contain"
-                    >
-
-
-                    <div
-                        class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-14 pointer-events-none"
-                    >
-
-                        <p
-                            class="text-xs text-slate-200"
-                        >
-                            Portada seleccionada
-                        </p>
-
-                        <p
-                            class="text-[10px] text-slate-400"
-                        >
-                            Toca la imagen para elegir otra
-                        </p>
-
-                    </div>
-
-
-                    <button
-                        type="button"
-                        onclick="event.stopPropagation(); resetImageCapture();"
-                        class="absolute top-3 right-3 w-9 h-9 bg-black/70 hover:bg-red-500 rounded-full flex items-center justify-center shadow-lg transition"
-                    >
-
-                        <i
-                            class="fa-solid fa-xmark"
-                        ></i>
-
-                    </button>
-
-                </div>
-
-            </div>
-
-
-
-            <!-- ANALIZANDO -->
-
-            <div
-                id="aiLoading"
-                class="hidden mt-4"
+                id="dropZoneContent"
+                class="aspect-square flex flex-col items-center justify-center text-center p-8"
             >
 
                 <div
-                    class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center gap-3"
+                    class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4"
                 >
 
                     <i
-                        class="fa-solid fa-wand-magic-sparkles animate-pulse text-emerald-400"
+                        class="fa-solid fa-camera text-2xl text-emerald-400"
                     ></i>
-
-
-                    <div>
-
-                        <p
-                            class="text-sm text-emerald-400 font-medium"
-                        >
-                            Analizando portada...
-                        </p>
-
-                        <p
-                            class="text-[10px] text-slate-500"
-                        >
-                            Buscando artista, álbum y metadatos
-                        </p>
-
-                    </div>
 
                 </div>
 
-            </div>
 
-        </div>
-
-
-
-        <!-- DATOS -->
-
-        <div
-            class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
-        >
-
-            <div>
-
-                <h2
-                    class="text-lg font-semibold text-slate-200"
+                <p
+                    class="text-sm font-medium text-slate-200"
                 >
-                    Datos del disco
-                </h2>
+                    Tomar foto
+                </p>
+
 
                 <p
                     class="text-xs text-slate-500 mt-1"
                 >
-                    Revisa los datos detectados antes de guardar
+                    También puedes elegir una imagen existente
+                </p>
+
+
+                <p
+                    class="text-[10px] text-slate-600 mt-5"
+                >
+                    Gemini identificará automáticamente el disco
                 </p>
 
             </div>
 
 
 
-            <!-- DUPLICADO -->
+            <!-- PREVIEW -->
 
             <div
-                id="duplicateWarning"
-                class="hidden bg-amber-500/10 border border-amber-500/30 rounded-xl p-3"
+                id="imagePreviewContainer"
+                class="hidden relative aspect-square bg-black"
             >
 
+                <img
+                    id="imagePreview"
+                    class="w-full h-full object-contain"
+                    alt="Portada seleccionada"
+                >
+
+
                 <div
-                    class="flex gap-3"
+                    class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-14 pointer-events-none"
+                >
+
+                    <p
+                        class="text-xs text-slate-200"
+                    >
+                        Portada seleccionada
+                    </p>
+
+                    <p
+                        class="text-[10px] text-slate-400"
+                    >
+                        Toca la imagen para elegir otra
+                    </p>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    onclick="event.stopPropagation(); resetImageCapture();"
+                    class="absolute top-3 right-3 w-9 h-9 bg-black/70 hover:bg-red-500 rounded-full flex items-center justify-center shadow-lg transition"
                 >
 
                     <i
-                        class="fa-solid fa-lock text-amber-400 mt-0.5"
+                        class="fa-solid fa-xmark"
                     ></i>
 
-
-                    <div
-                        class="min-w-0"
-                    >
-
-                        <p
-                            class="text-sm text-amber-400 font-semibold"
-                        >
-                            Posible duplicado
-                        </p>
-
-                        <p
-                            id="duplicateWarningText"
-                            class="text-xs text-slate-300 mt-1"
-                        ></p>
-
-                        <p
-                            class="text-[10px] text-slate-500 mt-1"
-                        >
-                            Al guardar volveremos a verificarlo.
-                        </p>
-
-                    </div>
-
-                </div>
+                </button>
 
             </div>
-
-
-
-            <!-- ARTISTA -->
-
-            <div>
-
-                <label
-                    class="text-xs text-slate-400 font-medium"
-                >
-                    Artista *
-                </label>
-
-                <input
-                    type="text"
-                    id="formArtist"
-                    placeholder="Artista o grupo"
-                    oninput="scheduleDuplicateCheck()"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                >
-
-            </div>
-
-
-
-            <!-- TÍTULO -->
-
-            <div>
-
-                <label
-                    class="text-xs text-slate-400 font-medium"
-                >
-                    Álbum / Título *
-                </label>
-
-                <input
-                    type="text"
-                    id="formTitle"
-                    placeholder="Título del álbum"
-                    oninput="scheduleDuplicateCheck()"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                >
-
-            </div>
-
-
-
-            <!-- FORMATO / AÑO -->
-
-            <div
-                class="grid grid-cols-2 gap-3"
-            >
-
-                <div>
-
-                    <label
-                        class="text-xs text-slate-400 font-medium"
-                    >
-                        Formato
-                    </label>
-
-                    <select
-                        id="formFormat"
-                        onchange="scheduleDuplicateCheck()"
-                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                    >
-
-                        <option value="Vinilo">
-                            Vinilo
-                        </option>
-
-                        <option value="CD">
-                            CD
-                        </option>
-
-                        <option value="Casete">
-                            Casete
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-
-                <div>
-
-                    <label
-                        class="text-xs text-slate-400 font-medium"
-                    >
-                        Año
-                    </label>
-
-                    <input
-                        type="text"
-                        id="formYear"
-                        placeholder="Ej. 1977"
-                        inputmode="numeric"
-                        oninput="scheduleDuplicateCheck()"
-                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                    >
-
-                </div>
-
-            </div>
-
-
-
-            <!-- GÉNERO -->
-
-            <div>
-
-                <label
-                    class="text-xs text-slate-400 font-medium"
-                >
-                    Género
-                </label>
-
-                <input
-                    type="text"
-                    id="formGenre"
-                    placeholder="Ej. Rock, Jazz, Pop"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                >
-
-            </div>
-
-
-
-            <!-- SELLO -->
-
-            <div>
-
-                <label
-                    class="text-xs text-slate-400 font-medium"
-                >
-                    Sello / Disquera
-                </label>
-
-                <input
-                    type="text"
-                    id="formLabel"
-                    placeholder="Sello discográfico"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                >
-
-            </div>
-
-
-
-            <!-- CONDICIÓN / UBICACIÓN -->
-
-            <div
-                class="grid grid-cols-2 gap-3"
-            >
-
-                <div>
-
-                    <label
-                        class="text-xs text-slate-400 font-medium"
-                    >
-                        Condición
-                    </label>
-
-                    <select
-                        id="formCondition"
-                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                    >
-
-                        <option value="">
-                            Sin especificar
-                        </option>
-
-                        <option value="M">
-                            M
-                        </option>
-
-                        <option value="NM">
-                            NM
-                        </option>
-
-                        <option value="VG+">
-                            VG+
-                        </option>
-
-                        <option value="VG">
-                            VG
-                        </option>
-
-                        <option value="G+">
-                            G+
-                        </option>
-
-                        <option value="G">
-                            G
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-
-                <div>
-
-                    <label
-                        class="text-xs text-slate-400 font-medium"
-                    >
-                        Ubicación
-                    </label>
-
-                    <input
-                        type="text"
-                        id="formLocation"
-                        placeholder="Ej. Estante 1"
-                        class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                    >
-
-                </div>
-
-            </div>
-
-
-
-            <!-- GUARDAR -->
-
-            <button
-                onclick="saveItem(false)"
-                id="saveBtn"
-                class="w-full mt-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:text-slate-500 text-slate-950 font-bold py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2"
-            >
-
-                <i
-                    class="fa-solid fa-floppy-disk"
-                ></i>
-
-                Guardar en colección
-
-            </button>
 
         </div>
 
-    </section>
+
+
+        <!-- ANALIZANDO -->
+
+        <div
+            id="aiLoading"
+            class="hidden mt-4"
+        >
+
+            <div
+                class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center gap-3"
+            >
+
+                <i
+                    class="fa-solid fa-wand-magic-sparkles animate-pulse text-emerald-400"
+                ></i>
+
+
+                <div>
+
+                    <p
+                        class="text-sm text-emerald-400 font-medium"
+                    >
+                        Analizando portada...
+                    </p>
+
+                    <p
+                        class="text-[10px] text-slate-500"
+                    >
+                        Identificando disco y verificando colección
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
 
 
 
     <!-- ==================================================
-         COLECCIÓN
+         DATOS
     =================================================== -->
 
-    <section
-        id="tab-collection"
-        class="tab-content hidden space-y-4"
+    <div
+        class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
     >
 
+        <div>
+
+            <h2
+                class="text-lg font-semibold text-slate-200"
+            >
+                Datos del disco
+            </h2>
+
+            <p
+                class="text-xs text-slate-500 mt-1"
+            >
+                Revisa los datos antes de guardar
+            </p>
+
+        </div>
+
+
+
+        <!-- DUPLICADO -->
+
         <div
-            class="flex justify-between items-center"
+            id="duplicateWarning"
+            class="hidden bg-amber-500/10 border border-amber-500/30 rounded-xl p-3"
         >
 
-            <div>
-
-                <h2
-                    class="text-lg font-semibold text-slate-200"
-                >
-                    Mi Colección
-                </h2>
-
-                <p
-                    id="collectionCount"
-                    class="text-xs text-slate-500"
-                >
-                    0 discos
-                </p>
-
-            </div>
-
-
-            <button
-                onclick="loadCollection()"
-                class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg text-emerald-400 flex items-center gap-1 transition"
+            <div
+                class="flex gap-3"
             >
 
                 <i
-                    class="fa-solid fa-rotate"
+                    class="fa-solid fa-lock text-amber-400 mt-0.5"
                 ></i>
 
-                Actualizar
 
-            </button>
+                <div
+                    class="min-w-0"
+                >
 
-        </div>
-
-
-
-        <!-- FILTROS -->
-
-        <div
-            class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1"
-        >
-
-            <button
-                onclick="setCollectionFilter('todos')"
-                id="filter-todos"
-                class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow"
-            >
-                Todos
-            </button>
+                    <p
+                        class="text-sm text-amber-400 font-semibold"
+                    >
+                        Posible duplicado
+                    </p>
 
 
-            <button
-                onclick="setCollectionFilter('vinilo')"
-                id="filter-vinilo"
-                class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
-            >
-                Vinilos
-            </button>
+                    <p
+                        id="duplicateWarningText"
+                        class="text-xs text-slate-300 mt-1"
+                    ></p>
 
+                </div>
 
-            <button
-                onclick="setCollectionFilter('cd')"
-                id="filter-cd"
-                class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
-            >
-                CDs
-            </button>
+            </div>
 
         </div>
 
 
 
-        <!-- BUSCADOR -->
+        <!-- ARTISTA -->
 
-        <div
-            class="relative"
-        >
+        <div>
 
-            <i
-                class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-sm"
-            ></i>
+            <label
+                class="text-xs text-slate-400 font-medium"
+            >
+                Artista *
+            </label>
 
             <input
                 type="text"
-                id="searchInput"
-                oninput="filterCollection()"
-                placeholder="Buscar por artista o álbum..."
-                class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                id="formArtist"
+                placeholder="Artista o grupo"
+                oninput="scheduleLocalDuplicateCheck()"
+                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
             >
 
         </div>
 
 
 
-        <div
-            id="collectionList"
-            class="space-y-3"
-        ></div>
+        <!-- ÁLBUM -->
 
-    </section>
+        <div>
 
+            <label
+                class="text-xs text-slate-400 font-medium"
+            >
+                Álbum / Título *
+            </label>
 
-
-    <!-- ==================================================
-         AJUSTES
-    =================================================== -->
-
-    <section
-        id="tab-settings"
-        class="tab-content hidden space-y-4"
-    >
-
-        <div
-            class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
-        >
-
-            <h2
-                class="text-lg font-semibold text-slate-200 flex items-center gap-2"
+            <input
+                type="text"
+                id="formTitle"
+                placeholder="Título del álbum"
+                oninput="scheduleLocalDuplicateCheck()"
+                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
             >
 
-                <i
-                    class="fa-solid fa-gear text-emerald-400"
-                ></i>
+        </div>
 
-                Configuración
 
-            </h2>
+
+        <!-- FORMATO / AÑO -->
+
+        <div
+            class="grid grid-cols-2 gap-3"
+        >
+
+            <div>
+
+                <label
+                    class="text-xs text-slate-400 font-medium"
+                >
+                    Formato
+                </label>
+
+                <select
+                    id="formFormat"
+                    onchange="localDuplicateCheck()"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                >
+
+                    <option value="Vinilo">
+                        Vinilo
+                    </option>
+
+                    <option value="CD">
+                        CD
+                    </option>
+
+                    <option value="Casete">
+                        Casete
+                    </option>
+
+                </select>
+
+            </div>
+
 
 
             <div>
@@ -718,43 +416,345 @@
                 <label
                     class="text-xs text-slate-400 font-medium"
                 >
-                    URL de Google Apps Script
+                    Año
                 </label>
 
                 <input
                     type="text"
-                    id="settingUrl"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none font-mono"
+                    id="formYear"
+                    placeholder="Ej. 1977"
+                    inputmode="numeric"
+                    oninput="scheduleLocalDuplicateCheck()"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
                 >
-
-            </div>
-
-
-
-            <div
-                class="flex gap-2"
-            >
-
-                <button
-                    onclick="saveSettings()"
-                    class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition"
-                >
-                    Guardar
-                </button>
-
-
-                <button
-                    onclick="testConnection()"
-                    class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm transition"
-                >
-                    Probar
-                </button>
 
             </div>
 
         </div>
 
-    </section>
+
+
+        <!-- GÉNERO -->
+
+        <div>
+
+            <label
+                class="text-xs text-slate-400 font-medium"
+            >
+                Género
+            </label>
+
+            <input
+                type="text"
+                id="formGenre"
+                placeholder="Ej. Rock, Jazz, Pop"
+                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+            >
+
+        </div>
+
+
+
+        <!-- SELLO -->
+
+        <div>
+
+            <label
+                class="text-xs text-slate-400 font-medium"
+            >
+                Sello / Disquera
+            </label>
+
+            <input
+                type="text"
+                id="formLabel"
+                placeholder="Sello discográfico"
+                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+            >
+
+        </div>
+
+
+
+        <!-- CONDICIÓN / UBICACIÓN -->
+
+        <div
+            class="grid grid-cols-2 gap-3"
+        >
+
+            <div>
+
+                <label
+                    class="text-xs text-slate-400 font-medium"
+                >
+                    Condición
+                </label>
+
+                <select
+                    id="formCondition"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                >
+
+                    <option value="">
+                        Sin especificar
+                    </option>
+
+                    <option value="M">
+                        M
+                    </option>
+
+                    <option value="NM">
+                        NM
+                    </option>
+
+                    <option value="VG+">
+                        VG+
+                    </option>
+
+                    <option value="VG">
+                        VG
+                    </option>
+
+                    <option value="G+">
+                        G+
+                    </option>
+
+                    <option value="G">
+                        G
+                    </option>
+
+                </select>
+
+            </div>
+
+
+
+            <div>
+
+                <label
+                    class="text-xs text-slate-400 font-medium"
+                >
+                    Ubicación
+                </label>
+
+                <input
+                    type="text"
+                    id="formLocation"
+                    placeholder="Ej. Estante 1"
+                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                >
+
+            </div>
+
+        </div>
+
+
+
+        <!-- GUARDAR -->
+
+        <button
+            onclick="saveItem(false)"
+            id="saveBtn"
+            class="w-full mt-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:text-slate-500 text-slate-950 font-bold py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2"
+        >
+
+            <i
+                class="fa-solid fa-floppy-disk"
+            ></i>
+
+            Guardar en colección
+
+        </button>
+
+    </div>
+
+</section>
+
+
+
+<!-- ======================================================
+     COLECCIÓN
+====================================================== -->
+
+<section
+    id="tab-collection"
+    class="tab-content hidden space-y-4"
+>
+
+    <div
+        class="flex justify-between items-center"
+    >
+
+        <div>
+
+            <h2
+                class="text-lg font-semibold text-slate-200"
+            >
+                Mi Colección
+            </h2>
+
+            <p
+                id="collectionCount"
+                class="text-xs text-slate-500"
+            >
+                0 discos
+            </p>
+
+        </div>
+
+
+        <button
+            onclick="loadCollection(true)"
+            class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg text-emerald-400 flex items-center gap-1 transition"
+        >
+
+            <i
+                class="fa-solid fa-rotate"
+            ></i>
+
+            Actualizar
+
+        </button>
+
+    </div>
+
+
+
+    <!-- FILTROS -->
+
+    <div
+        class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1"
+    >
+
+        <button
+            onclick="setCollectionFilter('todos')"
+            id="filter-todos"
+            class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow"
+        >
+            Todos
+        </button>
+
+
+        <button
+            onclick="setCollectionFilter('vinilo')"
+            id="filter-vinilo"
+            class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
+        >
+            Vinilos
+        </button>
+
+
+        <button
+            onclick="setCollectionFilter('cd')"
+            id="filter-cd"
+            class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
+        >
+            CDs
+        </button>
+
+    </div>
+
+
+
+    <!-- BUSCADOR -->
+
+    <div
+        class="relative"
+    >
+
+        <i
+            class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-sm"
+        ></i>
+
+        <input
+            type="text"
+            id="searchInput"
+            oninput="filterCollection()"
+            placeholder="Buscar por artista o álbum..."
+            class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+        >
+
+    </div>
+
+
+
+    <div
+        id="collectionList"
+        class="space-y-3"
+    ></div>
+
+</section>
+
+
+
+<!-- ======================================================
+     AJUSTES
+====================================================== -->
+
+<section
+    id="tab-settings"
+    class="tab-content hidden space-y-4"
+>
+
+    <div
+        class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
+    >
+
+        <h2
+            class="text-lg font-semibold text-slate-200 flex items-center gap-2"
+        >
+
+            <i
+                class="fa-solid fa-gear text-emerald-400"
+            ></i>
+
+            Configuración
+
+        </h2>
+
+
+        <div>
+
+            <label
+                class="text-xs text-slate-400 font-medium"
+            >
+                URL de Google Apps Script
+            </label>
+
+            <input
+                type="text"
+                id="settingUrl"
+                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none font-mono"
+            >
+
+        </div>
+
+
+        <div
+            class="flex gap-2"
+        >
+
+            <button
+                onclick="saveSettings()"
+                class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition"
+            >
+                Guardar
+            </button>
+
+
+            <button
+                onclick="testConnection()"
+                class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm transition"
+            >
+                Probar
+            </button>
+
+        </div>
+
+    </div>
+
+</section>
+
 
 </main>
 
@@ -787,7 +787,6 @@
     </button>
 
 
-
     <button
         onclick="switchTab('collection')"
         id="nav-collection"
@@ -805,7 +804,6 @@
         </span>
 
     </button>
-
 
 
     <button
@@ -831,7 +829,7 @@
 
 
 <!-- ======================================================
-     MODAL NORMAL
+     MODAL GENERAL
 ====================================================== -->
 
 <div
@@ -920,7 +918,6 @@
         </div>
 
 
-
         <div
             class="bg-slate-950 border border-slate-800 rounded-xl p-3 mt-4"
         >
@@ -945,13 +942,11 @@
         </div>
 
 
-
         <p
             class="text-xs text-slate-400 mt-4 text-center"
         >
             Si realmente tienes otra copia puedes guardarla de todos modos.
         </p>
-
 
 
         <div
@@ -968,7 +963,6 @@
 
             <button
                 onclick="confirmDuplicateSave()"
-                id="forceSaveBtn"
                 class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition"
             >
                 Guardar otra copia
@@ -990,23 +984,35 @@
 ====================================================== */
 
 const DEFAULT_GAS_URL =
-    "https://script.google.com/macros/s/AKfycby0fNHV6k124rhzEg-8DMba6OcQYkSeRwrrVeJ-CdEpZ66Z6n9Gb2_Fv7ZZSy1IiqvaVw/exec";
+    "https://script.google.com/macros/s/AKfycbwC8EvSprEoNdMugmg74AVOmnlWg_x6f12mWphD8KTx8OJVhQicqe8ejJlZrl0Agd1hYQ/exec";
+
+
+const APP_VERSION =
+    "2026-09-02-performance-v1";
 
 
 let currentImageBase64 =
     "";
 
+
 let fullCollectionData =
     [];
+
 
 let currentCollectionFilter =
     "todos";
 
+
 let currentDuplicate =
     null;
 
+
 let duplicateTimer =
     null;
+
+
+let collectionLoaded =
+    false;
 
 
 
@@ -1018,23 +1024,42 @@ window.addEventListener(
     "load",
     function () {
 
-        let savedUrl =
+        /*
+         * Esto evita que iPhone/Safari se quede
+         * apuntando eternamente a una implementación
+         * vieja guardada en localStorage.
+         */
+
+        const savedVersion =
             localStorage.getItem(
-                "gas_url"
+                "app_version"
             );
 
 
-        if (!savedUrl) {
-
-            savedUrl =
-                DEFAULT_GAS_URL;
+        if (
+            savedVersion !==
+            APP_VERSION
+        ) {
 
             localStorage.setItem(
                 "gas_url",
-                savedUrl
+                DEFAULT_GAS_URL
+            );
+
+
+            localStorage.setItem(
+                "app_version",
+                APP_VERSION
             );
 
         }
+
+
+        const savedUrl =
+            localStorage.getItem(
+                "gas_url"
+            ) ||
+            DEFAULT_GAS_URL;
 
 
         document.getElementById(
@@ -1045,10 +1070,37 @@ window.addEventListener(
 
         testConnection();
 
-        loadCollection();
+
+        /*
+         * Cargamos colección una sola vez.
+         *
+         * Esto permite que los chequeos posteriores
+         * de duplicados sean locales.
+         */
+
+        loadCollection(
+            false
+        );
 
     }
 );
+
+
+
+/* ======================================================
+   URL BACKEND
+====================================================== */
+
+function getGasUrl() {
+
+    return (
+        localStorage.getItem(
+            "gas_url"
+        ) ||
+        DEFAULT_GAS_URL
+    );
+
+}
 
 
 
@@ -1112,11 +1164,21 @@ function switchTab(tabName) {
     );
 
 
+    /*
+     * Ya no recargamos Google Sheets cada vez
+     * que entras a Mi Colección.
+     */
+
     if (
         tabName ===
-        "collection"
+        "collection" &&
+        !collectionLoaded
     ) {
-        loadCollection();
+
+        loadCollection(
+            false
+        );
+
     }
 
 }
@@ -1124,7 +1186,7 @@ function switchTab(tabName) {
 
 
 /* ======================================================
-   MODAL
+   MODAL GENERAL
 ====================================================== */
 
 function showModal(
@@ -1132,12 +1194,6 @@ function showModal(
     message,
     isError
 ) {
-
-    isError =
-        Boolean(
-            isError
-        );
-
 
     document.getElementById(
         "modalTitle"
@@ -1188,7 +1244,7 @@ function closeModal() {
 
 
 /* ======================================================
-   MODAL DUPLICADO
+   DUPLICADO MODAL
 ====================================================== */
 
 function showDuplicateModal(
@@ -1199,47 +1255,28 @@ function showDuplicateModal(
         duplicate || {};
 
 
-    const title =
-        duplicate.title ||
-        "Sin título";
-
-
-    const artist =
-        duplicate.artist ||
-        "Artista desconocido";
-
-
-    const format =
-        duplicate.format ||
-        "";
-
-
-    const year =
-        duplicate.year ||
-        "";
-
-
-    const location =
-        duplicate.location ||
-        "";
-
-
     document.getElementById(
         "duplicateModalTitle"
     ).innerText =
-        title;
+        duplicate.title ||
+        "Sin título";
 
 
     document.getElementById(
         "duplicateModalArtist"
     ).innerText =
-        artist;
+        duplicate.artist ||
+        "Artista desconocido";
 
 
-    let meta = format;
+    let meta =
+        duplicate.format ||
+        "";
 
 
-    if (year) {
+    if (
+        duplicate.year
+    ) {
 
         meta +=
             (
@@ -1247,12 +1284,14 @@ function showDuplicateModal(
                     ? " • "
                     : ""
             ) +
-            year;
+            duplicate.year;
 
     }
 
 
-    if (location) {
+    if (
+        duplicate.location
+    ) {
 
         meta +=
             (
@@ -1260,7 +1299,7 @@ function showDuplicateModal(
                     ? " • "
                     : ""
             ) +
-            location;
+            duplicate.location;
 
     }
 
@@ -1324,7 +1363,9 @@ function updateStatus(
         );
 
 
-    if (online) {
+    if (
+        online
+    ) {
 
         element.className =
             "text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1";
@@ -1368,7 +1409,9 @@ function saveSettings() {
         .trim();
 
 
-    if (!url) {
+    if (
+        !url
+    ) {
 
         showModal(
             "URL requerida",
@@ -1387,6 +1430,16 @@ function saveSettings() {
     );
 
 
+    localStorage.setItem(
+        "app_version",
+        APP_VERSION
+    );
+
+
+    collectionLoaded =
+        false;
+
+
     showModal(
         "Guardado",
         "Enlace configurado correctamente.",
@@ -1396,7 +1449,9 @@ function saveSettings() {
 
     testConnection();
 
-    loadCollection();
+    loadCollection(
+        true
+    );
 
 }
 
@@ -1408,21 +1463,19 @@ function saveSettings() {
 
 async function testConnection() {
 
-    const url =
-        getGasUrl();
-
-
     try {
 
         const response =
             await fetch(
-                url +
+                getGasUrl() +
                 "?t=" +
                 Date.now()
             );
 
 
-        if (!response.ok) {
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
                 "HTTP " +
@@ -1443,8 +1496,7 @@ async function testConnection() {
         ) {
 
             throw new Error(
-                result.message ||
-                "Error de servidor"
+                result.message
             );
 
         }
@@ -1458,7 +1510,6 @@ async function testConnection() {
     } catch (error) {
 
         console.error(
-            "Error conexión:",
             error
         );
 
@@ -1486,23 +1537,9 @@ function handleImageSelection(
         event.target.files[0];
 
 
-    if (!file) {
-        return;
-    }
-
-
     if (
-        !file.type ||
-        !file.type.startsWith(
-            "image/"
-        )
+        !file
     ) {
-
-        showModal(
-            "Archivo inválido",
-            "Selecciona una imagen.",
-            true
-        );
 
         return;
 
@@ -1535,16 +1572,22 @@ function handleImageSelection(
 
 
                         /*
-                         * Mantener el archivo pequeño ayuda
-                         * especialmente en Safari/iPhone.
+                         * OPTIMIZACIÓN:
+                         *
+                         * 760px sigue siendo suficiente
+                         * para reconocer una portada.
+                         *
+                         * Reduce bastante el Base64
+                         * comparado con 900 / 1000 px.
                          */
 
                         const MAX_SIZE =
-                            900;
+                            760;
 
 
                         let width =
                             image.width;
+
 
                         let height =
                             image.height;
@@ -1567,6 +1610,7 @@ function handleImageSelection(
                                         width
                                     );
 
+
                                 width =
                                     MAX_SIZE;
 
@@ -1585,6 +1629,7 @@ function handleImageSelection(
                                         MAX_SIZE /
                                         height
                                     );
+
 
                                 height =
                                     MAX_SIZE;
@@ -1627,10 +1672,16 @@ function handleImageSelection(
                         );
 
 
+                        /*
+                         * 72% JPEG:
+                         * menor transferencia especialmente
+                         * desde Safari/iPhone.
+                         */
+
                         currentImageBase64 =
                             canvas.toDataURL(
                                 "image/jpeg",
-                                0.78
+                                0.72
                             );
 
 
@@ -1658,7 +1709,7 @@ function handleImageSelection(
                         );
 
 
-                        analyzeImageWithGemini(
+                        analyzeImage(
                             currentImageBase64
                         );
 
@@ -1684,8 +1735,8 @@ function handleImageSelection(
                 function () {
 
                     showModal(
-                        "Error de imagen",
-                        "No se pudo abrir la fotografía seleccionada.",
+                        "Error",
+                        "No se pudo abrir la fotografía.",
                         true
                     );
 
@@ -1765,10 +1816,10 @@ function resetImageCapture() {
 
 
 /* ======================================================
-   GEMINI
+   ANALIZAR
 ====================================================== */
 
-async function analyzeImageWithGemini(
+async function analyzeImage(
     base64Data
 ) {
 
@@ -1786,6 +1837,12 @@ async function analyzeImageWithGemini(
 
 
     try {
+
+        /*
+         * UNA SOLA PETICIÓN:
+         *
+         * Gemini + duplicado.
+         */
 
         const result =
             await postToBackend({
@@ -1852,12 +1909,29 @@ async function analyzeImageWithGemini(
             data.label || "";
 
 
-        await checkDuplicate();
+        /*
+         * El backend ya nos devuelve el duplicado.
+         *
+         * NO hacemos otra llamada.
+         */
+
+        if (
+            result.duplicate
+        ) {
+
+            showDuplicateWarning(
+                result.duplicate
+            );
+
+        } else {
+
+            hideDuplicateWarning();
+
+        }
 
     } catch (error) {
 
         console.error(
-            "Error Gemini:",
             error
         );
 
@@ -1884,10 +1958,10 @@ async function analyzeImageWithGemini(
 
 
 /* ======================================================
-   DEBOUNCE DUPLICADO
+   DUPLICADO LOCAL
 ====================================================== */
 
-function scheduleDuplicateCheck() {
+function scheduleLocalDuplicateCheck() {
 
     clearTimeout(
         duplicateTimer
@@ -1896,12 +1970,8 @@ function scheduleDuplicateCheck() {
 
     duplicateTimer =
         setTimeout(
-            function () {
-
-                checkDuplicate();
-
-            },
-            600
+            localDuplicateCheck,
+            250
         );
 
 }
@@ -1909,25 +1979,41 @@ function scheduleDuplicateCheck() {
 
 
 /* ======================================================
-   VERIFICAR DUPLICADO
+   BUSCAR DUPLICADO LOCALMENTE
 ====================================================== */
 
-async function checkDuplicate() {
+function localDuplicateCheck() {
 
     const artist =
-        document.getElementById(
-            "formArtist"
-        )
-        .value
-        .trim();
+        normalizeTextFrontend(
+            document.getElementById(
+                "formArtist"
+            ).value
+        );
 
 
     const title =
-        document.getElementById(
-            "formTitle"
-        )
-        .value
-        .trim();
+        normalizeTextFrontend(
+            document.getElementById(
+                "formTitle"
+            ).value
+        );
+
+
+    const format =
+        normalizeFormatKeyFrontend(
+            document.getElementById(
+                "formFormat"
+            ).value
+        );
+
+
+    const year =
+        normalizeTextFrontend(
+            document.getElementById(
+                "formYear"
+            ).value
+        );
 
 
     if (
@@ -1942,76 +2028,84 @@ async function checkDuplicate() {
     }
 
 
-    try {
+    for (
+        let i = 0;
+        i < fullCollectionData.length;
+        i++
+    ) {
 
-        const result =
-            await postToBackend({
-                action:
-                    "checkDuplicate",
-
-                artist:
-                    artist,
-
-                title:
-                    title,
-
-                format:
-                    document.getElementById(
-                        "formFormat"
-                    ).value,
-
-                year:
-                    document.getElementById(
-                        "formYear"
-                    ).value
-            });
+        const item =
+            fullCollectionData[i];
 
 
-        if (
-            result.status !==
-            "success"
-        ) {
-
-            return null;
-
-        }
-
-
-        if (
-            result.duplicate
-        ) {
-
-            showDuplicateWarning(
-                result.duplicate
+        const existingArtist =
+            normalizeTextFrontend(
+                item.artist || ""
             );
 
-            return result.duplicate;
 
+        const existingTitle =
+            normalizeTextFrontend(
+                item.title || ""
+            );
+
+
+        const existingFormat =
+            normalizeFormatKeyFrontend(
+                item.format || ""
+            );
+
+
+        if (
+            existingArtist === artist &&
+            existingTitle === title &&
+            existingFormat === format
+        ) {
+
+            const duplicate = {
+                artist:
+                    item.artist || "",
+
+                title:
+                    item.title || "",
+
+                format:
+                    item.format || "",
+
+                year:
+                    item.year || "",
+
+                location:
+                    item.location || "",
+
+                photo:
+                    item.photo || "",
+
+                matchLevel:
+                    (
+                        year &&
+                        normalizeTextFrontend(
+                            item.year || ""
+                        ) === year
+                    )
+                        ? "strong"
+                        : "probable"
+            };
+
+
+            showDuplicateWarning(
+                duplicate
+            );
+
+
+            return duplicate;
         }
-
-
-        hideDuplicateWarning();
-
-        return null;
-
-    } catch (error) {
-
-        /*
-         * Un fallo del chequeo preventivo
-         * no impide usar la aplicación.
-         *
-         * El backend vuelve a comprobar
-         * obligatoriamente al guardar.
-         */
-
-        console.warn(
-            "No se pudo comprobar duplicado:",
-            error
-        );
-
-        return null;
-
     }
+
+
+    hideDuplicateWarning();
+
+    return null;
 
 }
 
@@ -2097,12 +2191,6 @@ async function saveItem(
     forceDuplicate
 ) {
 
-    forceDuplicate =
-        Boolean(
-            forceDuplicate
-        );
-
-
     const artist =
         document.getElementById(
             "formArtist"
@@ -2126,7 +2214,7 @@ async function saveItem(
 
         showModal(
             "Campos incompletos",
-            "Ingresa al menos el artista y el título.",
+            "Ingresa al menos artista y título.",
             true
         );
 
@@ -2140,7 +2228,9 @@ async function saveItem(
             "save",
 
         forceDuplicate:
-            forceDuplicate,
+            Boolean(
+                forceDuplicate
+            ),
 
         artist:
             artist,
@@ -2197,10 +2287,14 @@ async function saveItem(
 
 
     button.innerHTML =
-        '<i class="fa-solid fa-spinner animate-spin"></i> Verificando...';
+        '<i class="fa-solid fa-spinner animate-spin"></i> Guardando...';
 
 
     try {
+
+        /*
+         * ÚNICA verificación remota definitiva.
+         */
 
         const result =
             await postToBackend(
@@ -2208,22 +2302,10 @@ async function saveItem(
             );
 
 
-        /*
-         * CANDADO
-         */
-
         if (
             result.status ===
             "duplicate"
         ) {
-
-            button.disabled =
-                false;
-
-
-            button.innerHTML =
-                '<i class="fa-solid fa-floppy-disk"></i> Guardar en colección';
-
 
             showDuplicateWarning(
                 result.duplicate
@@ -2246,8 +2328,37 @@ async function saveItem(
 
             throw new Error(
                 result.message ||
-                "No se pudo guardar el disco."
+                "No se pudo guardar."
             );
+
+        }
+
+
+        /*
+         * OPTIMIZACIÓN:
+         *
+         * Ya no descargamos todo el Sheet.
+         *
+         * Apps Script nos devuelve el disco recién
+         * guardado y lo agregamos localmente.
+         */
+
+        if (
+            result.item
+        ) {
+
+            fullCollectionData.push(
+                result.item
+            );
+
+
+            collectionLoaded =
+                true;
+
+
+            updateCollectionCount();
+
+            filterCollection();
 
         }
 
@@ -2255,7 +2366,9 @@ async function saveItem(
         showModal(
             "Guardado",
             forceDuplicate
+
                 ? "La copia adicional se guardó correctamente."
+
                 : "Disco guardado correctamente.",
             false
         );
@@ -2263,13 +2376,9 @@ async function saveItem(
 
         resetForm();
 
-
-        await loadCollection();
-
     } catch (error) {
 
         console.error(
-            "Error guardando:",
             error
         );
 
@@ -2297,7 +2406,7 @@ async function saveItem(
 
 
 /* ======================================================
-   RESET FORMULARIO
+   RESET
 ====================================================== */
 
 function resetForm() {
@@ -2375,20 +2484,16 @@ function resetForm() {
 
 
 /* ======================================================
-   POST BACKEND
+   POST
 ====================================================== */
 
 async function postToBackend(
     payload
 ) {
 
-    const url =
-        getGasUrl();
-
-
     const response =
         await fetch(
-            url,
+            getGasUrl(),
             {
                 method:
                     "POST",
@@ -2406,10 +2511,12 @@ async function postToBackend(
         );
 
 
-    if (!response.ok) {
+    if (
+        !response.ok
+    ) {
 
         throw new Error(
-            "Error HTTP " +
+            "HTTP " +
             response.status
         );
 
@@ -2423,43 +2530,37 @@ async function postToBackend(
 
 
 /* ======================================================
-   URL BACKEND
+   CARGAR COLECCIÓN
 ====================================================== */
 
-function getGasUrl() {
+async function loadCollection(
+    forceRefresh
+) {
 
-    return (
-        localStorage.getItem(
-            "gas_url"
-        ) ||
-        DEFAULT_GAS_URL
-    );
+    if (
+        collectionLoaded &&
+        !forceRefresh
+    ) {
 
-}
+        filterCollection();
 
-
-
-/* ======================================================
-   COLECCIÓN
-====================================================== */
-
-async function loadCollection() {
-
-    const url =
-        getGasUrl();
+        return;
+    }
 
 
     try {
 
         const response =
             await fetch(
-                url +
+                getGasUrl() +
                 "?t=" +
                 Date.now()
             );
 
 
-        if (!response.ok) {
+        if (
+            !response.ok
+        ) {
 
             throw new Error(
                 "HTTP " +
@@ -2482,13 +2583,11 @@ async function loadCollection() {
             fullCollectionData =
                 data;
 
+
+            collectionLoaded =
+                true;
+
         } else {
-
-            console.error(
-                "Respuesta inesperada:",
-                data
-            );
-
 
             fullCollectionData =
                 [];
@@ -2503,7 +2602,6 @@ async function loadCollection() {
     } catch (error) {
 
         console.error(
-            "Error colección:",
             error
         );
 
@@ -2530,8 +2628,7 @@ async function loadCollection() {
 function updateCollectionCount() {
 
     const count =
-        fullCollectionData
-            .length;
+        fullCollectionData.length;
 
 
     document.getElementById(
@@ -2593,97 +2690,103 @@ function setCollectionFilter(
 
 
 /* ======================================================
-   FILTRAR COLECCIÓN
+   FILTRAR
 ====================================================== */
 
 function filterCollection() {
 
-    const query =
+    const searchInput =
         document.getElementById(
             "searchInput"
-        )
-        .value
-        .toLowerCase()
-        .trim();
+        );
+
+
+    const query =
+        searchInput
+
+            ? searchInput.value
+                .toLowerCase()
+                .trim()
+
+            : "";
 
 
     const filtered =
-        fullCollectionData
-            .filter(
-                function (item) {
+        fullCollectionData.filter(
+            function (item) {
 
-                    const artist =
-                        String(
-                            item.artist ||
-                            ""
-                        )
-                        .toLowerCase();
-
-
-                    const title =
-                        String(
-                            item.title ||
-                            ""
-                        )
-                        .toLowerCase();
+                const artist =
+                    String(
+                        item.artist ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-                    const format =
-                        String(
-                            item.format ||
-                            ""
-                        )
-                        .toLowerCase();
+                const title =
+                    String(
+                        item.title ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-                    const matchesText =
-                        artist.includes(
-                            query
-                        ) ||
-                        title.includes(
-                            query
-                        );
+                const format =
+                    String(
+                        item.format ||
+                        ""
+                    )
+                    .toLowerCase();
 
 
-                    if (
-                        currentCollectionFilter ===
-                        "vinilo"
-                    ) {
-
-                        return (
-                            matchesText &&
-                            (
-                                format.includes(
-                                    "vinilo"
-                                ) ||
-                                format.includes(
-                                    "vinyl"
-                                )
-                            )
-                        );
-
-                    }
+                const matches =
+                    artist.includes(
+                        query
+                    ) ||
+                    title.includes(
+                        query
+                    );
 
 
-                    if (
-                        currentCollectionFilter ===
-                        "cd"
-                    ) {
+                if (
+                    currentCollectionFilter ===
+                    "vinilo"
+                ) {
 
-                        return (
-                            matchesText &&
+                    return (
+                        matches &&
+                        (
                             format.includes(
-                                "cd"
+                                "vinilo"
+                            ) ||
+                            format.includes(
+                                "vinyl"
                             )
-                        );
-
-                    }
-
-
-                    return matchesText;
+                        )
+                    );
 
                 }
-            );
+
+
+                if (
+                    currentCollectionFilter ===
+                    "cd"
+                ) {
+
+                    return (
+                        matches &&
+                        format.includes(
+                            "cd"
+                        )
+                    );
+
+                }
+
+
+                return matches;
+
+            }
+        );
 
 
     renderCollection(
@@ -2695,15 +2798,19 @@ function filterCollection() {
 
 
 /* ======================================================
-   FOTO DIRECTA
+   FOTO DRIVE
 ====================================================== */
 
 function getDirectImageUrl(
     rawUrl
 ) {
 
-    if (!rawUrl) {
+    if (
+        !rawUrl
+    ) {
+
         return "";
+
     }
 
 
@@ -2842,31 +2949,31 @@ function renderCollection(
                             ${
                                 photoUrl
 
-                                ? `
-                                    <img
-                                        src="${escapeHtml(photoUrl)}"
-                                        class="w-full h-full object-cover"
-                                        alt="${escapeHtml(title)}"
-                                        loading="lazy"
-                                        referrerpolicy="no-referrer"
-                                        onerror="
-                                            this.onerror=null;
-                                            this.style.display='none';
-                                            this.nextElementSibling.style.display='block';
-                                        "
-                                    >
+                                    ? `
+                                        <img
+                                            src="${escapeHtml(photoUrl)}"
+                                            class="w-full h-full object-cover"
+                                            alt="${escapeHtml(title)}"
+                                            loading="lazy"
+                                            referrerpolicy="no-referrer"
+                                            onerror="
+                                                this.onerror=null;
+                                                this.style.display='none';
+                                                this.nextElementSibling.style.display='block';
+                                            "
+                                        >
 
-                                    <i
-                                        class="fa-solid fa-compact-disc text-emerald-400 text-xl"
-                                        style="display:none"
-                                    ></i>
-                                `
+                                        <i
+                                            class="fa-solid fa-compact-disc text-emerald-400 text-xl"
+                                            style="display:none"
+                                        ></i>
+                                    `
 
-                                : `
-                                    <i
-                                        class="fa-solid fa-compact-disc text-emerald-400 text-xl"
-                                    ></i>
-                                `
+                                    : `
+                                        <i
+                                            class="fa-solid fa-compact-disc text-emerald-400 text-xl"
+                                        ></i>
+                                    `
                             }
 
                         </div>
@@ -2893,26 +3000,33 @@ function renderCollection(
                             <p
                                 class="text-[10px] text-slate-400 mt-2"
                             >
+
                                 ${escapeHtml(format)}
+
                                 ${
                                     year
-                                    ? " • " +
-                                      escapeHtml(year)
-                                    : ""
+
+                                        ? " • " +
+                                          escapeHtml(year)
+
+                                        : ""
                                 }
+
                             </p>
 
 
                             ${
                                 genre
-                                ? `
-                                    <p
-                                        class="text-[10px] text-slate-500 truncate mt-1"
-                                    >
-                                        ${escapeHtml(genre)}
-                                    </p>
-                                `
-                                : ""
+
+                                    ? `
+                                        <p
+                                            class="text-[10px] text-slate-500 truncate mt-1"
+                                        >
+                                            ${escapeHtml(genre)}
+                                        </p>
+                                    `
+
+                                    : ""
                             }
 
 
@@ -2920,32 +3034,34 @@ function renderCollection(
                                 condition ||
                                 location
 
-                                ? `
-                                    <p
-                                        class="text-[10px] text-slate-600 truncate mt-1"
-                                    >
-                                        ${
-                                            condition
-                                            ? escapeHtml(condition)
-                                            : ""
-                                        }
+                                    ? `
+                                        <p
+                                            class="text-[10px] text-slate-600 truncate mt-1"
+                                        >
 
-                                        ${
-                                            condition &&
-                                            location
-                                            ? " • "
-                                            : ""
-                                        }
+                                            ${
+                                                condition
+                                                    ? escapeHtml(condition)
+                                                    : ""
+                                            }
 
-                                        ${
-                                            location
-                                            ? escapeHtml(location)
-                                            : ""
-                                        }
-                                    </p>
-                                `
+                                            ${
+                                                condition &&
+                                                location
+                                                    ? " • "
+                                                    : ""
+                                            }
 
-                                : ""
+                                            ${
+                                                location
+                                                    ? escapeHtml(location)
+                                                    : ""
+                                            }
+
+                                        </p>
+                                    `
+
+                                    : ""
                             }
 
                         </div>
@@ -2962,18 +3078,48 @@ function renderCollection(
 
 
 /* ======================================================
-   FORMAT
+   NORMALIZACIÓN FRONTEND
 ====================================================== */
 
-function normalizeFormatFrontend(
+function normalizeTextFrontend(
+    value
+) {
+
+    return String(
+        value == null
+            ? ""
+            : value
+    )
+    .toLowerCase()
+    .normalize(
+        "NFD"
+    )
+    .replace(
+        /[\u0300-\u036f]/g,
+        ""
+    )
+    .replace(
+        /[^a-z0-9]+/g,
+        " "
+    )
+    .replace(
+        /\s+/g,
+        " "
+    )
+    .trim();
+
+}
+
+
+
+function normalizeFormatKeyFrontend(
     value
 ) {
 
     const format =
-        String(
-            value || ""
-        )
-        .toLowerCase();
+        normalizeTextFrontend(
+            value
+        );
 
 
     if (
@@ -2982,7 +3128,7 @@ function normalizeFormatFrontend(
         )
     ) {
 
-        return "CD";
+        return "cd";
 
     }
 
@@ -2994,6 +3140,42 @@ function normalizeFormatFrontend(
         format.includes(
             "cassette"
         )
+    ) {
+
+        return "casete";
+
+    }
+
+
+    return "vinilo";
+
+}
+
+
+
+function normalizeFormatFrontend(
+    value
+) {
+
+    const key =
+        normalizeFormatKeyFrontend(
+            value
+        );
+
+
+    if (
+        key ===
+        "cd"
+    ) {
+
+        return "CD";
+
+    }
+
+
+    if (
+        key ===
+        "casete"
     ) {
 
         return "Casete";
