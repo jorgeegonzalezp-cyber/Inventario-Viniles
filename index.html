@@ -9,7 +9,6 @@
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans">
 
-    <!-- Header -->
     <header class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-50 flex justify-between items-center shadow-md">
         <h1 class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2">
             <i class="fa-solid fa-compact-disc"></i> ViniloVault
@@ -19,7 +18,6 @@
         </div>
     </header>
 
-    <!-- Main Content Area -->
     <main class="flex-1 max-w-md w-full mx-auto p-4 pb-24">
 
         <!-- Tab 1: Escanear / Agregar -->
@@ -31,14 +29,16 @@
                 
                 <div class="relative border-2 border-dashed border-slate-700 rounded-xl p-6 text-center bg-slate-950/50 hover:border-emerald-500 transition cursor-pointer" onclick="document.getElementById('fileInput').click()">
                     <input type="file" id="fileInput" accept="image/*" capture="environment" class="hidden" onchange="handleImageSelection(event)">
+                    
                     <div id="dropZoneContent" class="space-y-2">
                         <i class="fa-solid fa-cloud-arrow-up text-3xl text-emerald-400"></i>
                         <p class="text-sm text-slate-300">Toca para tomar foto o subir portada</p>
                         <p class="text-xs text-slate-500">Gemini IA leerá los datos automáticamente</p>
                     </div>
+
                     <div id="imagePreviewContainer" class="hidden relative">
-                        <img id="imagePreview" class="max-h-48 mx-auto rounded-lg shadow-md object-contain">
-                        <button onclick="event.stopPropagation(); resetImageCapture();" class="absolute top-2 right-2 bg-slate-900/80 hover:bg-red-500 text-slate-200 p-1.5 rounded-full text-xs transition">
+                        <img id="imagePreview" class="max-h-56 mx-auto rounded-lg shadow-md object-contain">
+                        <button onclick="event.stopPropagation(); resetImageCapture();" class="absolute top-2 right-2 bg-slate-900/80 hover:bg-red-500 text-slate-200 p-2 rounded-full text-xs transition shadow">
                             <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
@@ -49,17 +49,17 @@
                 </div>
             </div>
 
-            <!-- Formulario de Edición / Guardado -->
+            <!-- Formulario de Registro -->
             <div class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-3">
                 <h2 class="text-lg font-semibold text-slate-200 mb-2">Detalles del Disco</h2>
                 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Artista</label>
+                        <label class="text-xs text-slate-400 font-medium">Artista *</label>
                         <input type="text" id="formArtist" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Álbum / Título</label>
+                        <label class="text-xs text-slate-400 font-medium">Álbum / Título *</label>
                         <input type="text" id="formTitle" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
                     </div>
                 </div>
@@ -100,7 +100,7 @@
                         <input type="text" id="formLocation" placeholder="Ej. Estante 1" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
                     </div>
                     <div>
-                        <label class="text-xs text-slate-400 font-medium">Precio Aprox ($)</label>
+                        <label class="text-xs text-slate-400 font-medium">Precio ($)</label>
                         <input type="number" id="formPrice" class="w-full bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
                     </div>
                 </div>
@@ -111,7 +111,7 @@
             </div>
         </section>
 
-        <!-- Tab 2: Colección -->
+        <!-- Tab 2: Colección con Submenú de Formatos -->
         <section id="tab-collection" class="tab-content hidden space-y-4">
             <div class="flex justify-between items-center">
                 <h2 class="text-lg font-semibold text-slate-200">Mi Colección</h2>
@@ -120,6 +120,14 @@
                 </button>
             </div>
 
+            <!-- Submenú de Categorías (Vinilos / CDs / Todos) -->
+            <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1">
+                <button onclick="setCollectionFilter('todos')" id="filter-todos" class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow">Todos</button>
+                <button onclick="setCollectionFilter('vinilo')" id="filter-vinilo" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition">Vinilos</button>
+                <button onclick="setCollectionFilter('cd')" id="filter-cd" class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition">CDs</button>
+            </div>
+
+            <!-- Barra de Búsqueda -->
             <div class="relative">
                 <i class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-sm"></i>
                 <input type="text" id="searchInput" oninput="filterCollection()" placeholder="Buscar por artista o álbum..." class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none">
@@ -184,6 +192,7 @@
     <script>
         let currentImageBase64 = "";
         let fullCollectionData = [];
+        let currentCollectionFilter = 'todos';
 
         window.onload = function() {
             const savedUrl = localStorage.getItem("gas_url") || "";
@@ -208,6 +217,19 @@
             if (tabName === 'collection') {
                 loadCollection();
             }
+        }
+
+        function setCollectionFilter(filter) {
+            currentCollectionFilter = filter;
+            ['todos', 'vinilo', 'cd'].forEach(f => {
+                const btn = document.getElementById('filter-' + f);
+                if (f === filter) {
+                    btn.className = "flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow";
+                } else {
+                    btn.className = "flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition";
+                }
+            });
+            filterCollection();
         }
 
         function updateStatus(isOnline, text) {
@@ -261,8 +283,8 @@
                 const img = new Image();
                 img.onload = function() {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 800;
-                    const MAX_HEIGHT = 800;
+                    const MAX_WIDTH = 900;
+                    const MAX_HEIGHT = 900;
                     let width = img.width;
                     let height = img.height;
 
@@ -277,7 +299,7 @@
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
 
-                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.8);
+                    currentImageBase64 = canvas.toDataURL('image/jpeg', 0.85);
                     
                     const preview = document.getElementById('imagePreview');
                     preview.src = currentImageBase64;
@@ -304,7 +326,7 @@
             loading.classList.remove('hidden');
 
             const base64Clean = base64Data.split(',')[1];
-            const systemPrompt = "Analiza esta portada de disco de vinilo o CD. Devuelve estrictamente un objeto JSON con las claves: artist, title, format (Vinilo/CD), year, genre, label, condition.";
+            const systemPrompt = "Analiza esta portada de disco de vinilo o CD. Devuelve estrictamente un objeto JSON válido con las claves: artist, title, format ('Vinilo' o 'CD'), year, genre, label, condition. No agregues texto adicional fuera del JSON.";
             const apiKey = ""; 
 
             try {
@@ -314,7 +336,7 @@
                     body: JSON.stringify({
                         contents: [{
                             parts: [
-                                { text: "Extrae los metadatos de este disco en JSON." },
+                                { text: "Extrae los metadatos de este disco." },
                                 { inlineData: { mimeType: "image/jpeg", data: base64Clean } }
                             ]
                         }],
@@ -329,7 +351,11 @@
 
                 document.getElementById('formArtist').value = data.artist || "";
                 document.getElementById('formTitle').value = data.title || "";
-                if (data.format) document.getElementById('formFormat').value = data.format;
+                if (data.format) {
+                    const fmt = data.format.toLowerCase();
+                    if (fmt.includes('cd')) document.getElementById('formFormat').value = 'CD';
+                    else if (fmt.includes('vinil') || fmt.includes('vinyl')) document.getElementById('formFormat').value = 'Vinilo';
+                }
                 document.getElementById('formYear').value = data.year || "";
                 document.getElementById('formGenre').value = data.genre || "";
                 document.getElementById('formLabel').value = data.label || "";
@@ -415,7 +441,7 @@
                 const res = await fetch(url);
                 const data = await res.json();
                 fullCollectionData = Array.isArray(data) ? data : [];
-                renderCollection(fullCollectionData);
+                filterCollection();
             } catch (err) {
                 console.error(err);
             }
@@ -432,10 +458,29 @@
             return rawUrl;
         }
 
+        function filterCollection() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = fullCollectionData.filter(item => {
+                const artist = String(item.artist || item.artista || "").toLowerCase();
+                const title = String(item.title || item.título || item.album || "").toLowerCase();
+                const format = String(item.format || item.formato || "").toLowerCase();
+
+                const matchesQuery = artist.includes(query) || title.includes(query);
+                
+                if (currentCollectionFilter === 'vinilo') {
+                    return matchesQuery && format.includes('vinilo');
+                } else if (currentCollectionFilter === 'cd') {
+                    return matchesQuery && format.includes('cd');
+                }
+                return matchesQuery;
+            });
+            renderCollection(filtered);
+        }
+
         function renderCollection(items) {
             const listEl = document.getElementById('collectionList');
             if (items.length === 0) {
-                listEl.innerHTML = `<div class="text-center py-8 text-slate-500 text-xs">No hay discos registrados todavía.</div>`;
+                listEl.innerHTML = `<div class="text-center py-12 text-slate-500 text-xs">No hay discos registrados en esta categoría.</div>`;
                 return;
             }
 
@@ -460,16 +505,6 @@
                     </div>
                 `;
             }).join('');
-        }
-
-        function filterCollection() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = fullCollectionData.filter(item => {
-                const artist = String(item.artist || item.artista || "").toLowerCase();
-                const title = String(item.title || item.título || item.album || "").toLowerCase();
-                return artist.includes(query) || title.includes(query);
-            });
-            renderCollection(filtered);
         }
     </script>
 </body>
