@@ -2,7 +2,6 @@
 <html lang="es">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,58 +9,186 @@
         content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     >
 
-    <title>
-        ViniloVault
-    </title>
+    <title>ViniloVault</title>
 
-    <script
-        src="https://cdn.tailwindcss.com"
-    ></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <link
         rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     >
 
+    <style>
+        :root {
+            --cream: #f3ead7;
+            --paper: #fffaf0;
+            --ink: #111111;
+            --coral: #ff5f57;
+            --blue: #3157ff;
+            --yellow: #f7d046;
+            --muted: #766f64;
+            --line: rgba(17, 17, 17, 0.14);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(255, 95, 87, 0.12),
+                    transparent 30%
+                ),
+                radial-gradient(
+                    circle at 10% 20%,
+                    rgba(49, 87, 255, 0.08),
+                    transparent 28%
+                ),
+                var(--cream);
+
+            color: var(--ink);
+        }
+
+        .display-font {
+            font-family:
+                Impact,
+                Haettenschweiler,
+                "Arial Narrow Bold",
+                sans-serif;
+
+            letter-spacing: -0.025em;
+        }
+
+        .paper-card {
+            background: rgba(255, 250, 240, 0.95);
+            border: 1.5px solid var(--ink);
+            box-shadow: 4px 4px 0 var(--ink);
+        }
+
+        .soft-card {
+            background: rgba(255, 250, 240, 0.86);
+            border: 1px solid var(--line);
+        }
+
+        .editorial-button {
+            border: 1.5px solid var(--ink);
+            box-shadow: 3px 3px 0 var(--ink);
+            transition:
+                transform 0.12s ease,
+                box-shadow 0.12s ease;
+        }
+
+        .editorial-button:active {
+            transform: translate(3px, 3px);
+            box-shadow: 0 0 0 var(--ink);
+        }
+
+        .tab-active {
+            background: var(--ink);
+            color: var(--paper);
+        }
+
+        .filter-chip {
+            border: 1px solid var(--ink);
+            background: var(--paper);
+            color: var(--ink);
+            white-space: nowrap;
+        }
+
+        .filter-chip.active {
+            background: var(--blue);
+            color: white;
+        }
+
+        .album-card {
+            border-top: 1px solid rgba(17, 17, 17, 0.18);
+        }
+
+        .album-card:first-child {
+            border-top: none;
+        }
+
+        input,
+        select {
+            color: var(--ink);
+        }
+
+        input::placeholder {
+            color: #978f82;
+        }
+
+        .safe-bottom {
+            padding-bottom:
+                max(
+                    1rem,
+                    env(safe-area-inset-bottom)
+                );
+        }
+
+        .hide-scrollbar {
+            scrollbar-width: none;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .capture-shell {
+            background: rgba(255, 250, 240, 0.82);
+            border: 1px solid rgba(17, 17, 17, 0.18);
+        }
+
+        .capture-empty {
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255, 255, 255, 0.45),
+                    rgba(255, 250, 240, 0.75)
+                );
+        }
+    </style>
 </head>
 
 
-<body
-    class="bg-slate-950 text-slate-100 min-h-screen flex flex-col font-sans"
->
+<body class="min-h-screen font-sans">
 
-
-<!-- ======================================================
-     HEADER
-====================================================== -->
 
 <header
-    class="bg-slate-900 border-b border-slate-800 p-4 sticky top-0 z-40 flex justify-between items-center shadow-md"
+    class="sticky top-0 z-40 border-b border-black/20 bg-[#f3ead7]/95 backdrop-blur"
 >
 
-    <h1
-        class="text-xl font-bold tracking-tight text-emerald-400 flex items-center gap-2"
-    >
-
-        <i
-            class="fa-solid fa-compact-disc"
-        ></i>
-
-        ViniloVault
-
-    </h1>
-
-
     <div
-        id="connectionStatus"
-        class="text-xs px-2 py-1 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center gap-1"
+        class="max-w-md mx-auto px-4 py-3 flex items-center justify-between"
     >
 
-        <span
-            class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"
-        ></span>
+        <button
+            onclick="switchTab('collection')"
+            class="text-left"
+        >
 
-        Verificando...
+            <div
+                class="display-font text-2xl leading-none"
+            >
+                VINILO
+            </div>
+
+            <div
+                class="display-font text-2xl leading-none text-[#ff5f57]"
+            >
+                VAULT
+            </div>
+
+        </button>
+
+
+        <div
+            id="connectionStatus"
+            class="text-[10px] font-bold px-2.5 py-1.5 border border-black rounded-full bg-[#f7d046]"
+        >
+            VERIFICANDO
+        </div>
 
     </div>
 
@@ -69,54 +196,299 @@
 
 
 
-<!-- ======================================================
-     MAIN
-====================================================== -->
-
 <main
-    class="flex-1 max-w-md w-full mx-auto p-4 pb-28"
+    class="max-w-md mx-auto px-4 pt-5 pb-28"
 >
 
-
-<!-- ======================================================
-     ESCANEAR
-====================================================== -->
 
 <section
-    id="tab-scan"
-    class="tab-content space-y-4"
+    id="tab-collection"
+    class="tab-content space-y-5"
 >
 
-
-    <!-- FOTO -->
-
     <div
-        class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl"
+        class="paper-card rounded-[28px] p-5 overflow-hidden relative"
     >
 
-        <h2
-            class="text-lg font-semibold text-slate-200 flex items-center gap-2"
+        <div
+            class="absolute w-28 h-28 rounded-full bg-[#3157ff] -right-8 -top-8 opacity-95"
+        ></div>
+
+        <div class="relative z-10">
+
+            <p
+                class="text-[11px] font-black uppercase tracking-[0.2em]"
+            >
+                Archivo personal
+            </p>
+
+            <div
+                class="flex items-end justify-between mt-2"
+            >
+
+                <div>
+
+                    <h1
+                        class="display-font text-5xl leading-[0.85]"
+                    >
+                        MI
+                        <br>
+                        COLECCIÓN
+                    </h1>
+
+                </div>
+
+
+                <div class="text-right">
+
+                    <div
+                        id="totalCount"
+                        class="display-font text-5xl leading-none"
+                    >
+                        0
+                    </div>
+
+                    <div
+                        class="text-[10px] font-black uppercase tracking-wider"
+                    >
+                        unidades
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div
+        class="grid grid-cols-3 gap-2"
+    >
+
+        <div
+            class="soft-card rounded-2xl p-3"
         >
 
-            <i
-                class="fa-solid fa-camera text-emerald-400"
-            ></i>
+            <div
+                id="vinylCount"
+                class="display-font text-3xl"
+            >
+                0
+            </div>
 
-            Escanear portada
+            <div
+                class="text-[10px] font-black uppercase"
+            >
+                Vinilos
+            </div>
 
-        </h2>
-
-
-        <p
-            class="text-xs text-slate-500 mt-1 mb-4"
-        >
-            Fotografía la portada frontal del disco
-        </p>
-
+        </div>
 
 
         <div
-            class="relative border-2 border-dashed border-slate-700 rounded-2xl overflow-hidden bg-slate-950/60 hover:border-emerald-500 transition cursor-pointer"
+            class="soft-card rounded-2xl p-3"
+        >
+
+            <div
+                id="cdCount"
+                class="display-font text-3xl text-[#3157ff]"
+            >
+                0
+            </div>
+
+            <div
+                class="text-[10px] font-black uppercase"
+            >
+                CDs
+            </div>
+
+        </div>
+
+
+        <div
+            class="soft-card rounded-2xl p-3"
+        >
+
+            <div
+                id="cassetteCount"
+                class="display-font text-3xl text-[#ff5f57]"
+            >
+                0
+            </div>
+
+            <div
+                class="text-[10px] font-black uppercase"
+            >
+                Casetes
+            </div>
+
+        </div>
+
+    </div>
+
+
+
+    <div class="relative">
+
+        <i
+            class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-black"
+        ></i>
+
+        <input
+            id="searchInput"
+            type="text"
+            placeholder="Buscar artista o álbum"
+            oninput="filterCollection()"
+            class="w-full bg-[#fffaf0] border border-black/30 rounded-full pl-11 pr-4 py-3 text-sm font-semibold outline-none"
+        >
+
+    </div>
+
+
+
+    <div
+        class="overflow-x-auto hide-scrollbar"
+    >
+
+        <div class="flex gap-2 min-w-max">
+
+            <button
+                id="browse-todos"
+                onclick="setBrowseMode('todos')"
+                class="browse-mode tab-active rounded-full px-4 py-2 text-xs font-black uppercase border border-black"
+            >
+                Todos
+            </button>
+
+
+            <button
+                id="browse-genero"
+                onclick="setBrowseMode('genero')"
+                class="browse-mode bg-[#fffaf0] rounded-full px-4 py-2 text-xs font-black uppercase border border-black"
+            >
+                Género
+            </button>
+
+
+            <button
+                id="browse-anio"
+                onclick="setBrowseMode('anio')"
+                class="browse-mode bg-[#fffaf0] rounded-full px-4 py-2 text-xs font-black uppercase border border-black"
+            >
+                Año
+            </button>
+
+
+            <button
+                id="browse-artista"
+                onclick="setBrowseMode('artista')"
+                class="browse-mode bg-[#fffaf0] rounded-full px-4 py-2 text-xs font-black uppercase border border-black"
+            >
+                Artista
+            </button>
+
+        </div>
+
+    </div>
+
+
+
+    <div
+        id="subFilterContainer"
+        class="hidden"
+    >
+
+        <div
+            id="subFilterList"
+            class="flex gap-2 overflow-x-auto hide-scrollbar pb-2"
+        ></div>
+
+    </div>
+
+
+
+    <div>
+
+        <div
+            class="flex items-end justify-between mb-2"
+        >
+
+            <div>
+
+                <div
+                    id="collectionHeading"
+                    class="display-font text-3xl"
+                >
+                    TODOS
+                </div>
+
+                <div
+                    id="collectionCount"
+                    class="text-[11px] font-bold uppercase text-[#766f64]"
+                >
+                    0 registros
+                </div>
+
+            </div>
+
+
+            <button
+                onclick="loadCollection(true)"
+                class="w-9 h-9 flex items-center justify-center rounded-full border border-black bg-[#fffaf0]"
+            >
+                <i class="fa-solid fa-rotate"></i>
+            </button>
+
+        </div>
+
+
+        <div
+            id="collectionList"
+            class="bg-[#fffaf0] border border-black/30 rounded-[24px] overflow-hidden"
+        ></div>
+
+    </div>
+
+</section>
+
+
+
+<section
+    id="tab-scan"
+    class="tab-content hidden space-y-5"
+>
+
+
+    <div>
+
+        <p
+            class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#3157ff]"
+        >
+            Nueva entrada
+        </p>
+
+
+        <h2
+            class="display-font text-4xl leading-[0.9] mt-1"
+        >
+            AÑADIR DISCO
+        </h2>
+
+    </div>
+
+
+
+    <!-- PREVIEW MINIMALISTA -->
+
+    <div
+        class="capture-shell rounded-[26px] p-3"
+    >
+
+        <div
+            class="relative rounded-[20px] overflow-hidden cursor-pointer"
             onclick="document.getElementById('fileInput').click()"
         >
 
@@ -130,89 +502,59 @@
             >
 
 
-            <!-- ESTADO VACÍO -->
-
             <div
                 id="dropZoneContent"
-                class="aspect-square flex flex-col items-center justify-center text-center p-8"
+                class="capture-empty aspect-square flex flex-col items-center justify-center p-8 text-center"
             >
 
                 <div
-                    class="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center mb-4"
+                    class="w-12 h-12 rounded-full border border-black/30 flex items-center justify-center"
                 >
 
                     <i
-                        class="fa-solid fa-camera text-2xl text-emerald-400"
+                        class="fa-solid fa-camera text-lg"
                     ></i>
 
                 </div>
 
 
                 <p
-                    class="text-sm font-medium text-slate-200"
+                    class="text-sm font-bold mt-4"
                 >
                     Tomar foto
                 </p>
 
 
                 <p
-                    class="text-xs text-slate-500 mt-1"
+                    class="text-xs text-[#766f64] mt-1 max-w-[210px]"
                 >
-                    También puedes elegir una imagen existente
-                </p>
-
-
-                <p
-                    class="text-[10px] text-slate-600 mt-5"
-                >
-                    Gemini identificará automáticamente el disco
+                    Portada frontal o imagen existente
                 </p>
 
             </div>
 
 
 
-            <!-- PREVIEW -->
-
             <div
                 id="imagePreviewContainer"
-                class="hidden relative aspect-square bg-black"
+                class="hidden relative aspect-square bg-[#ebe3d5]"
             >
 
                 <img
                     id="imagePreview"
                     class="w-full h-full object-contain"
-                    alt="Portada seleccionada"
+                    alt="Portada"
                 >
-
-
-                <div
-                    class="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent p-4 pt-14 pointer-events-none"
-                >
-
-                    <p
-                        class="text-xs text-slate-200"
-                    >
-                        Portada seleccionada
-                    </p>
-
-                    <p
-                        class="text-[10px] text-slate-400"
-                    >
-                        Toca la imagen para elegir otra
-                    </p>
-
-                </div>
 
 
                 <button
                     type="button"
                     onclick="event.stopPropagation(); resetImageCapture();"
-                    class="absolute top-3 right-3 w-9 h-9 bg-black/70 hover:bg-red-500 rounded-full flex items-center justify-center shadow-lg transition"
+                    class="absolute top-3 right-3 w-8 h-8 rounded-full bg-white/90 border border-black/20 flex items-center justify-center shadow-sm"
                 >
 
                     <i
-                        class="fa-solid fa-xmark"
+                        class="fa-solid fa-xmark text-xs"
                     ></i>
 
                 </button>
@@ -223,37 +565,22 @@
 
 
 
-        <!-- ANALIZANDO -->
-
         <div
             id="aiLoading"
-            class="hidden mt-4"
+            class="hidden mt-3"
         >
 
             <div
-                class="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 flex items-center gap-3"
+                class="flex items-center gap-2 text-xs text-[#766f64] px-1 py-2"
             >
 
                 <i
-                    class="fa-solid fa-wand-magic-sparkles animate-pulse text-emerald-400"
+                    class="fa-solid fa-circle-notch fa-spin text-[#3157ff]"
                 ></i>
 
-
-                <div>
-
-                    <p
-                        class="text-sm text-emerald-400 font-medium"
-                    >
-                        Analizando portada...
-                    </p>
-
-                    <p
-                        class="text-[10px] text-slate-500"
-                    >
-                        Identificando disco y verificando colección
-                    </p>
-
-                </div>
+                <span>
+                    Analizando portada y revisando duplicados
+                </span>
 
             </div>
 
@@ -263,78 +590,67 @@
 
 
 
-    <!-- ==================================================
-         DATOS
-    =================================================== -->
-
     <div
-        class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
+        id="duplicateWarning"
+        class="hidden border border-black/25 bg-[#f7d046]/70 rounded-2xl p-3"
     >
 
-        <div>
-
-            <h2
-                class="text-lg font-semibold text-slate-200"
-            >
-                Datos del disco
-            </h2>
-
-            <p
-                class="text-xs text-slate-500 mt-1"
-            >
-                Revisa los datos antes de guardar
-            </p>
-
-        </div>
-
-
-
-        <!-- DUPLICADO -->
-
         <div
-            id="duplicateWarning"
-            class="hidden bg-amber-500/10 border border-amber-500/30 rounded-xl p-3"
+            class="flex gap-2"
         >
 
-            <div
-                class="flex gap-3"
-            >
+            <i
+                class="fa-solid fa-lock text-sm mt-0.5"
+            ></i>
 
-                <i
-                    class="fa-solid fa-lock text-amber-400 mt-0.5"
-                ></i>
 
+            <div>
 
                 <div
-                    class="min-w-0"
+                    class="font-black uppercase text-xs"
                 >
-
-                    <p
-                        class="text-sm text-amber-400 font-semibold"
-                    >
-                        Posible duplicado
-                    </p>
-
-
-                    <p
-                        id="duplicateWarningText"
-                        class="text-xs text-slate-300 mt-1"
-                    ></p>
-
+                    Posible duplicado
                 </div>
+
+                <div
+                    id="duplicateWarningText"
+                    class="text-xs mt-1"
+                ></div>
 
             </div>
 
         </div>
 
+    </div>
 
 
-        <!-- ARTISTA -->
+
+    <div
+        class="capture-shell rounded-[26px] p-5 space-y-5"
+    >
+
+        <div>
+
+            <div
+                class="text-[9px] font-bold uppercase tracking-[0.16em] text-[#ff5f57]"
+            >
+                Metadatos
+            </div>
+
+            <h3
+                class="text-xl font-black mt-1"
+            >
+                Datos del disco
+            </h3>
+
+        </div>
+
+
 
         <div>
 
             <label
-                class="text-xs text-slate-400 font-medium"
+                class="text-[10px] font-black uppercase"
             >
                 Artista *
             </label>
@@ -344,19 +660,17 @@
                 id="formArtist"
                 placeholder="Artista o grupo"
                 oninput="scheduleLocalDuplicateCheck()"
-                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                class="w-full mt-1 bg-transparent border-b border-black/40 py-2 text-lg font-bold outline-none"
             >
 
         </div>
 
 
 
-        <!-- ÁLBUM -->
-
         <div>
 
             <label
-                class="text-xs text-slate-400 font-medium"
+                class="text-[10px] font-black uppercase"
             >
                 Álbum / Título *
             </label>
@@ -366,23 +680,21 @@
                 id="formTitle"
                 placeholder="Título del álbum"
                 oninput="scheduleLocalDuplicateCheck()"
-                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                class="w-full mt-1 bg-transparent border-b border-black/40 py-2 text-lg font-bold outline-none"
             >
 
         </div>
 
 
 
-        <!-- FORMATO / AÑO -->
-
         <div
-            class="grid grid-cols-2 gap-3"
+            class="grid grid-cols-2 gap-4"
         >
 
             <div>
 
                 <label
-                    class="text-xs text-slate-400 font-medium"
+                    class="text-[10px] font-black uppercase"
                 >
                     Formato
                 </label>
@@ -390,7 +702,7 @@
                 <select
                     id="formFormat"
                     onchange="localDuplicateCheck()"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                    class="w-full mt-1 bg-transparent border-b border-black/40 py-2 text-base font-bold outline-none"
                 >
 
                     <option value="Vinilo">
@@ -410,11 +722,10 @@
             </div>
 
 
-
             <div>
 
                 <label
-                    class="text-xs text-slate-400 font-medium"
+                    class="text-[10px] font-black uppercase"
                 >
                     Año
                 </label>
@@ -422,10 +733,10 @@
                 <input
                     type="text"
                     id="formYear"
-                    placeholder="Ej. 1977"
+                    placeholder="1977"
                     inputmode="numeric"
                     oninput="scheduleLocalDuplicateCheck()"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                    class="w-full mt-1 bg-transparent border-b border-black/40 py-2 text-base font-bold outline-none"
                 >
 
             </div>
@@ -434,12 +745,10 @@
 
 
 
-        <!-- GÉNERO -->
-
         <div>
 
             <label
-                class="text-xs text-slate-400 font-medium"
+                class="text-[10px] font-black uppercase"
             >
                 Género
             </label>
@@ -447,20 +756,18 @@
             <input
                 type="text"
                 id="formGenre"
-                placeholder="Ej. Rock, Jazz, Pop"
-                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                placeholder="Rock, Jazz, Pop..."
+                class="w-full mt-1 bg-transparent border-b border-black/40 py-2 text-base font-bold outline-none"
             >
 
         </div>
 
 
 
-        <!-- SELLO -->
-
         <div>
 
             <label
-                class="text-xs text-slate-400 font-medium"
+                class="text-[10px] font-black uppercase"
             >
                 Sello / Disquera
             </label>
@@ -469,98 +776,20 @@
                 type="text"
                 id="formLabel"
                 placeholder="Sello discográfico"
-                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
+                class="w-full mt-1 bg-transparent border-b border-black/40 py-2 text-base font-bold outline-none"
             >
 
         </div>
 
 
 
-        <!-- CONDICIÓN / UBICACIÓN -->
-
-        <div
-            class="grid grid-cols-2 gap-3"
-        >
-
-            <div>
-
-                <label
-                    class="text-xs text-slate-400 font-medium"
-                >
-                    Condición
-                </label>
-
-                <select
-                    id="formCondition"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                >
-
-                    <option value="">
-                        Sin especificar
-                    </option>
-
-                    <option value="M">
-                        M
-                    </option>
-
-                    <option value="NM">
-                        NM
-                    </option>
-
-                    <option value="VG+">
-                        VG+
-                    </option>
-
-                    <option value="VG">
-                        VG
-                    </option>
-
-                    <option value="G+">
-                        G+
-                    </option>
-
-                    <option value="G">
-                        G
-                    </option>
-
-                </select>
-
-            </div>
-
-
-
-            <div>
-
-                <label
-                    class="text-xs text-slate-400 font-medium"
-                >
-                    Ubicación
-                </label>
-
-                <input
-                    type="text"
-                    id="formLocation"
-                    placeholder="Ej. Estante 1"
-                    class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-xl p-3 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-                >
-
-            </div>
-
-        </div>
-
-
-
-        <!-- GUARDAR -->
-
         <button
-            onclick="saveItem(false)"
             id="saveBtn"
-            class="w-full mt-2 bg-emerald-500 hover:bg-emerald-600 disabled:bg-slate-700 disabled:text-slate-500 text-slate-950 font-bold py-3.5 rounded-xl transition shadow-lg flex items-center justify-center gap-2"
+            onclick="saveItem(false)"
+            class="w-full bg-black text-white rounded-full py-3.5 font-black uppercase text-xs mt-2 disabled:opacity-50"
         >
 
-            <i
-                class="fa-solid fa-floppy-disk"
-            ></i>
+            <i class="fa-solid fa-plus mr-2"></i>
 
             Guardar en colección
 
@@ -572,171 +801,56 @@
 
 
 
-<!-- ======================================================
-     COLECCIÓN
-====================================================== -->
-
-<section
-    id="tab-collection"
-    class="tab-content hidden space-y-4"
->
-
-    <div
-        class="flex justify-between items-center"
-    >
-
-        <div>
-
-            <h2
-                class="text-lg font-semibold text-slate-200"
-            >
-                Mi Colección
-            </h2>
-
-            <p
-                id="collectionCount"
-                class="text-xs text-slate-500"
-            >
-                0 discos
-            </p>
-
-        </div>
-
-
-        <button
-            onclick="loadCollection(true)"
-            class="text-xs bg-slate-800 hover:bg-slate-700 px-3 py-2 rounded-lg text-emerald-400 flex items-center gap-1 transition"
-        >
-
-            <i
-                class="fa-solid fa-rotate"
-            ></i>
-
-            Actualizar
-
-        </button>
-
-    </div>
-
-
-
-    <!-- FILTROS -->
-
-    <div
-        class="flex bg-slate-900 p-1 rounded-xl border border-slate-800 gap-1"
-    >
-
-        <button
-            onclick="setCollectionFilter('todos')"
-            id="filter-todos"
-            class="flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow"
-        >
-            Todos
-        </button>
-
-
-        <button
-            onclick="setCollectionFilter('vinilo')"
-            id="filter-vinilo"
-            class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
-        >
-            Vinilos
-        </button>
-
-
-        <button
-            onclick="setCollectionFilter('cd')"
-            id="filter-cd"
-            class="flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition"
-        >
-            CDs
-        </button>
-
-    </div>
-
-
-
-    <!-- BUSCADOR -->
-
-    <div
-        class="relative"
-    >
-
-        <i
-            class="fa-solid fa-magnifying-glass absolute left-3 top-3.5 text-slate-500 text-sm"
-        ></i>
-
-        <input
-            type="text"
-            id="searchInput"
-            oninput="filterCollection()"
-            placeholder="Buscar por artista o álbum..."
-            class="w-full bg-slate-900 border border-slate-800 rounded-xl pl-9 pr-4 py-2.5 text-sm text-slate-100 focus:border-emerald-500 focus:outline-none"
-        >
-
-    </div>
-
-
-
-    <div
-        id="collectionList"
-        class="space-y-3"
-    ></div>
-
-</section>
-
-
-
-<!-- ======================================================
-     AJUSTES
-====================================================== -->
-
 <section
     id="tab-settings"
-    class="tab-content hidden space-y-4"
+    class="tab-content hidden space-y-5"
 >
 
-    <div
-        class="bg-slate-900 border border-slate-800 rounded-2xl p-4 shadow-xl space-y-4"
-    >
+    <div>
+
+        <p
+            class="text-[10px] font-bold uppercase tracking-[0.18em] text-[#ff5f57]"
+        >
+            Sistema
+        </p>
 
         <h2
-            class="text-lg font-semibold text-slate-200 flex items-center gap-2"
+            class="display-font text-4xl"
         >
-
-            <i
-                class="fa-solid fa-gear text-emerald-400"
-            ></i>
-
-            Configuración
-
+            AJUSTES
         </h2>
 
+    </div>
+
+
+    <div
+        class="capture-shell rounded-[26px] p-5 space-y-4"
+    >
 
         <div>
 
             <label
-                class="text-xs text-slate-400 font-medium"
+                class="text-[10px] font-black uppercase"
             >
-                URL de Google Apps Script
+                Google Apps Script
             </label>
 
             <input
                 type="text"
                 id="settingUrl"
-                class="w-full mt-1 bg-slate-950 border border-slate-800 rounded-lg p-2.5 text-xs text-slate-100 focus:border-emerald-500 focus:outline-none font-mono"
+                class="w-full mt-2 bg-[#fffaf0] border border-black/30 rounded-xl p-3 text-xs font-mono outline-none"
             >
 
         </div>
 
 
         <div
-            class="flex gap-2"
+            class="grid grid-cols-2 gap-2"
         >
 
             <button
                 onclick="saveSettings()"
-                class="flex-1 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-sm transition"
+                class="bg-[#3157ff] text-white rounded-full py-3 text-xs font-black uppercase"
             >
                 Guardar
             </button>
@@ -744,7 +858,7 @@
 
             <button
                 onclick="testConnection()"
-                class="bg-slate-800 hover:bg-slate-700 text-slate-200 px-4 py-2.5 rounded-xl text-sm transition"
+                class="bg-[#f7d046] rounded-full py-3 text-xs font-black uppercase"
             >
                 Probar
             </button>
@@ -760,96 +874,94 @@
 
 
 
-<!-- ======================================================
-     NAVEGACIÓN
-====================================================== -->
-
 <nav
-    class="bg-slate-900 border-t border-slate-800 fixed bottom-0 left-0 right-0 max-w-md mx-auto flex justify-around p-3 z-40"
+    class="fixed bottom-0 left-0 right-0 z-40"
 >
 
-    <button
-        onclick="switchTab('scan')"
-        id="nav-scan"
-        class="flex flex-col items-center text-emerald-400 transition"
+    <div
+        class="max-w-md mx-auto px-4 safe-bottom"
     >
 
-        <i
-            class="fa-solid fa-camera text-lg"
-        ></i>
-
-        <span
-            class="text-[10px] mt-1"
+        <div
+            class="bg-black text-white rounded-full px-3 py-2 flex items-center justify-around shadow-xl"
         >
-            Escanear
-        </span>
 
-    </button>
+            <button
+                id="nav-collection"
+                onclick="switchTab('collection')"
+                class="nav-btn flex-1 py-2 rounded-full bg-white text-black"
+            >
 
+                <i class="fa-solid fa-record-vinyl"></i>
 
-    <button
-        onclick="switchTab('collection')"
-        id="nav-collection"
-        class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition"
-    >
+                <span
+                    class="text-[9px] block font-bold uppercase mt-1"
+                >
+                    Colección
+                </span>
 
-        <i
-            class="fa-solid fa-compact-disc text-lg"
-        ></i>
-
-        <span
-            class="text-[10px] mt-1"
-        >
-            Colección
-        </span>
-
-    </button>
+            </button>
 
 
-    <button
-        onclick="switchTab('settings')"
-        id="nav-settings"
-        class="flex flex-col items-center text-slate-400 hover:text-slate-200 transition"
-    >
+            <button
+                id="nav-scan"
+                onclick="switchTab('scan')"
+                class="nav-btn flex-1 py-2 rounded-full"
+            >
 
-        <i
-            class="fa-solid fa-gear text-lg"
-        ></i>
+                <i class="fa-solid fa-camera"></i>
 
-        <span
-            class="text-[10px] mt-1"
-        >
-            Ajustes
-        </span>
+                <span
+                    class="text-[9px] block font-bold uppercase mt-1"
+                >
+                    Añadir
+                </span>
 
-    </button>
+            </button>
+
+
+            <button
+                id="nav-settings"
+                onclick="switchTab('settings')"
+                class="nav-btn flex-1 py-2 rounded-full"
+            >
+
+                <i class="fa-solid fa-gear"></i>
+
+                <span
+                    class="text-[9px] block font-bold uppercase mt-1"
+                >
+                    Ajustes
+                </span>
+
+            </button>
+
+        </div>
+
+    </div>
 
 </nav>
 
 
 
-<!-- ======================================================
-     MODAL GENERAL
-====================================================== -->
-
 <div
     id="appModal"
-    class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+    class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-5"
 >
 
     <div
-        class="bg-slate-900 border border-slate-800 rounded-2xl max-w-xs w-full p-5 text-center space-y-3 shadow-2xl"
+        class="bg-[#fffaf0] border border-black/30 rounded-[26px] max-w-xs w-full p-5 text-center shadow-xl"
     >
 
         <div
             id="modalIcon"
-            class="text-3xl"
+            class="text-2xl"
         ></div>
 
 
         <h3
             id="modalTitle"
-            class="font-bold text-slate-100"
+            class="text-xl font-black mt-3"
         >
             Aviso
         </h3>
@@ -857,13 +969,13 @@
 
         <p
             id="modalMessage"
-            class="text-xs text-slate-300"
+            class="text-sm mt-2"
         ></p>
 
 
         <button
             onclick="closeModal()"
-            class="w-full bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition"
+            class="w-full bg-black text-white rounded-full py-3 text-xs font-black uppercase mt-5"
         >
             Aceptar
         </button>
@@ -874,78 +986,57 @@
 
 
 
-<!-- ======================================================
-     MODAL DUPLICADO
-====================================================== -->
-
 <div
     id="duplicateModal"
-    class="hidden fixed inset-0 bg-black/85 backdrop-blur-sm z-[60] flex items-center justify-center p-4"
+    class="hidden fixed inset-0 bg-black/65 backdrop-blur-sm z-[60] flex items-center justify-center p-5"
 >
 
     <div
-        class="bg-slate-900 border border-amber-500/30 rounded-2xl max-w-sm w-full p-5 shadow-2xl"
+        class="bg-[#fffaf0] border border-black/30 rounded-[26px] max-w-sm w-full p-5 shadow-xl"
     >
 
         <div
-            class="text-center"
+            class="w-10 h-10 border border-black/30 rounded-full flex items-center justify-center"
         >
-
-            <div
-                class="w-14 h-14 mx-auto rounded-full bg-amber-500/10 border border-amber-500/20 flex items-center justify-center"
-            >
-
-                <i
-                    class="fa-solid fa-lock text-amber-400 text-xl"
-                ></i>
-
-            </div>
-
-
-            <h3
-                class="font-bold text-slate-100 mt-4"
-            >
-                Disco posiblemente duplicado
-            </h3>
-
-
-            <p
-                class="text-xs text-slate-400 mt-2"
-            >
-                Ya existe un registro similar en tu colección.
-            </p>
-
+            <i class="fa-solid fa-lock text-sm"></i>
         </div>
 
 
+        <h3
+            class="text-2xl font-black mt-4"
+        >
+            Posible duplicado
+        </h3>
+
+
         <div
-            class="bg-slate-950 border border-slate-800 rounded-xl p-3 mt-4"
+            class="bg-[#f3ead7] rounded-2xl p-4 mt-4"
         >
 
-            <p
+            <div
                 id="duplicateModalTitle"
-                class="text-sm font-semibold text-slate-100"
-            ></p>
+                class="font-black text-lg"
+            ></div>
 
 
-            <p
+            <div
                 id="duplicateModalArtist"
-                class="text-xs text-emerald-400 mt-1"
-            ></p>
+                class="text-sm font-bold text-[#3157ff]"
+            ></div>
 
 
-            <p
+            <div
                 id="duplicateModalMeta"
-                class="text-[10px] text-slate-500 mt-1"
-            ></p>
+                class="text-xs mt-1"
+            ></div>
 
         </div>
 
 
         <p
-            class="text-xs text-slate-400 mt-4 text-center"
+            class="text-xs mt-4"
         >
-            Si realmente tienes otra copia puedes guardarla de todos modos.
+            Si tienes otra copia del mismo disco puedes guardarla de todas formas.
         </p>
 
 
@@ -955,7 +1046,7 @@
 
             <button
                 onclick="closeDuplicateModal()"
-                class="bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium py-2.5 rounded-xl text-xs transition"
+                class="bg-[#f3ead7] border border-black/30 rounded-full py-3 text-xs font-black uppercase"
             >
                 Cancelar
             </button>
@@ -963,9 +1054,9 @@
 
             <button
                 onclick="confirmDuplicateSave()"
-                class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold py-2.5 rounded-xl text-xs transition"
+                class="bg-black text-white rounded-full py-3 text-xs font-black uppercase"
             >
-                Guardar otra copia
+                Guardar copia
             </button>
 
         </div>
@@ -979,56 +1070,26 @@
 <script>
 
 
-/* ======================================================
-   CONFIGURACIÓN
-====================================================== */
-
 const DEFAULT_GAS_URL =
-    "https://script.google.com/macros/s/AKfycbwC8EvSprEoNdMugmg74AVOmnlWg_x6f12mWphD8KTx8OJVhQicqe8ejJlZrl0Agd1hYQ/exec";
+    "https://script.google.com/macros/s/AKfycby0fNHV6k124rhzEg-8DMba6OcQYkSeRwrrVeJ-CdEpZ66Z6n9Gb2_Fv7ZZSy1IiqvaVw/exec";
 
 
 const APP_VERSION =
-    "2026-09-02-performance-v1";
+    "2026-09-04-minimal-v2";
 
 
-let currentImageBase64 =
-    "";
+let currentImageBase64 = "";
+let fullCollectionData = [];
+let collectionLoaded = false;
+let currentDuplicate = null;
+let duplicateTimer = null;
+let browseMode = "todos";
+let activeSubFilter = "";
 
-
-let fullCollectionData =
-    [];
-
-
-let currentCollectionFilter =
-    "todos";
-
-
-let currentDuplicate =
-    null;
-
-
-let duplicateTimer =
-    null;
-
-
-let collectionLoaded =
-    false;
-
-
-
-/* ======================================================
-   INICIO
-====================================================== */
 
 window.addEventListener(
     "load",
     function () {
-
-        /*
-         * Esto evita que iPhone/Safari se quede
-         * apuntando eternamente a una implementación
-         * vieja guardada en localStorage.
-         */
 
         const savedVersion =
             localStorage.getItem(
@@ -1055,28 +1116,19 @@ window.addEventListener(
         }
 
 
-        const savedUrl =
-            localStorage.getItem(
-                "gas_url"
-            ) ||
-            DEFAULT_GAS_URL;
-
-
         document.getElementById(
             "settingUrl"
         ).value =
-            savedUrl;
+            getGasUrl();
+
+
+        switchTab(
+            "collection"
+        );
 
 
         testConnection();
 
-
-        /*
-         * Cargamos colección una sola vez.
-         *
-         * Esto permite que los chequeos posteriores
-         * de duplicados sean locales.
-         */
 
         loadCollection(
             false
@@ -1085,11 +1137,6 @@ window.addEventListener(
     }
 );
 
-
-
-/* ======================================================
-   URL BACKEND
-====================================================== */
 
 function getGasUrl() {
 
@@ -1103,12 +1150,9 @@ function getGasUrl() {
 }
 
 
-
-/* ======================================================
-   NAVEGACIÓN
-====================================================== */
-
-function switchTab(tabName) {
+function switchTab(
+    tabName
+) {
 
     document
         .querySelectorAll(
@@ -1127,47 +1171,52 @@ function switchTab(tabName) {
         );
 
 
-    document
-        .getElementById(
-            "tab-" +
-            tabName
-        )
-        .classList
-        .remove(
-            "hidden"
-        );
+    document.getElementById(
+        "tab-" +
+        tabName
+    )
+    .classList
+    .remove(
+        "hidden"
+    );
 
 
     [
-        "scan",
         "collection",
+        "scan",
         "settings"
-
-    ].forEach(
+    ]
+    .forEach(
         function (tab) {
 
-            const button =
+            const btn =
                 document.getElementById(
                     "nav-" +
                     tab
                 );
 
 
-            button.className =
-                tab === tabName
+            btn.classList.remove(
+                "bg-white",
+                "text-black"
+            );
 
-                    ? "flex flex-col items-center text-emerald-400 transition"
 
-                    : "flex flex-col items-center text-slate-400 hover:text-slate-200 transition";
+            if (
+                tab ===
+                tabName
+            ) {
+
+                btn.classList.add(
+                    "bg-white",
+                    "text-black"
+                );
+
+            }
 
         }
     );
 
-
-    /*
-     * Ya no recargamos Google Sheets cada vez
-     * que entras a Mi Colección.
-     */
 
     if (
         tabName ===
@@ -1184,10 +1233,30 @@ function switchTab(tabName) {
 }
 
 
+function updateStatus(
+    online,
+    text
+) {
 
-/* ======================================================
-   MODAL GENERAL
-====================================================== */
+    const element =
+        document.getElementById(
+            "connectionStatus"
+        );
+
+
+    element.textContent =
+        text.toUpperCase();
+
+
+    element.className =
+        online
+
+            ? "text-[10px] font-bold px-2.5 py-1.5 border border-black rounded-full bg-[#f7d046]"
+
+            : "text-[10px] font-bold px-2.5 py-1.5 border border-black rounded-full bg-[#ff5f57] text-white";
+
+}
+
 
 function showModal(
     title,
@@ -1197,13 +1266,13 @@ function showModal(
 
     document.getElementById(
         "modalTitle"
-    ).innerText =
+    ).textContent =
         title;
 
 
     document.getElementById(
         "modalMessage"
-    ).innerText =
+    ).textContent =
         message;
 
 
@@ -1212,9 +1281,9 @@ function showModal(
     ).innerHTML =
         isError
 
-            ? '<i class="fa-solid fa-triangle-exclamation text-red-400"></i>'
+            ? '<i class="fa-solid fa-triangle-exclamation text-[#ff5f57]"></i>'
 
-            : '<i class="fa-solid fa-circle-check text-emerald-400"></i>';
+            : '<i class="fa-solid fa-circle-check text-[#3157ff]"></i>';
 
 
     document.getElementById(
@@ -1226,7 +1295,6 @@ function showModal(
     );
 
 }
-
 
 
 function closeModal() {
@@ -1242,11 +1310,6 @@ function closeModal() {
 }
 
 
-
-/* ======================================================
-   DUPLICADO MODAL
-====================================================== */
-
 function showDuplicateModal(
     duplicate
 ) {
@@ -1257,14 +1320,14 @@ function showDuplicateModal(
 
     document.getElementById(
         "duplicateModalTitle"
-    ).innerText =
+    ).textContent =
         duplicate.title ||
         "Sin título";
 
 
     document.getElementById(
         "duplicateModalArtist"
-    ).innerText =
+    ).textContent =
         duplicate.artist ||
         "Artista desconocido";
 
@@ -1289,24 +1352,9 @@ function showDuplicateModal(
     }
 
 
-    if (
-        duplicate.location
-    ) {
-
-        meta +=
-            (
-                meta
-                    ? " • "
-                    : ""
-            ) +
-            duplicate.location;
-
-    }
-
-
     document.getElementById(
         "duplicateModalMeta"
-    ).innerText =
+    ).textContent =
         meta;
 
 
@@ -1319,7 +1367,6 @@ function showDuplicateModal(
     );
 
 }
-
 
 
 function closeDuplicateModal() {
@@ -1335,7 +1382,6 @@ function closeDuplicateModal() {
 }
 
 
-
 function confirmDuplicateSave() {
 
     closeDuplicateModal();
@@ -1347,58 +1393,6 @@ function confirmDuplicateSave() {
 }
 
 
-
-/* ======================================================
-   CONEXIÓN
-====================================================== */
-
-function updateStatus(
-    online,
-    text
-) {
-
-    const element =
-        document.getElementById(
-            "connectionStatus"
-        );
-
-
-    if (
-        online
-    ) {
-
-        element.className =
-            "text-xs px-2 py-1 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1";
-
-
-        element.innerHTML =
-            '<span class="w-2 h-2 rounded-full bg-emerald-400"></span> ' +
-            escapeHtml(
-                text
-            );
-
-    } else {
-
-        element.className =
-            "text-xs px-2 py-1 rounded-full bg-red-500/20 text-red-400 border border-red-500/30 flex items-center gap-1";
-
-
-        element.innerHTML =
-            '<span class="w-2 h-2 rounded-full bg-red-400"></span> ' +
-            escapeHtml(
-                text
-            );
-
-    }
-
-}
-
-
-
-/* ======================================================
-   AJUSTES
-====================================================== */
-
 function saveSettings() {
 
     const url =
@@ -1409,9 +1403,7 @@ function saveSettings() {
         .trim();
 
 
-    if (
-        !url
-    ) {
+    if (!url) {
 
         showModal(
             "URL requerida",
@@ -1442,7 +1434,7 @@ function saveSettings() {
 
     showModal(
         "Guardado",
-        "Enlace configurado correctamente.",
+        "Enlace actualizado.",
         false
     );
 
@@ -1456,11 +1448,6 @@ function saveSettings() {
 }
 
 
-
-/* ======================================================
-   PROBAR CONEXIÓN
-====================================================== */
-
 async function testConnection() {
 
     try {
@@ -1473,9 +1460,7 @@ async function testConnection() {
             );
 
 
-        if (
-            !response.ok
-        ) {
+        if (!response.ok) {
 
             throw new Error(
                 "HTTP " +
@@ -1485,18 +1470,18 @@ async function testConnection() {
         }
 
 
-        const result =
+        const data =
             await response.json();
 
 
         if (
-            result &&
-            result.status ===
+            data &&
+            data.status ===
             "error"
         ) {
 
             throw new Error(
-                result.message
+                data.message
             );
 
         }
@@ -1516,18 +1501,13 @@ async function testConnection() {
 
         updateStatus(
             false,
-            "Error de enlace"
+            "Sin conexión"
         );
 
     }
 
 }
 
-
-
-/* ======================================================
-   FOTO
-====================================================== */
 
 function handleImageSelection(
     event
@@ -1537,12 +1517,8 @@ function handleImageSelection(
         event.target.files[0];
 
 
-    if (
-        !file
-    ) {
-
+    if (!file) {
         return;
-
     }
 
 
@@ -1570,16 +1546,6 @@ function handleImageSelection(
                                 "canvas"
                             );
 
-
-                        /*
-                         * OPTIMIZACIÓN:
-                         *
-                         * 760px sigue siendo suficiente
-                         * para reconocer una portada.
-                         *
-                         * Reduce bastante el Base64
-                         * comparado con 900 / 1000 px.
-                         */
 
                         const MAX_SIZE =
                             760;
@@ -1672,12 +1638,6 @@ function handleImageSelection(
                         );
 
 
-                        /*
-                         * 72% JPEG:
-                         * menor transferencia especialmente
-                         * desde Safari/iPhone.
-                         */
-
                         currentImageBase64 =
                             canvas.toDataURL(
                                 "image/jpeg",
@@ -1721,7 +1681,7 @@ function handleImageSelection(
 
 
                         showModal(
-                            "Error de imagen",
+                            "Error",
                             "No se pudo preparar la fotografía.",
                             true
                         );
@@ -1749,29 +1709,12 @@ function handleImageSelection(
         };
 
 
-    reader.onerror =
-        function () {
-
-            showModal(
-                "Error",
-                "No se pudo leer la fotografía.",
-                true
-            );
-
-        };
-
-
     reader.readAsDataURL(
         file
     );
 
 }
 
-
-
-/* ======================================================
-   RESET FOTO
-====================================================== */
 
 function resetImageCapture() {
 
@@ -1814,11 +1757,6 @@ function resetImageCapture() {
 }
 
 
-
-/* ======================================================
-   ANALIZAR
-====================================================== */
-
 async function analyzeImage(
     base64Data
 ) {
@@ -1837,12 +1775,6 @@ async function analyzeImage(
 
 
     try {
-
-        /*
-         * UNA SOLA PETICIÓN:
-         *
-         * Gemini + duplicado.
-         */
 
         const result =
             await postToBackend({
@@ -1909,12 +1841,6 @@ async function analyzeImage(
             data.label || "";
 
 
-        /*
-         * El backend ya nos devuelve el duplicado.
-         *
-         * NO hacemos otra llamada.
-         */
-
         if (
             result.duplicate
         ) {
@@ -1937,9 +1863,9 @@ async function analyzeImage(
 
 
         showModal(
-            "Error de reconocimiento",
+            "Error",
             error.message ||
-            "No se pudo analizar la portada.",
+            "No se pudo identificar la portada.",
             true
         );
 
@@ -1956,11 +1882,6 @@ async function analyzeImage(
 }
 
 
-
-/* ======================================================
-   DUPLICADO LOCAL
-====================================================== */
-
 function scheduleLocalDuplicateCheck() {
 
     clearTimeout(
@@ -1976,11 +1897,6 @@ function scheduleLocalDuplicateCheck() {
 
 }
 
-
-
-/* ======================================================
-   BUSCAR DUPLICADO LOCALMENTE
-====================================================== */
 
 function localDuplicateCheck() {
 
@@ -2008,14 +1924,6 @@ function localDuplicateCheck() {
         );
 
 
-    const year =
-        normalizeTextFrontend(
-            document.getElementById(
-                "formYear"
-            ).value
-        );
-
-
     if (
         !artist ||
         !title
@@ -2030,7 +1938,8 @@ function localDuplicateCheck() {
 
     for (
         let i = 0;
-        i < fullCollectionData.length;
+        i <
+        fullCollectionData.length;
         i++
     ) {
 
@@ -2038,68 +1947,29 @@ function localDuplicateCheck() {
             fullCollectionData[i];
 
 
-        const existingArtist =
+        if (
             normalizeTextFrontend(
                 item.artist || ""
-            );
-
-
-        const existingTitle =
+            ) === artist
+            &&
             normalizeTextFrontend(
                 item.title || ""
-            );
-
-
-        const existingFormat =
+            ) === title
+            &&
             normalizeFormatKeyFrontend(
                 item.format || ""
-            );
-
-
-        if (
-            existingArtist === artist &&
-            existingTitle === title &&
-            existingFormat === format
+            ) === format
         ) {
 
-            const duplicate = {
-                artist:
-                    item.artist || "",
-
-                title:
-                    item.title || "",
-
-                format:
-                    item.format || "",
-
-                year:
-                    item.year || "",
-
-                location:
-                    item.location || "",
-
-                photo:
-                    item.photo || "",
-
-                matchLevel:
-                    (
-                        year &&
-                        normalizeTextFrontend(
-                            item.year || ""
-                        ) === year
-                    )
-                        ? "strong"
-                        : "probable"
-            };
-
-
             showDuplicateWarning(
-                duplicate
+                item
             );
 
 
-            return duplicate;
+            return item;
+
         }
+
     }
 
 
@@ -2109,11 +1979,6 @@ function localDuplicateCheck() {
 
 }
 
-
-
-/* ======================================================
-   WARNING DUPLICADO
-====================================================== */
 
 function showDuplicateWarning(
     duplicate
@@ -2149,7 +2014,7 @@ function showDuplicateWarning(
 
     document.getElementById(
         "duplicateWarningText"
-    ).innerText =
+    ).textContent =
         text;
 
 
@@ -2162,7 +2027,6 @@ function showDuplicateWarning(
     );
 
 }
-
 
 
 function hideDuplicateWarning() {
@@ -2181,11 +2045,6 @@ function hideDuplicateWarning() {
 
 }
 
-
-
-/* ======================================================
-   GUARDAR
-====================================================== */
 
 async function saveItem(
     forceDuplicate
@@ -2214,7 +2073,7 @@ async function saveItem(
 
         showModal(
             "Campos incompletos",
-            "Ingresa al menos artista y título.",
+            "Ingresa artista y título.",
             true
         );
 
@@ -2262,14 +2121,10 @@ async function saveItem(
             ).value,
 
         condition:
-            document.getElementById(
-                "formCondition"
-            ).value,
+            "",
 
         location:
-            document.getElementById(
-                "formLocation"
-            ).value,
+            "",
 
         photo:
             currentImageBase64
@@ -2287,14 +2142,10 @@ async function saveItem(
 
 
     button.innerHTML =
-        '<i class="fa-solid fa-spinner animate-spin"></i> Guardando...';
+        '<i class="fa-solid fa-spinner fa-spin mr-2"></i> GUARDANDO';
 
 
     try {
-
-        /*
-         * ÚNICA verificación remota definitiva.
-         */
 
         const result =
             await postToBackend(
@@ -2318,6 +2169,7 @@ async function saveItem(
 
 
             return;
+
         }
 
 
@@ -2334,15 +2186,6 @@ async function saveItem(
         }
 
 
-        /*
-         * OPTIMIZACIÓN:
-         *
-         * Ya no descargamos todo el Sheet.
-         *
-         * Apps Script nos devuelve el disco recién
-         * guardado y lo agregamos localmente.
-         */
-
         if (
             result.item
         ) {
@@ -2356,9 +2199,7 @@ async function saveItem(
                 true;
 
 
-            updateCollectionCount();
-
-            filterCollection();
+            refreshCollectionUI();
 
         }
 
@@ -2369,7 +2210,7 @@ async function saveItem(
 
                 ? "La copia adicional se guardó correctamente."
 
-                : "Disco guardado correctamente.",
+                : "Disco agregado a tu colección.",
             false
         );
 
@@ -2386,7 +2227,7 @@ async function saveItem(
         showModal(
             "Error",
             error.message ||
-            "No se pudo guardar el registro.",
+            "No se pudo guardar.",
             true
         );
 
@@ -2397,17 +2238,12 @@ async function saveItem(
 
 
         button.innerHTML =
-            '<i class="fa-solid fa-floppy-disk"></i> Guardar en colección';
+            '<i class="fa-solid fa-plus mr-2"></i> GUARDAR EN COLECCIÓN';
 
     }
 
 }
 
-
-
-/* ======================================================
-   RESET
-====================================================== */
 
 function resetForm() {
 
@@ -2450,10 +2286,9 @@ function resetForm() {
         "formTitle",
         "formYear",
         "formGenre",
-        "formLabel",
-        "formLocation"
-
-    ].forEach(
+        "formLabel"
+    ]
+    .forEach(
         function (id) {
 
             document.getElementById(
@@ -2466,12 +2301,6 @@ function resetForm() {
 
 
     document.getElementById(
-        "formCondition"
-    ).value =
-        "";
-
-
-    document.getElementById(
         "formFormat"
     ).value =
         "Vinilo";
@@ -2481,11 +2310,6 @@ function resetForm() {
 
 }
 
-
-
-/* ======================================================
-   POST
-====================================================== */
 
 async function postToBackend(
     payload
@@ -2528,11 +2352,6 @@ async function postToBackend(
 }
 
 
-
-/* ======================================================
-   CARGAR COLECCIÓN
-====================================================== */
-
 async function loadCollection(
     forceRefresh
 ) {
@@ -2542,9 +2361,10 @@ async function loadCollection(
         !forceRefresh
     ) {
 
-        filterCollection();
+        refreshCollectionUI();
 
         return;
+
     }
 
 
@@ -2595,9 +2415,7 @@ async function loadCollection(
         }
 
 
-        updateCollectionCount();
-
-        filterCollection();
+        refreshCollectionUI();
 
     } catch (error) {
 
@@ -2610,7 +2428,7 @@ async function loadCollection(
             "collectionList"
         ).innerHTML =
             `
-            <div class="text-center py-12 text-red-400 text-xs">
+            <div class="p-8 text-center text-sm font-bold">
                 No se pudo cargar la colección.
             </div>
             `;
@@ -2620,148 +2438,467 @@ async function loadCollection(
 }
 
 
+function refreshCollectionUI() {
 
-/* ======================================================
-   CONTADOR
-====================================================== */
+    updateCounters();
 
-function updateCollectionCount() {
-
-    const count =
-        fullCollectionData.length;
-
-
-    document.getElementById(
-        "collectionCount"
-    ).innerText =
-        count === 1
-
-            ? "1 disco"
-
-            : count +
-              " discos";
-
-}
-
-
-
-/* ======================================================
-   FILTRO
-====================================================== */
-
-function setCollectionFilter(
-    filter
-) {
-
-    currentCollectionFilter =
-        filter;
-
-
-    [
-        "todos",
-        "vinilo",
-        "cd"
-
-    ].forEach(
-        function (item) {
-
-            const button =
-                document.getElementById(
-                    "filter-" +
-                    item
-                );
-
-
-            button.className =
-                item === filter
-
-                    ? "flex-1 py-2 text-xs font-medium rounded-lg bg-emerald-500 text-slate-950 transition shadow"
-
-                    : "flex-1 py-2 text-xs font-medium rounded-lg text-slate-400 hover:text-slate-200 transition";
-
-        }
-    );
-
+    renderSubFilters();
 
     filterCollection();
 
 }
 
 
+function updateCounters() {
 
-/* ======================================================
-   FILTRAR
-====================================================== */
+    let vinyl = 0;
+    let cd = 0;
+    let cassette = 0;
 
-function filterCollection() {
 
-    const searchInput =
-        document.getElementById(
-            "searchInput"
+    fullCollectionData.forEach(
+        function (item) {
+
+            const format =
+                normalizeFormatKeyFrontend(
+                    item.format || ""
+                );
+
+
+            if (
+                format ===
+                "cd"
+            ) {
+
+                cd++;
+
+            } else if (
+                format ===
+                "casete"
+            ) {
+
+                cassette++;
+
+            } else {
+
+                vinyl++;
+
+            }
+
+        }
+    );
+
+
+    document.getElementById(
+        "totalCount"
+    ).textContent =
+        fullCollectionData.length;
+
+
+    document.getElementById(
+        "vinylCount"
+    ).textContent =
+        vinyl;
+
+
+    document.getElementById(
+        "cdCount"
+    ).textContent =
+        cd;
+
+
+    document.getElementById(
+        "cassetteCount"
+    ).textContent =
+        cassette;
+
+}
+
+
+function setBrowseMode(
+    mode
+) {
+
+    browseMode =
+        mode;
+
+
+    activeSubFilter =
+        "";
+
+
+    document
+        .querySelectorAll(
+            ".browse-mode"
+        )
+        .forEach(
+            function (button) {
+
+                button.classList.remove(
+                    "tab-active"
+                );
+
+
+                button.classList.add(
+                    "bg-[#fffaf0]"
+                );
+
+            }
         );
 
 
+    const active =
+        document.getElementById(
+            "browse-" +
+            mode
+        );
+
+
+    active.classList.add(
+        "tab-active"
+    );
+
+
+    active.classList.remove(
+        "bg-[#fffaf0]"
+    );
+
+
+    renderSubFilters();
+
+    filterCollection();
+
+}
+
+
+function renderSubFilters() {
+
+    const container =
+        document.getElementById(
+            "subFilterContainer"
+        );
+
+
+    const list =
+        document.getElementById(
+            "subFilterList"
+        );
+
+
+    if (
+        browseMode ===
+        "todos"
+    ) {
+
+        container.classList.add(
+            "hidden"
+        );
+
+
+        list.innerHTML =
+            "";
+
+
+        return;
+
+    }
+
+
+    let values =
+        [];
+
+
+    fullCollectionData.forEach(
+        function (item) {
+
+            let value =
+                "";
+
+
+            if (
+                browseMode ===
+                "genero"
+            ) {
+
+                value =
+                    String(
+                        item.genre ||
+                        ""
+                    ).trim();
+
+            }
+
+
+            if (
+                browseMode ===
+                "anio"
+            ) {
+
+                value =
+                    String(
+                        item.year ||
+                        ""
+                    ).trim();
+
+            }
+
+
+            if (
+                browseMode ===
+                "artista"
+            ) {
+
+                value =
+                    String(
+                        item.artist ||
+                        ""
+                    ).trim();
+
+            }
+
+
+            if (
+                value
+            ) {
+
+                values.push(
+                    value
+                );
+
+            }
+
+        }
+    );
+
+
+    const uniqueMap =
+        new Map();
+
+
+    values.forEach(
+        function (value) {
+
+            const key =
+                normalizeTextFrontend(
+                    value
+                );
+
+
+            if (
+                !uniqueMap.has(
+                    key
+                )
+            ) {
+
+                uniqueMap.set(
+                    key,
+                    value
+                );
+
+            }
+
+        }
+    );
+
+
+    let unique =
+        Array.from(
+            uniqueMap.values()
+        );
+
+
+    if (
+        browseMode ===
+        "anio"
+    ) {
+
+        unique.sort(
+            function (a, b) {
+
+                return (
+                    Number(b) -
+                    Number(a)
+                );
+
+            }
+        );
+
+    } else {
+
+        unique.sort(
+            function (a, b) {
+
+                return a.localeCompare(
+                    b,
+                    "es",
+                    {
+                        sensitivity:
+                            "base"
+                    }
+                );
+
+            }
+        );
+
+    }
+
+
+    let html =
+        `
+        <button
+            onclick="setSubFilter('')"
+            class="filter-chip ${activeSubFilter === "" ? "active" : ""} rounded-full px-3 py-2 text-[10px] font-black uppercase"
+        >
+            Todos
+        </button>
+        `;
+
+
+    unique.forEach(
+        function (value) {
+
+            const encoded =
+                encodeURIComponent(
+                    value
+                );
+
+
+            const active =
+                normalizeTextFrontend(
+                    activeSubFilter
+                ) ===
+                normalizeTextFrontend(
+                    value
+                );
+
+
+            html +=
+                `
+                <button
+                    onclick="setSubFilter(decodeURIComponent('${encoded}'))"
+                    class="filter-chip ${active ? "active" : ""} rounded-full px-3 py-2 text-[10px] font-black uppercase"
+                >
+                    ${escapeHtml(value)}
+                </button>
+                `;
+
+        }
+    );
+
+
+    list.innerHTML =
+        html;
+
+
+    container.classList.remove(
+        "hidden"
+    );
+
+}
+
+
+function setSubFilter(
+    value
+) {
+
+    activeSubFilter =
+        value;
+
+
+    renderSubFilters();
+
+    filterCollection();
+
+}
+
+
+function filterCollection() {
+
     const query =
-        searchInput
-
-            ? searchInput.value
-                .toLowerCase()
-                .trim()
-
-            : "";
+        document.getElementById(
+            "searchInput"
+        )
+        .value
+        .toLowerCase()
+        .trim();
 
 
     const filtered =
-        fullCollectionData.filter(
+        fullCollectionData
+        .filter(
             function (item) {
 
                 const artist =
                     String(
                         item.artist ||
                         ""
-                    )
-                    .toLowerCase();
+                    );
 
 
                 const title =
                     String(
                         item.title ||
                         ""
-                    )
-                    .toLowerCase();
+                    );
 
 
-                const format =
+                const genre =
                     String(
-                        item.format ||
+                        item.genre ||
                         ""
-                    )
-                    .toLowerCase();
-
-
-                const matches =
-                    artist.includes(
-                        query
-                    ) ||
-                    title.includes(
-                        query
                     );
 
 
+                const year =
+                    String(
+                        item.year ||
+                        ""
+                    );
+
+
+                const textMatch =
+                    artist
+                        .toLowerCase()
+                        .includes(
+                            query
+                        )
+                    ||
+                    title
+                        .toLowerCase()
+                        .includes(
+                            query
+                        );
+
+
                 if (
-                    currentCollectionFilter ===
-                    "vinilo"
+                    !textMatch
+                ) {
+
+                    return false;
+
+                }
+
+
+                if (
+                    !activeSubFilter
+                ) {
+
+                    return true;
+
+                }
+
+
+                if (
+                    browseMode ===
+                    "genero"
                 ) {
 
                     return (
-                        matches &&
-                        (
-                            format.includes(
-                                "vinilo"
-                            ) ||
-                            format.includes(
-                                "vinyl"
-                            )
+                        normalizeTextFrontend(
+                            genre
+                        ) ===
+                        normalizeTextFrontend(
+                            activeSubFilter
                         )
                     );
 
@@ -2769,24 +2906,48 @@ function filterCollection() {
 
 
                 if (
-                    currentCollectionFilter ===
-                    "cd"
+                    browseMode ===
+                    "anio"
                 ) {
 
                     return (
-                        matches &&
-                        format.includes(
-                            "cd"
+                        normalizeTextFrontend(
+                            year
+                        ) ===
+                        normalizeTextFrontend(
+                            activeSubFilter
                         )
                     );
 
                 }
 
 
-                return matches;
+                if (
+                    browseMode ===
+                    "artista"
+                ) {
+
+                    return (
+                        normalizeTextFrontend(
+                            artist
+                        ) ===
+                        normalizeTextFrontend(
+                            activeSubFilter
+                        )
+                    );
+
+                }
+
+
+                return true;
 
             }
         );
+
+
+    updateCollectionHeading(
+        filtered.length
+    );
 
 
     renderCollection(
@@ -2796,21 +2957,75 @@ function filterCollection() {
 }
 
 
+function updateCollectionHeading(
+    count
+) {
 
-/* ======================================================
-   FOTO DRIVE
-====================================================== */
+    let heading =
+        "TODOS";
+
+
+    if (
+        browseMode ===
+        "genero"
+    ) {
+
+        heading =
+            activeSubFilter ||
+            "GÉNEROS";
+
+    }
+
+
+    if (
+        browseMode ===
+        "anio"
+    ) {
+
+        heading =
+            activeSubFilter ||
+            "AÑOS";
+
+    }
+
+
+    if (
+        browseMode ===
+        "artista"
+    ) {
+
+        heading =
+            activeSubFilter ||
+            "ARTISTAS";
+
+    }
+
+
+    document.getElementById(
+        "collectionHeading"
+    ).textContent =
+        heading;
+
+
+    document.getElementById(
+        "collectionCount"
+    ).textContent =
+        count === 1
+
+            ? "1 registro"
+
+            : count +
+              " registros";
+
+}
+
 
 function getDirectImageUrl(
     rawUrl
 ) {
 
-    if (
-        !rawUrl
-    ) {
-
+    if (!rawUrl) {
         return "";
-
     }
 
 
@@ -2835,7 +3050,8 @@ function getDirectImageUrl(
     const match =
         url.match(
             /\/d\/([a-zA-Z0-9_-]+)/
-        ) ||
+        )
+        ||
         url.match(
             /[?&]id=([a-zA-Z0-9_-]+)/
         );
@@ -2860,11 +3076,6 @@ function getDirectImageUrl(
 }
 
 
-
-/* ======================================================
-   RENDER
-====================================================== */
-
 function renderCollection(
     items
 ) {
@@ -2876,15 +3087,29 @@ function renderCollection(
 
 
     if (
-        items.length === 0
+        items.length ===
+        0
     ) {
 
         list.innerHTML =
             `
-            <div class="text-center py-12 text-slate-500 text-xs">
-                No hay discos registrados.
+            <div class="p-10 text-center">
+
+                <div
+                    class="text-xl font-black"
+                >
+                    Sin resultados
+                </div>
+
+                <p
+                    class="text-xs mt-2 text-[#766f64]"
+                >
+                    No hay discos que coincidan con este filtro.
+                </p>
+
             </div>
             `;
+
 
         return;
 
@@ -2892,7 +3117,8 @@ function renderCollection(
 
 
     list.innerHTML =
-        items.map(
+        items
+        .map(
             function (item) {
 
                 const artist =
@@ -2920,13 +3146,8 @@ function renderCollection(
                     "";
 
 
-                const condition =
-                    item.condition ||
-                    "";
-
-
-                const location =
-                    item.location ||
+                const label =
+                    item.label ||
                     "";
 
 
@@ -2938,135 +3159,122 @@ function renderCollection(
 
 
                 return `
-                    <div
-                        class="bg-slate-900 border border-slate-800 rounded-xl p-3 flex gap-3 shadow-md"
+                    <article
+                        class="album-card p-4"
                     >
 
-                        <div
-                            class="w-20 h-20 bg-slate-950 rounded-lg overflow-hidden flex-shrink-0 border border-slate-800 flex items-center justify-center"
-                        >
+                        <div class="flex gap-4">
 
-                            ${
-                                photoUrl
-
-                                    ? `
-                                        <img
-                                            src="${escapeHtml(photoUrl)}"
-                                            class="w-full h-full object-cover"
-                                            alt="${escapeHtml(title)}"
-                                            loading="lazy"
-                                            referrerpolicy="no-referrer"
-                                            onerror="
-                                                this.onerror=null;
-                                                this.style.display='none';
-                                                this.nextElementSibling.style.display='block';
-                                            "
-                                        >
-
-                                        <i
-                                            class="fa-solid fa-compact-disc text-emerald-400 text-xl"
-                                            style="display:none"
-                                        ></i>
-                                    `
-
-                                    : `
-                                        <i
-                                            class="fa-solid fa-compact-disc text-emerald-400 text-xl"
-                                        ></i>
-                                    `
-                            }
-
-                        </div>
-
-
-                        <div
-                            class="flex-1 min-w-0"
-                        >
-
-                            <h4
-                                class="text-sm font-bold text-slate-100 truncate"
+                            <div
+                                class="w-24 h-24 flex-shrink-0 rounded-xl bg-[#f3ead7] overflow-hidden"
                             >
-                                ${escapeHtml(title)}
-                            </h4>
-
-
-                            <p
-                                class="text-xs text-emerald-400 truncate mt-0.5"
-                            >
-                                ${escapeHtml(artist)}
-                            </p>
-
-
-                            <p
-                                class="text-[10px] text-slate-400 mt-2"
-                            >
-
-                                ${escapeHtml(format)}
 
                                 ${
-                                    year
+                                    photoUrl
 
-                                        ? " • " +
-                                          escapeHtml(year)
+                                        ? `
+                                            <img
+                                                src="${escapeHtml(photoUrl)}"
+                                                alt="${escapeHtml(title)}"
+                                                class="w-full h-full object-cover"
+                                                loading="lazy"
+                                                referrerpolicy="no-referrer"
+                                                onerror="
+                                                    this.onerror=null;
+                                                    this.style.display='none';
+                                                    this.nextElementSibling.style.display='flex';
+                                                "
+                                            >
 
+                                            <div
+                                                style="display:none"
+                                                class="w-full h-full items-center justify-center bg-[#3157ff] text-white"
+                                            >
+                                                <i class="fa-solid fa-record-vinyl text-3xl"></i>
+                                            </div>
+                                        `
+
+                                        : `
+                                            <div
+                                                class="w-full h-full flex items-center justify-center bg-[#3157ff] text-white"
+                                            >
+                                                <i class="fa-solid fa-record-vinyl text-3xl"></i>
+                                            </div>
+                                        `
+                                }
+
+                            </div>
+
+
+
+                            <div
+                                class="flex-1 min-w-0 flex flex-col"
+                            >
+
+                                <div
+                                    class="text-[9px] font-bold uppercase tracking-wider text-[#ff5f57]"
+                                >
+                                    ${escapeHtml(format)}
+                                </div>
+
+
+                                <h3
+                                    class="text-xl font-black leading-tight mt-1 truncate"
+                                >
+                                    ${escapeHtml(title)}
+                                </h3>
+
+
+                                <p
+                                    class="font-bold text-sm truncate mt-1"
+                                >
+                                    ${escapeHtml(artist)}
+                                </p>
+
+
+                                <div
+                                    class="mt-auto flex flex-wrap gap-x-2 text-[10px] font-bold uppercase text-[#766f64]"
+                                >
+
+                                    ${
+                                        year
+                                            ? `<span>${escapeHtml(year)}</span>`
+                                            : ""
+                                    }
+
+                                    ${
+                                        year &&
+                                        genre
+                                            ? `<span>•</span>`
+                                            : ""
+                                    }
+
+                                    ${
+                                        genre
+                                            ? `<span>${escapeHtml(genre)}</span>`
+                                            : ""
+                                    }
+
+                                </div>
+
+
+                                ${
+                                    label
+                                        ? `
+                                            <div
+                                                class="text-[9px] mt-1 truncate text-[#978f82]"
+                                            >
+                                                ${escapeHtml(label)}
+                                            </div>
+                                        `
                                         : ""
                                 }
 
-                            </p>
-
-
-                            ${
-                                genre
-
-                                    ? `
-                                        <p
-                                            class="text-[10px] text-slate-500 truncate mt-1"
-                                        >
-                                            ${escapeHtml(genre)}
-                                        </p>
-                                    `
-
-                                    : ""
-                            }
-
-
-                            ${
-                                condition ||
-                                location
-
-                                    ? `
-                                        <p
-                                            class="text-[10px] text-slate-600 truncate mt-1"
-                                        >
-
-                                            ${
-                                                condition
-                                                    ? escapeHtml(condition)
-                                                    : ""
-                                            }
-
-                                            ${
-                                                condition &&
-                                                location
-                                                    ? " • "
-                                                    : ""
-                                            }
-
-                                            ${
-                                                location
-                                                    ? escapeHtml(location)
-                                                    : ""
-                                            }
-
-                                        </p>
-                                    `
-
-                                    : ""
-                            }
+                            </div>
 
                         </div>
 
-                    </div>
+                    </article>
                 `;
 
             }
@@ -3075,11 +3283,6 @@ function renderCollection(
 
 }
 
-
-
-/* ======================================================
-   NORMALIZACIÓN FRONTEND
-====================================================== */
 
 function normalizeTextFrontend(
     value
@@ -3109,7 +3312,6 @@ function normalizeTextFrontend(
     .trim();
 
 }
-
 
 
 function normalizeFormatKeyFrontend(
@@ -3152,7 +3354,6 @@ function normalizeFormatKeyFrontend(
 }
 
 
-
 function normalizeFormatFrontend(
     value
 ) {
@@ -3187,11 +3388,6 @@ function normalizeFormatFrontend(
 
 }
 
-
-
-/* ======================================================
-   ESCAPE
-====================================================== */
 
 function escapeHtml(
     value
