@@ -70,6 +70,21 @@
         .soft-card {
             background: rgba(255, 250, 240, 0.86);
             border: 1px solid var(--line);
+            transition:
+                transform 0.12s ease,
+                background 0.12s ease,
+                color 0.12s ease,
+                border-color 0.12s ease;
+        }
+
+        .soft-card:active {
+            transform: scale(0.98);
+        }
+
+        .format-card-active {
+            background: var(--ink);
+            color: white;
+            border-color: var(--ink);
         }
 
         .editorial-button {
@@ -264,12 +279,16 @@
 
 
 
+    <!-- CONTADORES / FILTROS DE FORMATO -->
+
     <div
         class="grid grid-cols-3 gap-2"
     >
 
-        <div
-            class="soft-card rounded-2xl p-3"
+        <button
+            id="formatFilter-vinilo"
+            onclick="toggleFormatFilter('vinilo')"
+            class="soft-card rounded-2xl p-3 text-left"
         >
 
             <div
@@ -285,11 +304,13 @@
                 Vinilos
             </div>
 
-        </div>
+        </button>
 
 
-        <div
-            class="soft-card rounded-2xl p-3"
+        <button
+            id="formatFilter-cd"
+            onclick="toggleFormatFilter('cd')"
+            class="soft-card rounded-2xl p-3 text-left"
         >
 
             <div
@@ -305,11 +326,13 @@
                 CDs
             </div>
 
-        </div>
+        </button>
 
 
-        <div
-            class="soft-card rounded-2xl p-3"
+        <button
+            id="formatFilter-casete"
+            onclick="toggleFormatFilter('casete')"
+            class="soft-card rounded-2xl p-3 text-left"
         >
 
             <div
@@ -325,7 +348,7 @@
                 Casetes
             </div>
 
-        </div>
+        </button>
 
     </div>
 
@@ -480,8 +503,6 @@
     </div>
 
 
-
-    <!-- PREVIEW MINIMALISTA -->
 
     <div
         class="capture-shell rounded-[26px] p-3"
@@ -1075,7 +1096,7 @@ const DEFAULT_GAS_URL =
 
 
 const APP_VERSION =
-    "2026-09-04-minimal-v2";
+    "2026-09-04-format-filter-v3";
 
 
 let currentImageBase64 = "";
@@ -1085,6 +1106,7 @@ let currentDuplicate = null;
 let duplicateTimer = null;
 let browseMode = "todos";
 let activeSubFilter = "";
+let activeFormatFilter = "";
 
 
 window.addEventListener(
@@ -2442,6 +2464,8 @@ function refreshCollectionUI() {
 
     updateCounters();
 
+    updateFormatFilterUI();
+
     renderSubFilters();
 
     filterCollection();
@@ -2511,6 +2535,115 @@ function updateCounters() {
         "cassetteCount"
     ).textContent =
         cassette;
+
+}
+
+
+/* ======================================================
+   FILTRO RÁPIDO DE FORMATO
+====================================================== */
+
+function toggleFormatFilter(
+    format
+) {
+
+    if (
+        activeFormatFilter ===
+        format
+    ) {
+
+        activeFormatFilter =
+            "";
+
+    } else {
+
+        activeFormatFilter =
+            format;
+
+    }
+
+
+    updateFormatFilterUI();
+
+    filterCollection();
+
+}
+
+
+function updateFormatFilterUI() {
+
+    [
+        "vinilo",
+        "cd",
+        "casete"
+    ]
+    .forEach(
+        function (format) {
+
+            const card =
+                document.getElementById(
+                    "formatFilter-" +
+                    format
+                );
+
+
+            if (
+                activeFormatFilter ===
+                format
+            ) {
+
+                card.classList.add(
+                    "format-card-active"
+                );
+
+            } else {
+
+                card.classList.remove(
+                    "format-card-active"
+                );
+
+            }
+
+        }
+    );
+
+
+    /*
+     * Ajustamos los colores de los números
+     * para que se lean bien sobre fondo negro.
+     */
+
+    document.getElementById(
+        "vinylCount"
+    ).className =
+        activeFormatFilter ===
+        "vinilo"
+
+            ? "display-font text-3xl text-white"
+
+            : "display-font text-3xl";
+
+
+    document.getElementById(
+        "cdCount"
+    ).className =
+        activeFormatFilter ===
+        "cd"
+
+            ? "display-font text-3xl text-white"
+
+            : "display-font text-3xl text-[#3157ff]";
+
+
+    document.getElementById(
+        "cassetteCount"
+    ).className =
+        activeFormatFilter ===
+        "casete"
+
+            ? "display-font text-3xl text-white"
+
+            : "display-font text-3xl text-[#ff5f57]";
 
 }
 
@@ -2604,11 +2737,42 @@ function renderSubFilters() {
     }
 
 
+    let sourceData =
+        fullCollectionData;
+
+
+    /*
+     * Si hay un formato seleccionado,
+     * los subfiltros se generan sólo
+     * con ese formato.
+     */
+
+    if (
+        activeFormatFilter
+    ) {
+
+        sourceData =
+            fullCollectionData.filter(
+                function (item) {
+
+                    return (
+                        normalizeFormatKeyFrontend(
+                            item.format || ""
+                        ) ===
+                        activeFormatFilter
+                    );
+
+                }
+            );
+
+    }
+
+
     let values =
         [];
 
 
-    fullCollectionData.forEach(
+    sourceData.forEach(
         function (item) {
 
             let value =
@@ -2856,6 +3020,12 @@ function filterCollection() {
                     );
 
 
+                const format =
+                    normalizeFormatKeyFrontend(
+                        item.format || ""
+                    );
+
+
                 const textMatch =
                     artist
                         .toLowerCase()
@@ -2872,6 +3042,21 @@ function filterCollection() {
 
                 if (
                     !textMatch
+                ) {
+
+                    return false;
+
+                }
+
+
+                /*
+                 * FILTRO DE FORMATO
+                 */
+
+                if (
+                    activeFormatFilter &&
+                    format !==
+                    activeFormatFilter
                 ) {
 
                     return false;
@@ -2966,37 +3151,80 @@ function updateCollectionHeading(
 
 
     if (
-        browseMode ===
-        "genero"
+        activeFormatFilter ===
+        "vinilo"
     ) {
 
         heading =
-            activeSubFilter ||
-            "GÉNEROS";
+            "VINILOS";
 
     }
 
 
     if (
-        browseMode ===
-        "anio"
+        activeFormatFilter ===
+        "cd"
     ) {
 
         heading =
-            activeSubFilter ||
-            "AÑOS";
+            "CDs";
 
     }
 
 
     if (
-        browseMode ===
-        "artista"
+        activeFormatFilter ===
+        "casete"
     ) {
 
         heading =
-            activeSubFilter ||
-            "ARTISTAS";
+            "CASETES";
+
+    }
+
+
+    if (
+        activeSubFilter
+    ) {
+
+        heading =
+            activeSubFilter;
+
+    } else if (
+        !activeFormatFilter
+    ) {
+
+        if (
+            browseMode ===
+            "genero"
+        ) {
+
+            heading =
+                "GÉNEROS";
+
+        }
+
+
+        if (
+            browseMode ===
+            "anio"
+        ) {
+
+            heading =
+                "AÑOS";
+
+        }
+
+
+        if (
+            browseMode ===
+            "artista"
+        ) {
+
+            heading =
+                "ARTISTAS";
+
+        }
 
     }
 
